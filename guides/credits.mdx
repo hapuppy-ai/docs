@@ -1,0 +1,170 @@
+---
+title: "Credits & Pricing"
+description: "How credits, model multipliers, the vault, and rate limits work."
+---
+
+Hapuppy uses a **credit-based** system. You buy credits once, they enter your **vault**, and they never expire. Every API call deducts credits based on the model and the work it did.
+
+## Plans
+
+| Plan | Price | Credits | Models | Notes |
+|------|-------|---------|--------|-------|
+| Free | $0 | 100K per day | Basic models | Resets daily; daily allowance does **not** roll over |
+| Lite | $9.99 one-time | 30M | All 100+ models | Vault credits never expire |
+| Standard | $19.99 one-time | 120M | All models | Most popular |
+| Pro | $36.99 one-time | 240M | All models + **priority routing** | Lowest-latency tier |
+
+Purchase credit packs from the [dashboard](https://hapuppy.com/dashboard). Payments are processed via Creem; refunds are available within 7 days if you have not consumed a significant portion of the pack.
+
+## The Vault
+
+Credits you purchase enter a personal **vault** tied to your account.
+
+- **Never expire** — use them at your own pace
+- **Stack on top of each other** — buying a Standard pack while a Lite is partly consumed simply adds 120M to your remaining balance
+- **Independent of the free tier** — your 100K daily free allowance is consumed first; the vault is only drawn down when the daily allowance runs out
+- **Not refundable after significant use** — see refund policy on the dashboard
+
+## How Credits Work
+
+Two billing formulas, depending on the endpoint:
+
+### Token-based (chat, embeddings)
+
+```
+credits_charged = total_tokens × model_multiplier
+```
+
+Where:
+- `total_tokens` = prompt tokens + completion tokens (returned in the `usage` object of every response)
+- `model_multiplier` is published per model (see table below)
+
+### Fixed-cost (images, audio, video, moderation)
+
+```
+credits_charged = fixed_base_cost
+```
+
+Each request deducts a fixed amount that depends on the model and parameters (resolution, duration, etc.) — not on token count.
+
+## Model Multipliers (illustrative)
+
+Exact multipliers and fixed costs are maintained at [hapuppy.com/credits](https://hapuppy.com/credits) — always check there for the latest values. The numbers below are representative and may shift as upstream prices change.
+
+### Chat models
+
+| Model | Multiplier | Tier required |
+|---|---|---|
+| `claude-haiku-*` | 0.3× | Free |
+| `gpt-4o-mini` | 0.2× | Free |
+| `deepseek-chat` | 0.1× | Free |
+| `gemini-2.5-flash` | 0.3× | Free |
+| `claude-sonnet-*` | 1.0× | Lite+ |
+| `gpt-4o` | 1.0× | Lite+ |
+| `gemini-2.5-pro` | 1.0× | Lite+ |
+| `claude-opus-*` | 5.0× | Standard+ |
+| `o1` / `o3` | 4.0× | Standard+ |
+| `grok-4` | 2.0× | Lite+ |
+
+### Fixed-cost endpoints
+
+| Endpoint | Model | Credits per call |
+|---|---|---|
+| Images | `dall-e-3` (1024×1024 std) | ~5,000 |
+| Images | `dall-e-3` (1024×1024 hd) | ~10,000 |
+| Images | `midjourney` | ~75,000 |
+| Audio | `tts-1` | ~150 per 1K chars |
+| Audio | `tts-1-hd` | ~300 per 1K chars |
+| Audio | `whisper-1` | ~600 per minute |
+| Video | `sora-2` | ~30,000 per second of output |
+| Moderation | `omni-moderation-latest` | 0 (free) |
+
+## Example Calculation
+
+You send a prompt to `gpt-4o` with 800 prompt tokens and receive a 1,200-token response:
+
+```
+total_tokens     = 800 + 1200 = 2000
+model_multiplier = 1.0
+credits_charged  = 2000 × 1.0 = 2,000 credits
+```
+
+If your vault has 30M credits, you can run this call about **15,000 times** before topping up.
+
+For a higher-cost model like Claude Opus (5×):
+
+```
+credits_charged = 2000 × 5.0 = 10,000 credits
+```
+
+You'd get **3,000 calls** from the same vault.
+
+## Rate Limiting
+
+All API keys share a single rate limit: **100 requests per minute (RPM)**. Exceeding this returns a `429` error with:
+
+```json
+{
+  "error": {
+    "message": "Rate limit exceeded. Please retry after 1 second.",
+    "type": "rate_limit_error",
+    "code": "rate_limit_exceeded"
+  }
+}
+```
+
+The right pattern is exponential backoff. The OpenAI SDK has retries built in (`max_retries=N`), or roll your own:
+
+```python Python
+import time
+from openai import OpenAI, RateLimitError, APIError
+
+client = OpenAI(api_key="sk-hapuppy-xxx", base_url="https://api.hapuppy.com/v1")
+
+def chat_with_retry(messages, model="claude-sonnet-4-20250514", max_retries=5):
+    for attempt in range(max_retries):
+        try:
+            return client.chat.completions.create(model=model, messages=messages)
+        except RateLimitError:
+            wait = min(2 ** attempt, 30)
+            time.sleep(wait)
+        except APIError as e:
+            if e.status_code in (500, 502, 503):
+                time.sleep(min(2 ** attempt, 30))
+            else:
+                raise
+    raise RuntimeError("max retries exceeded")
+```
+
+See [Error Handling](/guides/errors) for the full retry strategy.
+
+## Checking Your Balance
+
+Visit the [dashboard](https://hapuppy.com/dashboard) — your vault balance, daily free allowance, and recent usage are all surfaced there. There is no public API for balance lookup yet; this is on the roadmap.
+
+## Cost-Optimization Tips
+
+<CardGroup cols={2}>
+  <Card title="Use Prompt Caching" icon="bolt">
+    Anthropic models auto-cache repeated system prompts. Claude Code's 40K system prompt is cached after the first call — subsequent calls save ~90% on the cached tokens.
+  </Card>
+  <Card title="Choose the right model" icon="scale-balanced">
+    Don't default to Opus/o1 for everything. Most tasks fit Sonnet/4o; reserve high-multiplier models for hard reasoning or production agents.
+  </Card>
+  <Card title="Cap `max_tokens`" icon="ruler">
+    Set a hard ceiling on response length. A runaway completion at 5× multiplier burns credits fast.
+  </Card>
+  <Card title="Batch when possible" icon="layer-group">
+    For embeddings, send arrays of inputs in one request rather than one call per item — same token cost, fewer rate-limit hits.
+  </Card>
+  <Card title="Use streaming wisely" icon="play">
+    Streaming doesn't cost less, but it lets you cancel early when the user has what they need — and that *does* save credits.
+  </Card>
+  <Card title="Moderate cheaply" icon="shield">
+    Run [Moderation](/api-reference/moderations/create) on user input before forwarding to a high-multiplier chat model. It's near-free and rejects bad prompts before they cost credits.
+  </Card>
+</CardGroup>
+
+<Info>
+  When in doubt about exact pricing, the canonical source is **[hapuppy.com/credits](https://hapuppy.com/credits)** — it's updated whenever upstream provider prices change.
+</Info>

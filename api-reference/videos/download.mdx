@@ -1,0 +1,99 @@
+---
+title: "Download Video"
+description: "Download the generated video file."
+---
+
+```
+GET https://api.hapuppy.com/v1/videos/{video_id}/content
+```
+
+Streams the binary content of a completed video job as `video/mp4`. Only callable after [Get Video](/api-reference/videos/get) reports `status=completed`.
+
+## Path Parameters
+
+<ParamField path="video_id" type="string" required>
+  The video job ID (format: `video_*`).
+</ParamField>
+
+## Response
+
+Returns binary video data with `Content-Type: video/mp4`. Use streaming-aware HTTP clients to avoid loading the entire file into memory.
+
+## Examples
+
+### Save to disk
+
+<CodeGroup>
+
+```python Python
+import requests
+
+resp = requests.get(
+    "https://api.hapuppy.com/v1/videos/video_abc123/content",
+    headers={"Authorization": "Bearer sk-hapuppy-xxx"},
+    stream=True,
+)
+resp.raise_for_status()
+
+with open("output.mp4", "wb") as f:
+    for chunk in resp.iter_content(chunk_size=1024 * 1024):
+        f.write(chunk)
+```
+
+```typescript TypeScript
+import fs from "fs";
+import { pipeline } from "stream/promises";
+
+const resp = await fetch(
+  "https://api.hapuppy.com/v1/videos/video_abc123/content",
+  { headers: { Authorization: "Bearer sk-hapuppy-xxx" } }
+);
+
+if (!resp.ok || !resp.body) {
+  throw new Error(`Download failed: ${resp.status}`);
+}
+
+await pipeline(resp.body, fs.createWriteStream("output.mp4"));
+```
+
+```bash cURL
+curl https://api.hapuppy.com/v1/videos/video_abc123/content \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  --output output.mp4
+```
+
+</CodeGroup>
+
+### Stream into a presigned upload (S3, etc.)
+
+```python Python
+import requests
+import boto3
+
+video_id = "video_abc123"
+s3 = boto3.client("s3")
+
+resp = requests.get(
+    f"https://api.hapuppy.com/v1/videos/{video_id}/content",
+    headers={"Authorization": "Bearer sk-hapuppy-xxx"},
+    stream=True,
+)
+
+s3.upload_fileobj(resp.raw, "my-bucket", f"videos/{video_id}.mp4")
+```
+
+## Errors
+
+| Status | Meaning |
+|---|---|
+| `404` | Video does not exist or has been deleted. |
+| `409` | Job has not completed yet (still `queued`, `in_progress`, or `failed`). |
+| `410` | Video has expired and is no longer downloadable — see retention note. |
+
+<Warning>
+  Generated videos are retained for a limited window (typically 7–30 days depending on plan). Download immediately and store in your own object store if you need long-term access.
+</Warning>
+
+<Info>
+  For browser playback, you can stream directly from this URL — but the `Authorization` header is required, so signed URLs are not supported. Proxy through your backend or pre-fetch and store in your CDN.
+</Info>

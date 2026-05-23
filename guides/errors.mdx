@@ -72,14 +72,16 @@ When a request fails, Hapuppy returns a JSON error response:
 ```json
 {
   "error": {
-    "message": "Insufficient credits. Credits will refresh at midnight Beijing time (UTC 16:00).",
+    "message": "Insufficient credits.",
     "type": "rate_limit_error",
     "code": "insufficient_credits"
   }
 }
 ```
 
-**Fix:** Your daily credits have been used up. Wait for the next midnight Beijing time (UTC 16:00) refresh or [upgrade your plan](https://hapuppy.com/dashboard).
+**Fix:**
+- **Free tier**: your 100K daily allowance is used up. It resets the next day, or you can purchase any credit pack to top up your vault immediately.
+- **Paid users**: your vault is empty. Purchase another credit pack from the [dashboard](https://hapuppy.com/dashboard) — credits stack and never expire.
 
 ### 400 — Invalid Model
 

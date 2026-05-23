@@ -1,0 +1,153 @@
+---
+title: "Create Video"
+description: "Start a video generation job from a text prompt."
+---
+
+```
+POST https://api.hapuppy.com/v1/videos
+```
+
+Submits a video generation job. The endpoint returns immediately with a job ID — generation runs asynchronously and may take from tens of seconds to several minutes depending on the model, resolution, and duration. Poll [Get Video](/api-reference/videos/get) to track progress, then call [Download Video](/api-reference/videos/download) when the job completes.
+
+## Request Body
+
+<ParamField body="model" type="string" required>
+  Video generation model. Examples: `sora-2`, `veo-3`, `kling-v2`, `runway-gen-3`. Available models depend on your plan and provider availability.
+</ParamField>
+
+<ParamField body="prompt" type="string" required>
+  Text description of the desired video. Be specific about subjects, motion, camera work, and style.
+</ParamField>
+
+<ParamField body="seconds" type="integer" default="5">
+  Duration of the output video in seconds. Common values: 5, 10, 15. Maximum varies by model (Sora 2 supports up to 20s; some models cap at 6s).
+</ParamField>
+
+<ParamField body="size" type="string" default="1280x720">
+  Output resolution. Common values: `1280x720`, `1920x1080`, `720x1280` (vertical), `1024x1024` (square). Supported sizes vary by model.
+</ParamField>
+
+<ParamField body="reference_image" type="string">
+  Optional URL or base64-encoded image to use as the first frame / style reference. Enables image-to-video workflows.
+</ParamField>
+
+<ParamField body="user" type="string">
+  Optional stable identifier for the end-user, used for abuse detection.
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="string">Unique job identifier. Use this with [Get](/api-reference/videos/get), [Download](/api-reference/videos/download), and [Delete](/api-reference/videos/delete).</ResponseField>
+<ResponseField name="object" type="string">Always `video`.</ResponseField>
+<ResponseField name="created_at" type="integer">Unix timestamp of job submission.</ResponseField>
+<ResponseField name="status" type="string">Initial status: typically `queued` or `in_progress`. Possible values: `queued`, `in_progress`, `completed`, `failed`, `cancelled`.</ResponseField>
+<ResponseField name="model" type="string">The model that will run the job.</ResponseField>
+<ResponseField name="progress" type="integer">Generation progress 0–100. Starts at 0.</ResponseField>
+
+## Examples
+
+<CodeGroup>
+
+```python Python
+import requests
+
+resp = requests.post(
+    "https://api.hapuppy.com/v1/videos",
+    headers={"Authorization": "Bearer sk-hapuppy-xxx"},
+    json={
+        "model": "sora-2",
+        "prompt": "A drone shot flying over a glacier at golden hour, slow camera push-in",
+        "seconds": 10,
+        "size": "1920x1080"
+    },
+)
+
+job = resp.json()
+print(f"Job {job['id']}: {job['status']}")
+```
+
+```typescript TypeScript
+const resp = await fetch("https://api.hapuppy.com/v1/videos", {
+  method: "POST",
+  headers: {
+    "Authorization": "Bearer sk-hapuppy-xxx",
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify({
+    model: "sora-2",
+    prompt: "A drone shot flying over a glacier at golden hour, slow camera push-in",
+    seconds: 10,
+    size: "1920x1080",
+  }),
+});
+
+const job = await resp.json();
+console.log(`Job ${job.id}: ${job.status}`);
+```
+
+```bash cURL
+curl https://api.hapuppy.com/v1/videos \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "sora-2",
+    "prompt": "A drone shot flying over a glacier at golden hour, slow camera push-in",
+    "seconds": 10,
+    "size": "1920x1080"
+  }'
+```
+
+</CodeGroup>
+
+## Poll-to-completion Pattern
+
+```python Python
+import time, requests
+
+HEADERS = {"Authorization": "Bearer sk-hapuppy-xxx"}
+
+job = requests.post(
+    "https://api.hapuppy.com/v1/videos",
+    headers=HEADERS,
+    json={"model": "sora-2", "prompt": "Northern lights over a still lake", "seconds": 8}
+).json()
+
+while True:
+    status = requests.get(
+        f"https://api.hapuppy.com/v1/videos/{job['id']}",
+        headers=HEADERS
+    ).json()
+    print(f"{status['status']} — {status.get('progress', 0)}%")
+    if status["status"] in ("completed", "failed", "cancelled"):
+        break
+    time.sleep(5)
+
+# Download the result
+video = requests.get(
+    f"https://api.hapuppy.com/v1/videos/{job['id']}/content",
+    headers=HEADERS
+).content
+with open("output.mp4", "wb") as f:
+    f.write(video)
+```
+
+## Response Example
+
+```json
+{
+  "id": "video_abc123xyz",
+  "object": "video",
+  "created_at": 1715367049,
+  "status": "queued",
+  "model": "sora-2",
+  "progress": 0
+}
+```
+
+<Info>
+  Video generation uses **fixed credit costs per second** of output (higher for HD / longer clips). Check the credit table at [hapuppy.com/credits](https://hapuppy.com/credits) before sending long jobs.
+</Info>
+
+<Warning>
+  Jobs may take several minutes. Do not block your request thread — poll asynchronously or use a background worker.
+</Warning>

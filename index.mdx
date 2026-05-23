@@ -12,11 +12,11 @@ Everything you need to start using 100+ AI models with a single API key.
   <Card title="Quickstart" icon="bolt" href="/quickstart">
     Get up and running in under 5 minutes.
   </Card>
-  <Card title="Authentication" icon="key" href="/authentication">
+  <Card title="Authentication" icon="key" href="/guides/authentication">
     Learn how to authenticate your API requests.
   </Card>
-  <Card title="Chat Completions" icon="comments" href="/chat-completions">
-    Explore the Chat Completions API endpoint.
+  <Card title="API Reference" icon="code" href="/api-reference/chat/completions">
+    Browse every endpoint — chat, embeddings, images, audio, video, moderation, models.
   </Card>
   <Card title="Browse Models" icon="layer-group" href="https://hapuppy.com/models">
     View all 100+ available AI models.
@@ -32,8 +32,8 @@ Everything you need to start using 100+ AI models with a single API key.
   <Card title="100+ Models" icon="robot">
     Access Claude, GPT, Gemini, Grok, DeepSeek, Mistral, Llama, GLM, and more — all through one API key.
   </Card>
-  <Card title="Flat Rate Pricing" icon="tag">
-    Simple monthly subscriptions starting at $9.99/mo. No per-token billing surprises.
+  <Card title="One-Time Pricing" icon="tag">
+    One-time credit packs from $9.99. Credits enter your vault and never expire — no subscriptions, no token surprises.
   </Card>
 </CardGroup>
 
@@ -93,13 +93,41 @@ curl https://beta.hapuppy.com/v1/chat/completions \
 
 </CodeGroup>
 
+## What You Can Do
+
+Hapuppy is OpenAI-compatible across every major modality.
+
+<CardGroup cols={3}>
+  <Card title="Chat" icon="comments" href="/api-reference/chat/completions">
+    Streaming, function calling, vision — across Claude, GPT, Gemini, Grok, GLM, and more.
+  </Card>
+  <Card title="Embeddings" icon="diagram-project" href="/api-reference/embeddings/create">
+    Vector embeddings for semantic search, RAG, and clustering.
+  </Card>
+  <Card title="Image Generation" icon="image" href="/api-reference/images/generations">
+    DALL-E 3, GPT-Image-1, Flux, Midjourney, Stable Diffusion.
+  </Card>
+  <Card title="Text-to-Speech" icon="microphone" href="/api-reference/audio/speech">
+    Natural-sounding voices in 8+ presets, multiple formats.
+  </Card>
+  <Card title="Transcription" icon="closed-captioning" href="/api-reference/audio/transcriptions">
+    Whisper-class transcription with word-level timestamps.
+  </Card>
+  <Card title="Video" icon="film" href="/api-reference/videos/create">
+    Sora 2, Veo 3, Kling, Runway — text-to-video and image-to-video.
+  </Card>
+  <Card title="Moderation" icon="shield" href="/api-reference/moderations/create">
+    Free / near-free safety classification before forwarding user input.
+  </Card>
+</CardGroup>
+
 ## Integrations
 
 Hapuppy works seamlessly with your favorite AI tools:
 
 <CardGroup cols={4}>
-  <Card title="Claude Code" icon="terminal" href="/integrations#claude-code" />
-  <Card title="Cursor" icon="code" href="/integrations#cursor" />
-  <Card title="Cline" icon="wand-magic-sparkles" href="/integrations#cline" />
-  <Card title="Continue" icon="forward" href="/integrations#continue" />
+  <Card title="Claude Code" icon="terminal" href="/guides/integrations#claude-code" />
+  <Card title="Cursor" icon="code" href="/guides/integrations#cursor" />
+  <Card title="Cline" icon="wand-magic-sparkles" href="/guides/integrations#cline" />
+  <Card title="Continue" icon="forward" href="/guides/integrations#continue" />
 </CardGroup>
