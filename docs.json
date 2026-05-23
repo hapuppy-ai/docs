@@ -15,7 +15,7 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
+        "tab": "Guides",
         "groups": [
           {
             "group": "Getting Started",
@@ -25,28 +25,80 @@
             ]
           },
           {
-            "group": "Guides",
+            "group": "Core",
             "pages": [
-              "authentication",
-              "integrations"
+              "guides/authentication",
+              "guides/credits",
+              "guides/errors",
+              "guides/integrations"
             ]
           },
           {
-            "group": "API Reference",
+            "group": "Account",
             "pages": [
-              "chat-completions",
-              "errors"
+              "guides/verify-account",
+              "guides/claude-apply"
+            ]
+          },
+          {
+            "group": "Support",
+            "pages": [
+              "guides/faq"
             ]
           }
         ]
       },
       {
-        "tab": "Resources",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "Support",
+            "group": "Chat",
             "pages": [
-              "faq"
+              "api-reference/chat/completions"
+            ]
+          },
+          {
+            "group": "Embeddings",
+            "pages": [
+              "api-reference/embeddings/create"
+            ]
+          },
+          {
+            "group": "Images",
+            "pages": [
+              "api-reference/images/generations",
+              "api-reference/images/edits"
+            ]
+          },
+          {
+            "group": "Audio",
+            "pages": [
+              "api-reference/audio/speech",
+              "api-reference/audio/transcriptions",
+              "api-reference/audio/translations"
+            ]
+          },
+          {
+            "group": "Video",
+            "pages": [
+              "api-reference/videos/create",
+              "api-reference/videos/list",
+              "api-reference/videos/get",
+              "api-reference/videos/download",
+              "api-reference/videos/delete"
+            ]
+          },
+          {
+            "group": "Moderations",
+            "pages": [
+              "api-reference/moderations/create"
+            ]
+          },
+          {
+            "group": "Models",
+            "pages": [
+              "api-reference/models/list",
+              "api-reference/models/get"
             ]
           }
         ]

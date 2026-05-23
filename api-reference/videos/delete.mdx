@@ -1,0 +1,101 @@
+---
+title: "Delete Video"
+description: "Delete a video job and its associated assets."
+---
+
+```
+DELETE https://api.hapuppy.com/v1/videos/{video_id}
+```
+
+Permanently deletes a video job and its rendered file. Use this to clean up after you've downloaded and stored the video yourself, or to cancel an in-progress job (no refund of partially consumed credits).
+
+## Path Parameters
+
+<ParamField path="video_id" type="string" required>
+  The video job ID (format: `video_*`).
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="string">The deleted job ID.</ResponseField>
+<ResponseField name="object" type="string">Always `video`.</ResponseField>
+<ResponseField name="deleted" type="boolean">Always `true` on success.</ResponseField>
+
+## Examples
+
+<CodeGroup>
+
+```python Python
+import requests
+
+resp = requests.delete(
+    "https://api.hapuppy.com/v1/videos/video_abc123",
+    headers={"Authorization": "Bearer sk-hapuppy-xxx"},
+)
+print(resp.json())
+```
+
+```typescript TypeScript
+const resp = await fetch(
+  "https://api.hapuppy.com/v1/videos/video_abc123",
+  {
+    method: "DELETE",
+    headers: { Authorization: "Bearer sk-hapuppy-xxx" },
+  }
+);
+console.log(await resp.json());
+```
+
+```bash cURL
+curl -X DELETE https://api.hapuppy.com/v1/videos/video_abc123 \
+  -H "Authorization: Bearer sk-hapuppy-xxx"
+```
+
+</CodeGroup>
+
+### Batch cleanup
+
+Delete all jobs older than 7 days:
+
+```python Python
+import time, requests
+
+HEADERS = {"Authorization": "Bearer sk-hapuppy-xxx"}
+cutoff = int(time.time()) - 7 * 86400
+
+jobs = requests.get("https://api.hapuppy.com/v1/videos",
+                    headers=HEADERS, params={"limit": 100}).json()["data"]
+
+for job in jobs:
+    if job["created_at"] < cutoff:
+        requests.delete(
+            f"https://api.hapuppy.com/v1/videos/{job['id']}",
+            headers=HEADERS
+        )
+        print(f"Deleted {job['id']}")
+```
+
+## Response Example
+
+```json
+{
+  "id": "video_abc123",
+  "object": "video",
+  "deleted": true
+}
+```
+
+## Errors
+
+| Status | Meaning |
+|---|---|
+| `404` | Video does not exist or has already been deleted. |
+| `401` | Invalid or missing API key. |
+
+<Warning>
+  Deletion is permanent and cannot be undone. The video file is unrecoverable after delete returns. Make sure you have a local/object-store copy if you need it later.
+</Warning>
+
+<Info>
+  Deleting a `queued` or `in_progress` job effectively cancels it. Credits already consumed at the time of deletion are not refunded.
+</Info>

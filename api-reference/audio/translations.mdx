@@ -1,0 +1,127 @@
+---
+title: "Create Translation"
+description: "Translate audio in any supported language directly into English text."
+---
+
+```
+POST https://api.hapuppy.com/v1/audio/translations
+```
+
+Takes a non-English audio file and produces an **English text transcript** in one step. The model both transcribes and translates — there is no intermediate source-language text.
+
+For same-language transcription, use [Create Transcription](/api-reference/audio/transcriptions) instead.
+
+This endpoint accepts `multipart/form-data`.
+
+## Request Body (multipart/form-data)
+
+<ParamField body="file" type="file" required>
+  Audio file in the source language. Supported formats: `mp3`, `mp4`, `mpeg`, `mpga`, `m4a`, `wav`, `webm`, `flac`, `ogg`. Max 25 MB.
+</ParamField>
+
+<ParamField body="model" type="string" required>
+  Translation model — currently `whisper-1`.
+</ParamField>
+
+<ParamField body="prompt" type="string">
+  Optional English prompt to guide style or supply proper nouns. Must be in English regardless of the source audio language.
+</ParamField>
+
+<ParamField body="response_format" type="string" default="json">
+  Output format: `json`, `text`, `srt`, `verbose_json`, `vtt`.
+</ParamField>
+
+<ParamField body="temperature" type="number" default="0">
+  Sampling temperature (0–1).
+</ParamField>
+
+## Response
+
+Same shape as [Create Transcription](/api-reference/audio/transcriptions#response). The `text` field always contains English.
+
+## Examples
+
+### Translate a clip
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://api.hapuppy.com/v1"
+)
+
+with open("japanese_podcast.mp3", "rb") as audio:
+    result = client.audio.translations.create(
+        model="whisper-1",
+        file=audio
+    )
+
+print(result.text)  # English
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+import fs from "fs";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://api.hapuppy.com/v1",
+});
+
+const result = await client.audio.translations.create({
+  model: "whisper-1",
+  file: fs.createReadStream("japanese_podcast.mp3"),
+});
+
+console.log(result.text);  // English
+```
+
+```bash cURL
+curl https://api.hapuppy.com/v1/audio/translations \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -F file="@japanese_podcast.mp3" \
+  -F model="whisper-1"
+```
+
+</CodeGroup>
+
+### English-subtitled video from foreign audio
+
+```python Python
+with open("foreign_lecture.mp4", "rb") as audio:
+    srt = client.audio.translations.create(
+        model="whisper-1",
+        file=audio,
+        response_format="srt"
+    )
+
+with open("lecture_en.srt", "w") as f:
+    f.write(srt)
+```
+
+### Guide proper-noun spelling
+
+The `prompt` must be in English even when the audio is not.
+
+```python Python
+result = client.audio.translations.create(
+    model="whisper-1",
+    file=audio_file,
+    prompt="The speakers are discussing the BeiDou satellite navigation system."
+)
+```
+
+## Response Example
+
+```json
+{
+  "text": "Hello, today we will discuss the history of the silk road and its modern revival."
+}
+```
+
+<Info>
+  Translation is one-way: **into English only**. For other target languages, transcribe with [Create Transcription](/api-reference/audio/transcriptions), then pass the result through [Chat Completions](/api-reference/chat/completions) with a translation prompt.
+</Info>

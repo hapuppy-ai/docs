@@ -1,0 +1,147 @@
+---
+title: "Get Video"
+description: "Retrieve the status and details of a video generation job."
+---
+
+```
+GET https://api.hapuppy.com/v1/videos/{video_id}
+```
+
+Fetches the current state of a video generation job. Poll this endpoint after [Create Video](/api-reference/videos/create) to detect when generation completes. Stops being meaningful once you call [Delete Video](/api-reference/videos/delete) — the job will return 404.
+
+## Path Parameters
+
+<ParamField path="video_id" type="string" required>
+  The job ID returned from [Create Video](/api-reference/videos/create) (format: `video_*`).
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="string">The job ID.</ResponseField>
+<ResponseField name="object" type="string">Always `video`.</ResponseField>
+<ResponseField name="created_at" type="integer">Unix timestamp of submission.</ResponseField>
+<ResponseField name="completed_at" type="integer">Unix timestamp of completion (only present once `status=completed`).</ResponseField>
+<ResponseField name="status" type="string">`queued`, `in_progress`, `completed`, `failed`, or `cancelled`.</ResponseField>
+<ResponseField name="model" type="string">The model used.</ResponseField>
+<ResponseField name="progress" type="integer">Generation progress 0–100.</ResponseField>
+<ResponseField name="prompt" type="string">The original prompt.</ResponseField>
+<ResponseField name="seconds" type="integer">Duration in seconds.</ResponseField>
+<ResponseField name="size" type="string">Output resolution.</ResponseField>
+<ResponseField name="duration_ms" type="integer">Final video length in milliseconds (only after completion).</ResponseField>
+<ResponseField name="error" type="object">Populated only when `status=failed`.
+
+  <Expandable title="properties">
+    <ResponseField name="message" type="string">Human-readable failure reason.</ResponseField>
+    <ResponseField name="code" type="string">Machine-readable code (e.g., `content_policy_violation`, `model_overloaded`).</ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Examples
+
+<CodeGroup>
+
+```python Python
+import requests
+
+resp = requests.get(
+    "https://api.hapuppy.com/v1/videos/video_abc123",
+    headers={"Authorization": "Bearer sk-hapuppy-xxx"},
+)
+
+job = resp.json()
+print(f"{job['status']} — {job['progress']}%")
+
+if job["status"] == "completed":
+    print(f"Duration: {job['duration_ms']/1000:.1f}s")
+```
+
+```typescript TypeScript
+const resp = await fetch(
+  "https://api.hapuppy.com/v1/videos/video_abc123",
+  { headers: { Authorization: "Bearer sk-hapuppy-xxx" } }
+);
+
+const job = await resp.json();
+console.log(`${job.status} — ${job.progress}%`);
+```
+
+```bash cURL
+curl https://api.hapuppy.com/v1/videos/video_abc123 \
+  -H "Authorization: Bearer sk-hapuppy-xxx"
+```
+
+</CodeGroup>
+
+### Poll with exponential backoff
+
+```python Python
+import time, requests
+
+def wait_for_video(video_id, max_wait=600):
+    headers = {"Authorization": "Bearer sk-hapuppy-xxx"}
+    delay, elapsed = 2, 0
+    while elapsed < max_wait:
+        job = requests.get(
+            f"https://api.hapuppy.com/v1/videos/{video_id}",
+            headers=headers
+        ).json()
+        if job["status"] in ("completed", "failed", "cancelled"):
+            return job
+        time.sleep(delay)
+        elapsed += delay
+        delay = min(delay * 1.5, 30)  # cap at 30s
+    raise TimeoutError("Video generation timed out")
+```
+
+## Response Examples
+
+### In-progress
+
+```json
+{
+  "id": "video_abc123",
+  "object": "video",
+  "created_at": 1715367049,
+  "status": "in_progress",
+  "model": "sora-2",
+  "progress": 42,
+  "prompt": "A drone shot over a glacier...",
+  "seconds": 10,
+  "size": "1920x1080"
+}
+```
+
+### Completed
+
+```json
+{
+  "id": "video_abc123",
+  "object": "video",
+  "created_at": 1715367049,
+  "completed_at": 1715367189,
+  "status": "completed",
+  "model": "sora-2",
+  "progress": 100,
+  "prompt": "A drone shot over a glacier...",
+  "seconds": 10,
+  "size": "1920x1080",
+  "duration_ms": 10000
+}
+```
+
+### Failed
+
+```json
+{
+  "id": "video_abc123",
+  "object": "video",
+  "created_at": 1715367049,
+  "status": "failed",
+  "model": "sora-2",
+  "progress": 0,
+  "error": {
+    "message": "The prompt was flagged by content moderation.",
+    "code": "content_policy_violation"
+  }
+}
+```

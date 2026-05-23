@@ -1,0 +1,140 @@
+---
+title: "Edit Image"
+description: "Edit or extend an existing image using a text prompt and an optional mask."
+---
+
+```
+POST https://api.hapuppy.com/v1/images/edits
+```
+
+Modify an existing image based on a text prompt. Use a transparent **mask** to indicate which pixels the model should regenerate (inpainting), or omit the mask to let the model edit the whole image (instructed editing).
+
+This endpoint accepts `multipart/form-data` because it uploads image files.
+
+## Request Body (multipart/form-data)
+
+<ParamField body="model" type="string" required>
+  Image edit model. Common options: `gpt-image-1`, `dall-e-2`, `flux-pro-edit`.
+</ParamField>
+
+<ParamField body="image" type="file" required>
+  The source image to edit. PNG file, square (DALL-E 2) or any size (gpt-image-1), under 4MB.
+</ParamField>
+
+<ParamField body="prompt" type="string" required>
+  Description of the desired result. Be specific about what should change.
+</ParamField>
+
+<ParamField body="mask" type="file">
+  PNG with transparent pixels marking the area to replace. Must match the source image's dimensions. If omitted, the model edits the entire image based on the prompt.
+</ParamField>
+
+<ParamField body="n" type="integer" default="1">
+  Number of edits to produce. Range varies by model.
+</ParamField>
+
+<ParamField body="size" type="string" default="1024x1024">
+  Output image size. Must match the source for DALL-E 2.
+</ParamField>
+
+<ParamField body="response_format" type="string" default="url">
+  `url` or `b64_json`. URLs expire after ~1 hour.
+</ParamField>
+
+## Response
+
+Same shape as [Create Image](/api-reference/images/generations#response).
+
+## Examples
+
+### Inpaint with a mask
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://api.hapuppy.com/v1"
+)
+
+with open("portrait.png", "rb") as img, open("mask.png", "rb") as mask:
+    resp = client.images.edit(
+        model="gpt-image-1",
+        image=img,
+        mask=mask,
+        prompt="Replace the background with a sunset beach scene",
+        size="1024x1024"
+    )
+
+print(resp.data[0].url)
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+import fs from "fs";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://api.hapuppy.com/v1",
+});
+
+const resp = await client.images.edit({
+  model: "gpt-image-1",
+  image: fs.createReadStream("portrait.png"),
+  mask: fs.createReadStream("mask.png"),
+  prompt: "Replace the background with a sunset beach scene",
+  size: "1024x1024",
+});
+
+console.log(resp.data[0].url);
+```
+
+```bash cURL
+curl https://api.hapuppy.com/v1/images/edits \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -F model="gpt-image-1" \
+  -F image="@portrait.png" \
+  -F mask="@mask.png" \
+  -F prompt="Replace the background with a sunset beach scene" \
+  -F size="1024x1024"
+```
+
+</CodeGroup>
+
+### Edit without a mask (instructed editing)
+
+```python Python
+with open("sketch.png", "rb") as img:
+    resp = client.images.edit(
+        model="gpt-image-1",
+        image=img,
+        prompt="Colorize this pencil sketch with warm autumn tones"
+    )
+```
+
+## Generating a Mask
+
+Masks are PNGs the same size as the source. Transparent pixels (`alpha=0`) mark the region to regenerate; opaque pixels are preserved.
+
+```python Python
+# Create a circular mask programmatically
+from PIL import Image, ImageDraw
+
+src = Image.open("portrait.png")
+mask = Image.new("RGBA", src.size, (0, 0, 0, 255))
+draw = ImageDraw.Draw(mask)
+# Transparent circle in the center
+w, h = src.size
+draw.ellipse((w//4, h//4, 3*w//4, 3*h//4), fill=(0, 0, 0, 0))
+mask.save("mask.png")
+```
+
+<Warning>
+  Mask alpha conventions: **transparent = will be regenerated**, **opaque = preserved**. Some image tools invert this — verify before submitting.
+</Warning>
+
+<Info>
+  For best results with `gpt-image-1`, describe both **what to change** and **what to keep**. e.g., "Replace the sky with stormy clouds, keep the foreground exactly as it is."
+</Info>

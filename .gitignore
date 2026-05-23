@@ -1,0 +1,11 @@
+# Mintlify
+.mintlify/
+
+# Editors
+.vscode/
+.idea/
+.DS_Store
+
+# Internal docs / scratch
+补充文档.md
+*.local.md

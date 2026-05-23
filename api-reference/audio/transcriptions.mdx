@@ -1,0 +1,193 @@
+---
+title: "Create Transcription"
+description: "Transcribe audio into text in the source language."
+---
+
+```
+POST https://api.hapuppy.com/v1/audio/transcriptions
+```
+
+Convert an audio file into text in the **same language** as the audio. Use this for podcast transcription, meeting notes, voicemail processing, voice command recognition, and accessibility captions.
+
+For translating audio to English, use [Create Translation](/api-reference/audio/translations) instead.
+
+This endpoint accepts `multipart/form-data`.
+
+## Request Body (multipart/form-data)
+
+<ParamField body="file" type="file" required>
+  Audio file. Supported formats: `mp3`, `mp4`, `mpeg`, `mpga`, `m4a`, `wav`, `webm`, `flac`, `ogg`. Max file size: 25 MB.
+</ParamField>
+
+<ParamField body="model" type="string" required>
+  Transcription model. Options: `whisper-1`, `gpt-4o-transcribe`, `gpt-4o-mini-transcribe`.
+</ParamField>
+
+<ParamField body="language" type="string">
+  ISO-639-1 language code (e.g., `en`, `zh`, `es`, `ja`). Improves accuracy and latency when known. Auto-detected if omitted.
+</ParamField>
+
+<ParamField body="prompt" type="string">
+  Optional text to guide the model's style or provide context — e.g., proper nouns, acronyms, or a snippet of the previous transcription to maintain consistency.
+</ParamField>
+
+<ParamField body="response_format" type="string" default="json">
+  Output format: `json`, `text`, `srt`, `verbose_json`, `vtt`. Use `srt` or `vtt` for subtitle files, `verbose_json` for word-level timestamps.
+</ParamField>
+
+<ParamField body="temperature" type="number" default="0">
+  Sampling temperature (0–1). Higher values give more variation; 0 is most deterministic.
+</ParamField>
+
+<ParamField body="timestamp_granularities" type="string[]">
+  When `response_format=verbose_json`, include timestamps at `segment` and/or `word` level.
+</ParamField>
+
+## Response
+
+For `response_format=json` (default):
+
+<ResponseField name="text" type="string">The transcribed text.</ResponseField>
+
+For `response_format=verbose_json`: additionally includes `language`, `duration`, and an array of `segments` (and optionally `words`) with start/end timestamps.
+
+## Examples
+
+### Simple transcription
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://api.hapuppy.com/v1"
+)
+
+with open("meeting.mp3", "rb") as audio:
+    transcript = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=audio
+    )
+
+print(transcript.text)
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+import fs from "fs";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://api.hapuppy.com/v1",
+});
+
+const transcript = await client.audio.transcriptions.create({
+  model: "whisper-1",
+  file: fs.createReadStream("meeting.mp3"),
+});
+
+console.log(transcript.text);
+```
+
+```bash cURL
+curl https://api.hapuppy.com/v1/audio/transcriptions \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -F file="@meeting.mp3" \
+  -F model="whisper-1"
+```
+
+</CodeGroup>
+
+### Generate SRT subtitles
+
+<CodeGroup>
+
+```python Python
+with open("lecture.mp4", "rb") as audio:
+    srt = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=audio,
+        response_format="srt"
+    )
+
+with open("lecture.srt", "w") as f:
+    f.write(srt)
+```
+
+```bash cURL
+curl https://api.hapuppy.com/v1/audio/transcriptions \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -F file="@lecture.mp4" \
+  -F model="whisper-1" \
+  -F response_format="srt" \
+  --output lecture.srt
+```
+
+</CodeGroup>
+
+### Word-level timestamps
+
+```python Python
+with open("interview.wav", "rb") as audio:
+    result = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=audio,
+        response_format="verbose_json",
+        timestamp_granularities=["word"]
+    )
+
+for word in result.words:
+    print(f"[{word.start:.2f}–{word.end:.2f}] {word.word}")
+```
+
+### Hint with a prompt
+
+```python Python
+# Guide proper-noun spelling
+transcript = client.audio.transcriptions.create(
+    model="whisper-1",
+    file=audio_file,
+    prompt="Speakers: Alice, Bob. Discussing Kubernetes and gRPC."
+)
+```
+
+## Response Example (json)
+
+```json
+{
+  "text": "Hello, and welcome to the show. Today we'll be talking about..."
+}
+```
+
+## Response Example (verbose_json)
+
+```json
+{
+  "task": "transcribe",
+  "language": "en",
+  "duration": 14.32,
+  "text": "Hello, and welcome to the show.",
+  "segments": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 3.2,
+      "text": " Hello, and welcome to the show."
+    }
+  ]
+}
+```
+
+## Limits & Tips
+
+| Constraint | Value |
+|---|---|
+| Max file size | 25 MB |
+| Max audio length | Approximately 2 hours (depends on bitrate/compression) |
+| Supported languages | Whisper supports 90+; accuracy varies |
+
+<Info>
+  For audio over 25 MB, split it into chunks (using `pydub` or `ffmpeg`) and stitch the transcripts together. Pass the tail of one transcript as the `prompt` for the next chunk to maintain consistency.
+</Info>
