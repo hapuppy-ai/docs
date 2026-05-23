@@ -28,6 +28,7 @@
             "group": "Core",
             "pages": [
               "guides/authentication",
+              "guides/credits",
               "guides/errors",
               "guides/integrations"
             ]
