@@ -15,7 +15,7 @@
   "navigation": {
     "tabs": [
       {
-        "tab": "Documentation",
+        "tab": "Guides",
         "groups": [
           {
             "group": "Getting Started",
@@ -25,28 +25,28 @@
             ]
           },
           {
-            "group": "Guides",
+            "group": "Core",
             "pages": [
-              "authentication",
-              "integrations"
+              "guides/authentication",
+              "guides/errors",
+              "guides/integrations"
             ]
           },
           {
-            "group": "API Reference",
+            "group": "Support",
             "pages": [
-              "chat-completions",
-              "errors"
+              "guides/faq"
             ]
           }
         ]
       },
       {
-        "tab": "Resources",
+        "tab": "API Reference",
         "groups": [
           {
-            "group": "Support",
+            "group": "Chat",
             "pages": [
-              "faq"
+              "api-reference/chat/completions"
             ]
           }
         ]
