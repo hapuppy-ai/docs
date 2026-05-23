@@ -4,7 +4,7 @@ description: "Transcribe audio into text in the source language."
 ---
 
 ```
-POST https://api.hapuppy.com/v1/audio/transcriptions
+POST https://beta.hapuppy.com/v1/audio/transcriptions
 ```
 
 Convert an audio file into text in the **same language** as the audio. Use this for podcast transcription, meeting notes, voicemail processing, voice command recognition, and accessibility captions.
@@ -62,7 +62,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://api.hapuppy.com/v1"
+    base_url="https://beta.hapuppy.com/v1"
 )
 
 with open("meeting.mp3", "rb") as audio:
@@ -80,7 +80,7 @@ import fs from "fs";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://api.hapuppy.com/v1",
+  baseURL: "https://beta.hapuppy.com/v1",
 });
 
 const transcript = await client.audio.transcriptions.create({
@@ -92,7 +92,7 @@ console.log(transcript.text);
 ```
 
 ```bash cURL
-curl https://api.hapuppy.com/v1/audio/transcriptions \
+curl https://beta.hapuppy.com/v1/audio/transcriptions \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -F file="@meeting.mp3" \
   -F model="whisper-1"
@@ -117,7 +117,7 @@ with open("lecture.srt", "w") as f:
 ```
 
 ```bash cURL
-curl https://api.hapuppy.com/v1/audio/transcriptions \
+curl https://beta.hapuppy.com/v1/audio/transcriptions \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -F file="@lecture.mp4" \
   -F model="whisper-1" \

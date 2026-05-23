@@ -14,7 +14,7 @@ Hapuppy uses a **credit-based** system. You buy credits once, they enter your **
 | Standard | $19.99 one-time | 120M | All models | Most popular |
 | Pro | $36.99 one-time | 240M | All models + **priority routing** | Lowest-latency tier |
 
-Purchase credit packs from the [dashboard](https://hapuppy.com/dashboard). Payments are processed via Creem; refunds are available within 7 days if you have not consumed a significant portion of the pack.
+Purchase credit packs from the [dashboard](https://hapuppy.com/en/dashboard/billing). Payments are processed via Creem; refunds are available within 7 days if you have not consumed a significant portion of the pack.
 
 ## The Vault
 
@@ -22,82 +22,95 @@ Credits you purchase enter a personal **vault** tied to your account.
 
 - **Never expire** — use them at your own pace
 - **Stack on top of each other** — buying a Standard pack while a Lite is partly consumed simply adds 120M to your remaining balance
-- **Independent of the free tier** — your 100K daily free allowance is consumed first; the vault is only drawn down when the daily allowance runs out
 - **Not refundable after significant use** — see refund policy on the dashboard
 
 ## How Credits Work
 
 Two billing formulas, depending on the endpoint:
 
-### Token-based (chat, embeddings)
+### Token-based (chat)
+
+Input and output tokens are charged separately, each with its own multiplier:
 
 ```
-credits_charged = total_tokens × model_multiplier
+credits_charged
+  = prompt_tokens     × input_multiplier
+  + completion_tokens × output_multiplier
 ```
 
 Where:
-- `total_tokens` = prompt tokens + completion tokens (returned in the `usage` object of every response)
-- `model_multiplier` is published per model (see table below)
+- `prompt_tokens` and `completion_tokens` come from the `usage` object of every response
+- `input_multiplier` and `output_multiplier` are published per model (see table below)
 
-### Fixed-cost (images, audio, video, moderation)
+### Fixed-cost (images, TTS, transcription, embeddings, moderation)
 
 ```
 credits_charged = fixed_base_cost
 ```
 
-Each request deducts a fixed amount that depends on the model and parameters (resolution, duration, etc.) — not on token count.
+Each request deducts a fixed amount per call, regardless of token count. The exact cost depends on the model (and, for some endpoints, parameters like resolution or duration).
 
 ## Model Multipliers (illustrative)
 
-Exact multipliers and fixed costs are maintained at [hapuppy.com/credits](https://hapuppy.com/credits) — always check there for the latest values. The numbers below are representative and may shift as upstream prices change.
+Exact multipliers and fixed costs are maintained at the [Models](https://hapuppy.com/en/dashboard/models) page — always check there for the latest values. The numbers below are representative and may shift as upstream prices change.
 
 ### Chat models
 
-| Model | Multiplier | Tier required |
-|---|---|---|
-| `claude-haiku-*` | 0.3× | Free |
-| `gpt-4o-mini` | 0.2× | Free |
-| `deepseek-chat` | 0.1× | Free |
-| `gemini-2.5-flash` | 0.3× | Free |
-| `claude-sonnet-*` | 1.0× | Lite+ |
-| `gpt-4o` | 1.0× | Lite+ |
-| `gemini-2.5-pro` | 1.0× | Lite+ |
-| `claude-opus-*` | 5.0× | Standard+ |
-| `o1` / `o3` | 4.0× | Standard+ |
-| `grok-4` | 2.0× | Lite+ |
+| Model | Input multiplier | Output multiplier | Tier required |
+|---|---|---|---|
+| `claude-opus-4-5-20251101` | 1× | 5× | Free |
+| `claude-opus-4-6` | 1× | 5× | Free |
+| `claude-opus-4-7` | 1× | 5× | Free |
+| `claude-sonnet-4-6` | 0.6× | 3× | Free |
+| `hapuppy/claude-haiku-4-5-20251001` | 0.8× | 4× | Pro |
+| `hapuppy/claude-opus-4-6` | 2.4× | 12× | Pro |
+| `hapuppy/claude-opus-4-7` | 2.4× | 12× | Pro |
+| `hapuppy/claude-sonnet-4-6` | 1.6× | 8× | Pro |
 
 ### Fixed-cost endpoints
 
-| Endpoint | Model | Credits per call |
+| Category | Model | Credits per call |
 |---|---|---|
-| Images | `dall-e-3` (1024×1024 std) | ~5,000 |
-| Images | `dall-e-3` (1024×1024 hd) | ~10,000 |
-| Images | `midjourney` | ~75,000 |
-| Audio | `tts-1` | ~150 per 1K chars |
-| Audio | `tts-1-hd` | ~300 per 1K chars |
-| Audio | `whisper-1` | ~600 per minute |
-| Video | `sora-2` | ~30,000 per second of output |
+| Image | `gpt-image-1` | 12,000 |
+| Image | `gpt-image-1.5` | 8,000 |
+| Image | `gpt-image-2` | 10,000 |
+| Image | `flux-kontext-pro` | 3,000 |
+| Image | `flux-kontext-max` | 3,000 |
+| Image | `recraft-v3` | 1,000 |
+| Image | `midjourney` | 75,000 |
+| TTS | `gpt-4o-mini-tts` | 250 |
+| TTS | `tts-1` | 75 |
+| TTS | `tts-1-hd` | 150 |
+| Transcription | `gpt-4o-mini-transcribe` | 20 |
+| Transcription | `gpt-4o-transcribe` | 50 |
+| Transcription | `whisper-1` | 10 |
+| Embedding | `text-embedding-3-small` | 50 |
+| Embedding | `text-embedding-3-large` | 50 |
 | Moderation | `omni-moderation-latest` | 0 (free) |
 
 ## Example Calculation
 
-You send a prompt to `gpt-4o` with 800 prompt tokens and receive a 1,200-token response:
+Most chat models charge input and output tokens separately:
 
 ```
-total_tokens     = 800 + 1200 = 2000
-model_multiplier = 1.0
-credits_charged  = 2000 × 1.0 = 2,000 credits
+credits_charged = prompt_tokens × input_multiplier + completion_tokens × output_multiplier
 ```
 
-If your vault has 30M credits, you can run this call about **15,000 times** before topping up.
-
-For a higher-cost model like Claude Opus (5×):
+You send a prompt to `claude-sonnet-4-6` (inp 0.6×, out 3×) with 800 prompt tokens and receive a 1,200-token response:
 
 ```
-credits_charged = 2000 × 5.0 = 10,000 credits
+credits_charged = 800 × 0.6 + 1200 × 3 = 480 + 3600 = 4,080 credits
 ```
 
-You'd get **3,000 calls** from the same vault.
+If your vault has 30M credits, you can run this call about **7,300 times** before topping up.
+
+For a higher-cost model like `hapuppy/claude-opus-4-7` (inp 2.4×, out 12×):
+
+```
+credits_charged = 800 × 2.4 + 1200 × 12 = 1920 + 14400 = 16,320 credits
+```
+
+You'd get roughly **1,800 calls** from the same vault.
 
 ## Rate Limiting
 
@@ -119,7 +132,7 @@ The right pattern is exponential backoff. The OpenAI SDK has retries built in (`
 import time
 from openai import OpenAI, RateLimitError, APIError
 
-client = OpenAI(api_key="sk-hapuppy-xxx", base_url="https://api.hapuppy.com/v1")
+client = OpenAI(api_key="sk-hapuppy-xxx", base_url="https://beta.hapuppy.com/v1")
 
 def chat_with_retry(messages, model="claude-sonnet-4-20250514", max_retries=5):
     for attempt in range(max_retries):
@@ -136,11 +149,9 @@ def chat_with_retry(messages, model="claude-sonnet-4-20250514", max_retries=5):
     raise RuntimeError("max retries exceeded")
 ```
 
-See [Error Handling](/guides/errors) for the full retry strategy.
-
 ## Checking Your Balance
 
-Visit the [dashboard](https://hapuppy.com/dashboard) — your vault balance, daily free allowance, and recent usage are all surfaced there. There is no public API for balance lookup yet; this is on the roadmap.
+Visit the [dashboard](https://hapuppy.com/en/dashboard/billing) — your vault balance, daily free allowance, and recent usage are all surfaced there. There is no public API for balance lookup yet; this is on the roadmap.
 
 ## Cost-Optimization Tips
 
@@ -149,10 +160,10 @@ Visit the [dashboard](https://hapuppy.com/dashboard) — your vault balance, dai
     Anthropic models auto-cache repeated system prompts. Claude Code's 40K system prompt is cached after the first call — subsequent calls save ~90% on the cached tokens.
   </Card>
   <Card title="Choose the right model" icon="scale-balanced">
-    Don't default to Opus/o1 for everything. Most tasks fit Sonnet/4o; reserve high-multiplier models for hard reasoning or production agents.
+    Don't default to Opus for everything. Most tasks fit Sonnet or Haiku; reserve Opus for hard reasoning or production agents where quality matters more than cost.
   </Card>
   <Card title="Cap `max_tokens`" icon="ruler">
-    Set a hard ceiling on response length. A runaway completion at 5× multiplier burns credits fast.
+    Set a hard ceiling on response length. Output tokens are charged at the higher multiplier (e.g. 12× for Opus output) — a runaway completion burns credits fast.
   </Card>
   <Card title="Batch when possible" icon="layer-group">
     For embeddings, send arrays of inputs in one request rather than one call per item — same token cost, fewer rate-limit hits.
@@ -166,5 +177,5 @@ Visit the [dashboard](https://hapuppy.com/dashboard) — your vault balance, dai
 </CardGroup>
 
 <Info>
-  When in doubt about exact pricing, the canonical source is **[hapuppy.com/credits](https://hapuppy.com/credits)** — it's updated whenever upstream provider prices change.
+  When in doubt about exact pricing, the canonical source is the [Models](https://hapuppy.com/en/dashboard/models) page — it's updated whenever upstream provider prices change.
 </Info>

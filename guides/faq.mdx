@@ -6,7 +6,7 @@ description: "Frequently asked questions about Hapuppy."
 <AccordionGroup>
 
 <Accordion title="What is Hapuppy?">
-  Hapuppy is an AI API gateway that lets you access 100+ AI models (Claude, GPT, Gemini, Grok, DeepSeek, Mistral, Llama, GLM, and more) through a single API key. It's fully compatible with the OpenAI API format, so it works as a drop-in replacement in any tool or SDK that supports OpenAI.
+  Hapuppy is an AI API gateway that lets you access 100+ AI models (Claude, GPT, Gemini, DeepSeek, Llama, GLM, and more) through a single API key. It's fully compatible with the OpenAI API format, so it works as a drop-in replacement in any tool or SDK that supports OpenAI.
 </Accordion>
 
 <Accordion title="How is Hapuppy different from using provider APIs directly?">
@@ -17,7 +17,7 @@ description: "Frequently asked questions about Hapuppy."
 </Accordion>
 
 <Accordion title="Which models are supported?">
-  Hapuppy supports 100+ models from providers including Anthropic (Claude), OpenAI (GPT), Google (Gemini), xAI (Grok), DeepSeek, Mistral, Meta (Llama), and Zhipu (GLM). See the [Models](https://hapuppy.com/models) page for the curated catalog, or call [List Models](/api-reference/models/list) programmatically.
+  Hapuppy supports 100+ models from providers including Anthropic (Claude), OpenAI (GPT), Google (Gemini), DeepSeek, Meta (Llama), and Zhipu (GLM). See the [Models](https://hapuppy.com/en/dashboard/models) page for the curated catalog with up-to-date credit multipliers, or call [List Models](/api-reference/models/list) programmatically.
 </Accordion>
 
 <Accordion title="Which API endpoints are supported?">
@@ -25,15 +25,14 @@ description: "Frequently asked questions about Hapuppy."
 
   - **Chat** — [Create Chat Completion](/api-reference/chat/completions) with streaming, function calling, and vision
   - **Embeddings** — [Create Embeddings](/api-reference/embeddings/create) for semantic search and RAG
-  - **Images** — [Generate](/api-reference/images/generations) and [Edit](/api-reference/images/edits) (DALL-E 3, Flux, Midjourney, etc.)
+  - **Images** — [Generate](/api-reference/images/generations) and [Edit](/api-reference/images/edits) (gpt-image, Flux, Midjourney, Recraft, etc.)
   - **Audio** — [TTS](/api-reference/audio/speech), [Transcription](/api-reference/audio/transcriptions), [Translation](/api-reference/audio/translations)
-  - **Video** — [Create](/api-reference/videos/create), [List](/api-reference/videos/list), [Get](/api-reference/videos/get), [Download](/api-reference/videos/download), [Delete](/api-reference/videos/delete)
   - **Moderation** — [Create Moderation](/api-reference/moderations/create) for content safety
   - **Models** — [List](/api-reference/models/list) and [Get](/api-reference/models/get) for model discovery
 </Accordion>
 
 <Accordion title="Is Hapuppy compatible with the OpenAI SDK?">
-  Yes. Hapuppy is a drop-in replacement for the OpenAI API. Simply set your base URL to `https://api.hapuppy.com/v1` and use your Hapuppy API key. Both the Python and TypeScript OpenAI SDKs are fully supported.
+  Yes. Hapuppy is a drop-in replacement for the OpenAI API. Simply set your base URL to `https://beta.hapuppy.com/v1` and use your Hapuppy API key. Both the Python and TypeScript OpenAI SDKs are fully supported.
 </Accordion>
 
 <Accordion title="What tools does Hapuppy work with?">
@@ -53,7 +52,7 @@ description: "Frequently asked questions about Hapuppy."
   - **Standard** — $19.99 one-time, 120M credits, all models (most popular)
   - **Pro** — $36.99 one-time, 240M credits, all models + priority routing
 
-  Purchased credits enter your **vault** and never expire. Credits are consumed based on token usage with per-model multipliers. See [Credits & Pricing](https://hapuppy.com/credits) for details.
+  Purchased credits enter your **vault** and never expire. Chat models charge `prompt_tokens × input_multiplier + completion_tokens × output_multiplier`; fixed-cost endpoints (image, TTS, transcription, embedding, moderation) deduct a flat amount per call. See [Credits & Pricing](/guides/credits) for the formulas and current multipliers.
 </Accordion>
 
 <Accordion title="Do credits expire?">
@@ -64,7 +63,7 @@ description: "Frequently asked questions about Hapuppy."
   API requests will return a `429` error.
 
   - **Free tier**: your 100K daily allowance resets the next day. You can also purchase any credit pack to top up your vault.
-  - **Paid users**: purchase another credit pack from the [dashboard](https://hapuppy.com/dashboard) — newly purchased credits stack into your vault.
+  - **Paid users**: purchase another credit pack from the [dashboard](https://hapuppy.com/en/dashboard/billing) — newly purchased credits stack into your vault.
 </Accordion>
 
 <Accordion title="What is the rate limit?">
@@ -76,17 +75,18 @@ description: "Frequently asked questions about Hapuppy."
 </Accordion>
 
 <Accordion title="Does Hapuppy support function calling?">
-  Yes. Function calling (tool use) is supported for models that natively support it, such as GPT-4o, Claude Sonnet/Opus, and Gemini Pro. See [Chat Completions](/api-reference/chat/completions#function-calling) for examples.
+  Yes. Function calling (tool use) is supported for models that natively support it, including Claude Sonnet/Opus, GPT-4o, and Gemini Pro. See [Chat Completions](/api-reference/chat/completions#function-calling) for examples.
 </Accordion>
 
 <Accordion title="Does Hapuppy support vision/image inputs?">
-  Yes. For models that support multimodal input (GPT-4o, Claude Sonnet, Gemini), you can send images in your messages. See [Chat Completions](/api-reference/chat/completions#vision) for details.
+  Yes. For models that support multimodal input (Claude Sonnet/Opus, GPT-4o, Gemini), you can send images in your messages. See [Chat Completions](/api-reference/chat/completions#vision) for details.
 </Accordion>
 
 <Accordion title="How do I get an API key?">
   1. Sign up at [hapuppy.com/register](https://hapuppy.com/register) — you start on the free tier with 100K daily credits
-  2. (Optional) Purchase a one-time credit pack from the dashboard to unlock all 100+ models
-  3. Generate an API key from the dashboard
+  2. Verify your account by binding it to a Discord account — see [Verify Account](/guides/verify-account)
+  3. (Optional) Purchase a one-time credit pack from the [dashboard](https://hapuppy.com/en/dashboard/billing) to unlock all 100+ models
+  4. Generate an API key from the dashboard
 
   See the [Quickstart](/quickstart) guide for step-by-step instructions.
 </Accordion>
@@ -112,19 +112,21 @@ description: "Frequently asked questions about Hapuppy."
 </Accordion>
 
 <Accordion title="How do I verify my account?">
-  See [Verify Account](/guides/verify-account) for the full flow. Verification is fast (usually minutes), unlocks premium models, and is a prerequisite for [Claude Apply](/guides/claude-apply).
+  Hapuppy verification is done by binding your account to a Discord account in our official server. The full flow — including the dashboard banner, invite link, and 1:1 binding rule — is in [Verify Account](/guides/verify-account). Without this binding the API will reject your requests even on the free tier.
 </Accordion>
 
-<Accordion title="How do I get access to Claude Opus?">
-  After verifying your account, submit a Claude Apply request via **Dashboard → Models → Claude Apply**. Reviews typically take 1–3 business days. See [Claude Apply](/guides/claude-apply) for prerequisites and what to write in the application.
+<Accordion title="How do I get access to Claude models?">
+  All Claude models on Hapuppy (both unprefixed like `claude-opus-4-7` and the `hapuppy/`-prefixed RP-enabled variants) are gated behind a single manual application. Submit it from **Dashboard → [Claude Apply](https://hapuppy.com/zh/dashboard/claude-apply)** after you've verified your account.
+
+  Reviews are done by hand — there's no email notification, so check the application page in the dashboard for the status update. See [Claude Apply](/guides/claude-apply) for what to write and how the two variants differ.
 </Accordion>
 
 <Accordion title="Why am I getting a 403 / model_access_denied error?">
   The model exists but your account isn't entitled to call it. Common reasons:
 
-  - **Account not verified** — see [Verify Account](/guides/verify-account)
-  - **Plan too low** — premium models (Opus, o1, Midjourney) require Standard or Pro
-  - **No Claude Apply approval** — Opus specifically requires the application step
+  - **Account not verified** — bind your Discord account first, see [Verify Account](/guides/verify-account)
+  - **No Claude Apply approval** — any Claude model (prefixed or unprefixed) requires the application step, see [Claude Apply](/guides/claude-apply)
+  - **Missing credits for paid variants** — `hapuppy/`-prefixed Claude models are paid; top up via the [dashboard](https://hapuppy.com/en/dashboard/billing) if your vault is empty
 
   Check the error message body for the exact reason.
 </Accordion>
@@ -132,7 +134,7 @@ description: "Frequently asked questions about Hapuppy."
 <Accordion title="Why am I getting 429 errors?">
   Two distinct causes — the error code tells you which:
 
-  - `rate_limit_exceeded` — you've sent more than 100 requests in the last minute. Add exponential backoff (see [Errors](/guides/errors#retry-strategy)).
+  - `rate_limit_exceeded` — you've sent more than 100 requests in the last minute. Add exponential backoff to your retry logic.
   - `insufficient_credits` — free-tier allowance is used up, or your vault is empty. Free users wait for the next day's reset, paid users purchase another credit pack.
 </Accordion>
 

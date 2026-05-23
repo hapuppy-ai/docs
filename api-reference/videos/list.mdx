@@ -4,7 +4,7 @@ description: "List all video generation jobs for the authenticated user."
 ---
 
 ```
-GET https://api.hapuppy.com/v1/videos
+GET https://beta.hapuppy.com/v1/videos
 ```
 
 Returns the history of video generation jobs associated with your API key, including queued, in-progress, completed, and failed jobs. Useful for dashboards, retry workflows, and cleaning up old jobs.
@@ -45,7 +45,7 @@ Returns the history of video generation jobs associated with your API key, inclu
 import requests
 
 resp = requests.get(
-    "https://api.hapuppy.com/v1/videos",
+    "https://beta.hapuppy.com/v1/videos",
     headers={"Authorization": "Bearer sk-hapuppy-xxx"},
     params={"limit": 20, "status": "completed"},
 )
@@ -56,7 +56,7 @@ for job in resp.json()["data"]:
 
 ```typescript TypeScript
 const resp = await fetch(
-  "https://api.hapuppy.com/v1/videos?limit=20&status=completed",
+  "https://beta.hapuppy.com/v1/videos?limit=20&status=completed",
   { headers: { Authorization: "Bearer sk-hapuppy-xxx" } }
 );
 
@@ -67,7 +67,7 @@ for (const job of data) {
 ```
 
 ```bash cURL
-curl "https://api.hapuppy.com/v1/videos?limit=20&status=completed" \
+curl "https://beta.hapuppy.com/v1/videos?limit=20&status=completed" \
   -H "Authorization: Bearer sk-hapuppy-xxx"
 ```
 
@@ -83,7 +83,7 @@ while True:
     params = {"limit": 100}
     if after:
         params["after"] = after
-    page = requests.get("https://api.hapuppy.com/v1/videos",
+    page = requests.get("https://beta.hapuppy.com/v1/videos",
                         headers=HEADERS, params=params).json()
     all_jobs.extend(page["data"])
     if not page["has_more"]:

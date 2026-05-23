@@ -4,7 +4,7 @@ description: "Classify text for potentially harmful content across safety catego
 ---
 
 ```
-POST https://api.hapuppy.com/v1/moderations
+POST https://beta.hapuppy.com/v1/moderations
 ```
 
 Checks whether text contains potentially harmful content (hate, harassment, self-harm, sexual, violence, etc.). Use this before forwarding user-generated content to a chat model, posting to a feed, or storing in a public surface.
@@ -44,7 +44,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://api.hapuppy.com/v1"
+    base_url="https://beta.hapuppy.com/v1"
 )
 
 resp = client.moderations.create(
@@ -64,7 +64,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://api.hapuppy.com/v1",
+  baseURL: "https://beta.hapuppy.com/v1",
 });
 
 const resp = await client.moderations.create({
@@ -76,7 +76,7 @@ console.log(resp.results[0].flagged ? "flagged" : "ok");
 ```
 
 ```bash cURL
-curl https://api.hapuppy.com/v1/moderations \
+curl https://beta.hapuppy.com/v1/moderations \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -153,5 +153,5 @@ if scores.violence > 0.3 or scores.harassment > 0.3:
 ```
 
 <Info>
-  Moderation is free or near-free on most plans (see [Credits & Pricing](https://hapuppy.com/credits)). Run it on every user-submitted prompt before forwarding to a chat model — it's the cheapest safety layer you can add.
+  Moderation is free or near-free on most plans (see [Credits & Pricing](https://hapuppy.com/en/dashboard/models)). Run it on every user-submitted prompt before forwarding to a chat model — it's the cheapest safety layer you can add.
 </Info>

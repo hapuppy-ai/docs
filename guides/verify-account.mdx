@@ -1,104 +1,66 @@
 ---
 title: "Verify Account"
-description: "Complete account verification to unlock higher rate limits and premium model access."
+description: "Bind your Hapuppy account to a Discord account to unlock API access."
 ---
 
-Hapuppy uses a lightweight verification step to prevent abuse and gate access to high-cost upstream models (notably Claude Opus and some image/video models). New accounts can use the free tier and most basic models immediately; verification unlocks the full catalog.
+After registering, every Hapuppy account must complete a one-time verification step before the API can be used. Verification is done by linking your account to a Discord account through our official Discord server.
 
 ## Why verify?
 
-- **Prevent abuse** of high-cost upstream APIs by automated scrapers and shared keys
-- **Unlock premium models** (Claude Opus, o1, Midjourney, Sora, etc.)
-- **Raise rate limits** beyond the default 100 RPM (case-by-case)
-- **Enable refund eligibility** on credit pack purchases
-
-## What you get without verification
-
-- ✅ Free tier: 100K daily credits
-- ✅ Basic chat models (Haiku, GPT-4o-mini, DeepSeek, Gemini Flash, etc.)
-- ✅ Embeddings, transcription, moderation, basic image generation
-- ❌ Premium chat models (Opus, o1, o3)
-- ❌ Premium image/video models (Midjourney, Sora 2, etc.) — may also require [Claude Apply](/guides/claude-apply) for Claude-specific models
+- **Prevent abuse** by automated scrapers and shared keys
+- **Tie each account to a single real person** — one Hapuppy account, one Discord identity
+- **Unlock API access** — without verification, requests are rejected even on the free tier
 
 ## Verification steps
 
 <Steps>
 
 <Step title="Sign in to the dashboard">
-  Open [hapuppy.com/dashboard](https://hapuppy.com/dashboard) and sign in with the email you registered.
+  Open the [dashboard](https://hapuppy.com/zh/dashboard) and sign in with the email you registered.
+
+  You'll see a banner at the top of the page prompting you to verify before the API will accept your requests.
 </Step>
 
-<Step title="Open the Verification panel">
-  In the sidebar, click **Account → Verification**.
+<Step title="Join the Hapuppy Discord server">
+  Click the link in the verification banner — or join directly via [discord.gg/YWayJmZKCu](https://discord.gg/YWayJmZKCu).
 </Step>
 
-<Step title="Submit required information">
-  Provide the information requested. Typically this includes:
+<Step title="Bind your Discord account">
+  In the dashboard's verification banner, click **Bind Discord** and authorize the Hapuppy bot to read your Discord identity.
 
-  - **Email confirmation** — click the link in the email we sent
-  - **Phone or messenger** — receive and enter a one-time code
-  - **Payment method** — link a credit card or PayPal (a small temporary hold may be placed and immediately released)
-
-  <Note>
-    Hapuppy does not perform invasive KYC. Verification is intended to confirm you are a real, unique user — not to collect identity documents.
-  </Note>
+  <Warning>
+    One Hapuppy account can only be bound to **one** Discord account, and one Discord account can only verify **one** Hapuppy account. The binding cannot be reused — choose carefully.
+  </Warning>
 </Step>
 
-<Step title="Wait for approval">
-  Most verifications complete within minutes. Edge cases (e.g., regional restrictions, duplicate signals from a shared IP) may take up to 24 hours of manual review.
-
-  You will receive an email when your account is verified.
-</Step>
-
-<Step title="Use unlocked models">
-  Once verified, the full model catalog is available immediately. You can now:
-
-  - Send chat requests to premium models (`claude-opus-*`, `o1`, `o3`, `gpt-5`)
-  - Apply for Claude high-tier model access — see [Claude Apply](/guides/claude-apply)
-  - Request rate limit increases via support
+<Step title="Start using the API">
+  Once binding succeeds, the verification banner disappears and your API key starts accepting requests immediately.
 </Step>
 
 </Steps>
+
+<Info>
+  Verification unlocks general API access. Access to **Claude** models requires a separate application — see [Claude Apply](/guides/claude-apply) for the prerequisites and how to submit.
+</Info>
 
 ## Troubleshooting
 
 <AccordionGroup>
 
-<Accordion title="My email confirmation link expired">
-  Confirmation links expire after 24 hours. Sign back in and click **Resend confirmation email** from the verification panel.
+<Accordion title="The verification banner doesn't disappear after binding">
+  Refresh the dashboard once. If it persists, sign out and sign back in — the session may be holding a stale verification state.
 </Accordion>
 
-<Accordion title="I'm not receiving the SMS / messenger code">
-  Common causes:
-  - Carrier filtering — try requesting the code 2–3 times with a 1-minute gap
-  - Wrong country code — make sure the dropdown matches your phone's actual region
-  - Messenger restrictions in your region — use the email-only path instead
-
-  If it still fails, contact [support@hapuppy.com](mailto:support@hapuppy.com) with your account email and last 4 digits of the phone number.
+<Accordion title="This Discord account is already bound to another Hapuppy account">
+  Each Discord account can only bind a single Hapuppy account. If you have an older Hapuppy account you no longer use, contact [support@hapuppy.com](mailto:support@hapuppy.com) to release the binding before retrying.
 </Accordion>
 
-<Accordion title="My payment method was rejected">
-  - Some virtual / prepaid cards are blocked by our payment processor (Creem). Use a standard credit card or PayPal.
-  - Make sure billing address country matches the card-issuing country.
-  - International cards: check that international transactions are enabled on your card.
+<Accordion title="I can't join the Discord server">
+  Make sure your Discord account is in good standing (not rate-limited by Discord, age requirement satisfied). If the invite link expired, grab a fresh one from the dashboard banner or footer.
 </Accordion>
 
-<Accordion title="Verification is stuck in 'Pending review' for over 24 hours">
-  Email [support@hapuppy.com](mailto:support@hapuppy.com) with your registered email and "verification stuck" in the subject. Manual reviews are usually resolved within one business day.
-</Accordion>
-
-<Accordion title="I got 'Account already verified on another email'">
-  Hapuppy enforces one verified identity per person. If you have an old account you no longer access, contact support to merge or transfer.
+<Accordion title="I want to switch the bound Discord account">
+  Rebinding is not self-service — email [support@hapuppy.com](mailto:support@hapuppy.com) from your registered email with the old and new Discord usernames.
 </Accordion>
 
 </AccordionGroup>
-
-## Privacy
-
-- Verification data (email, phone, payment method) is stored encrypted and used only for fraud prevention and account recovery.
-- We do **not** sell, share, or use this data for advertising.
-- You can request deletion of verification data after account closure — though some records may be retained for legal/financial obligations (typically 6–12 months).
-
-<Info>
-  Need access to premium **Claude** models specifically? After verification, you'll still need to submit a separate request — see [Claude Apply](/guides/claude-apply).
-</Info>

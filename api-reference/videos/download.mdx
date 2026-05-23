@@ -4,7 +4,7 @@ description: "Download the generated video file."
 ---
 
 ```
-GET https://api.hapuppy.com/v1/videos/{video_id}/content
+GET https://beta.hapuppy.com/v1/videos/{video_id}/content
 ```
 
 Streams the binary content of a completed video job as `video/mp4`. Only callable after [Get Video](/api-reference/videos/get) reports `status=completed`.
@@ -29,7 +29,7 @@ Returns binary video data with `Content-Type: video/mp4`. Use streaming-aware HT
 import requests
 
 resp = requests.get(
-    "https://api.hapuppy.com/v1/videos/video_abc123/content",
+    "https://beta.hapuppy.com/v1/videos/video_abc123/content",
     headers={"Authorization": "Bearer sk-hapuppy-xxx"},
     stream=True,
 )
@@ -45,7 +45,7 @@ import fs from "fs";
 import { pipeline } from "stream/promises";
 
 const resp = await fetch(
-  "https://api.hapuppy.com/v1/videos/video_abc123/content",
+  "https://beta.hapuppy.com/v1/videos/video_abc123/content",
   { headers: { Authorization: "Bearer sk-hapuppy-xxx" } }
 );
 
@@ -57,7 +57,7 @@ await pipeline(resp.body, fs.createWriteStream("output.mp4"));
 ```
 
 ```bash cURL
-curl https://api.hapuppy.com/v1/videos/video_abc123/content \
+curl https://beta.hapuppy.com/v1/videos/video_abc123/content \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   --output output.mp4
 ```
@@ -74,7 +74,7 @@ video_id = "video_abc123"
 s3 = boto3.client("s3")
 
 resp = requests.get(
-    f"https://api.hapuppy.com/v1/videos/{video_id}/content",
+    f"https://beta.hapuppy.com/v1/videos/{video_id}/content",
     headers={"Authorization": "Bearer sk-hapuppy-xxx"},
     stream=True,
 )

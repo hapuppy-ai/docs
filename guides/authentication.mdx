@@ -23,14 +23,10 @@ All keys start with the `sk-hapuppy-` prefix. If your key does not match this fo
 
 ### Getting Your Key
 
-1. Log in to your [Hapuppy Dashboard](https://hapuppy.com/dashboard)
+1. Log in to your [Hapuppy Dashboard](https://hapuppy.com/en/dashboard/billing)
 2. Navigate to **API Keys**
 3. Click **Create Key**
 4. Copy and securely store your key
-
-<Warning>
-  API keys are shown only once at creation time. If you lose your key, you'll need to generate a new one.
-</Warning>
 
 ## Using Your Key
 
@@ -134,9 +130,6 @@ client = OpenAI()
   </Accordion>
   <Accordion title="Rotate keys regularly">
     Generate new API keys periodically and revoke old ones from the dashboard.
-  </Accordion>
-  <Accordion title="Use separate keys for different environments">
-    Create distinct keys for development, staging, and production. This limits the blast radius if a key is compromised.
   </Accordion>
   <Accordion title="Monitor key usage">
     Check your dashboard regularly for unexpected usage patterns that might indicate a compromised key.

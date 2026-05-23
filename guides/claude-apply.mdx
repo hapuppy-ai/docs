@@ -1,69 +1,75 @@
 ---
 title: "Claude Apply"
-description: "Request access to premium Claude models (Opus, Sonnet high-tier)."
+description: "Apply for access to Claude models on Hapuppy — including role-play–capable hapuppy/ variants."
 ---
 
-Anthropic places extra capacity controls on its top-tier Claude models (notably **Claude Opus**). To prevent these limited slots from being consumed by spam or abusive workloads, Hapuppy gates them behind a short application step. Once approved, the models become available immediately via the same `/v1/chat/completions` endpoint — no separate API.
+Hapuppy offers Claude models in two flavours:
+
+- **Unprefixed** (e.g. `claude-opus-4-7`, `claude-sonnet-4-6`) — the standard Claude experience.
+- **`hapuppy/` prefix** (e.g. `hapuppy/claude-opus-4-7`, `hapuppy/claude-sonnet-4-6`) — the same underlying models, but configured to allow **role-play (RP)** scenarios that the standard variants refuse.
+
+Both variants are gated by a single application at [Claude Apply](https://hapuppy.com/zh/dashboard/claude-apply). Reviews are **manual** — we read each application by hand to prevent abuse of upstream capacity.
 
 ## Who needs to apply?
 
-| Model | Application required? |
-|---|---|
-| `claude-haiku-*` | No — available to all (free tier included) |
-| `claude-sonnet-*` | No — available after [account verification](/guides/verify-account) |
-| `claude-opus-*` | **Yes** — submit a Claude Apply request |
-| Future Claude high-tier models | Yes — same flow as Opus |
+| Variant | Examples | Access |
+|---|---|---|
+| Unprefixed Claude | `claude-opus-4-7`, `claude-sonnet-4-6`, `claude-haiku-4-5-*` | Free for all approved users — submit a Claude Apply request to unlock |
+| `hapuppy/` prefix (RP-enabled) | `hapuppy/claude-opus-4-7`, `hapuppy/claude-sonnet-4-6`, `hapuppy/claude-haiku-4-5-*` | Paid — requires Claude Apply approval **and** a credit pack; consumed at the `hapuppy/` multiplier (see [Credits & Pricing](/guides/credits#chat-models)) |
+
+In short: **everyone who wants any Claude model needs to apply.** The application is the same — approval unlocks both variants at once. Whether you actually use the `hapuppy/` prefix is then your choice on a per-request basis.
 
 ## Prerequisites
 
 Before applying, you must:
 
-1. Have a **verified account** — see [Verify Account](/guides/verify-account)
-2. Hold a **Standard or Pro** credit pack (Lite is generally not accepted for Opus)
-3. Have a brief description of your intended use case ready
+1. Have a **verified account** — see [Verify Account](/guides/verify-account).
+2. Understand the variant policy:
+   - Unprefixed Claude is **free to use** after approval.
+   - `hapuppy/`-prefixed Claude is **paid** and draws from your credit pack at the multipliers shown on the [Models](https://hapuppy.com/en/dashboard/models) page.
+3. Have a brief description of your intended use case ready.
 
 ## How to apply
 
 <Steps>
 
 <Step title="Open the application form">
-  In the dashboard, navigate to **Models → Claude Apply**.
+  In the dashboard, navigate to **Models → [Claude Apply](https://hapuppy.com/zh/dashboard/claude-apply)**.
 </Step>
 
 <Step title="Describe your use case">
   Provide a short summary (a few sentences) of:
 
-  - What you're building (production app, research, agent, internal tool, etc.)
-  - Expected request volume per day
-  - Why Opus specifically — what Sonnet can't do for your task
+  - What you're building (production app, research, agent, internal tool, role-play companion, etc.)
+  - Whether you intend to use the `hapuppy/` RP variants
+  - Rough expected request volume
 
   <Note>
-    You do not need to share proprietary details. A general description (e.g., "code review agent for an internal team of 20 developers, ~5K requests/day") is sufficient.
+    You do not need to share proprietary details. A general description is sufficient — for example, "code review agent for an internal team, ~5K requests/day" or "interactive fiction prototype using hapuppy/claude-sonnet-4-6".
   </Note>
 </Step>
 
-<Step title="Submit and wait">
-  Most applications are reviewed within **1–3 business days**.
+<Step title="Submit and wait for manual review">
+  All applications are reviewed by a human. Turnaround is usually within a few days, but there's no hard SLA.
 
-  Common approval signals:
-  - Verified account in good standing
-  - Reasonable use case (not "I want to test everything")
-  - Sufficient credit pack tier
-
-  Common rejection signals:
-  - Brand-new unverified account
-  - Vague or evasive use case description
-  - Past abuse signals (banned key reuse, etc.)
+  <Warning>
+    **We do not send approval emails.** Check the [Claude Apply](https://hapuppy.com/zh/dashboard/claude-apply) page in the dashboard from time to time — the application's status updates there when a decision is made.
+  </Warning>
 </Step>
 
-<Step title="Receive approval">
-  You'll receive an email confirming access. Opus model IDs (`claude-opus-*`) will start working immediately — no client-side change required.
+<Step title="Start using Claude">
+  Once the page shows your application as approved, Claude model IDs start working immediately — no client-side change required.
 
   ```python Python
-  # Before approval: returns 403 model_access_denied
-  # After approval: works normally
+  # Unprefixed — free Claude access after approval
   resp = client.chat.completions.create(
-      model="claude-opus-4-20250522",
+      model="claude-opus-4-7",
+      messages=[{"role": "user", "content": "Hello!"}]
+  )
+
+  # hapuppy/ prefix — paid, RP-enabled variant
+  resp = client.chat.completions.create(
+      model="hapuppy/claude-opus-4-7",
       messages=[{"role": "user", "content": "Hello!"}]
   )
   ```
@@ -73,29 +79,10 @@ Before applying, you must:
 
 ## What if I'm rejected?
 
-You'll receive an email with the specific reason. Common next steps:
+A rejection just means the manual review didn't pass this time. There's no cooldown — you can **submit a new application right away** from the same [Claude Apply](https://hapuppy.com/zh/dashboard/claude-apply) page.
 
-- **"Insufficient plan"** — upgrade to Standard or Pro, then re-apply
-- **"Account not verified"** — complete [Verify Account](/guides/verify-account) first
-- **"Use case unclear"** — re-apply with more detail (give realistic volume, specific Sonnet shortcomings)
-- **"Recent abuse signals"** — contact [support@hapuppy.com](mailto:support@hapuppy.com) for review
-
-You can reapply anytime — there's no cooldown on rejection.
-
-## Limits after approval
-
-| Limit | Default |
-|---|---|
-| Requests per minute | 100 (shared with all other endpoints) |
-| Daily Opus token budget | Subject to credit balance × Opus multiplier (~5×) |
-| Concurrent streams | 5 (contact support to raise for production use) |
-
-If you need higher limits for production traffic, email [support@hapuppy.com](mailto:support@hapuppy.com) with traffic projections and we'll provision a custom quota.
-
-## Cost reminder
-
-Opus is the most expensive Claude model — typically ~5× the credit multiplier of Sonnet. A 2K-token call to Sonnet (~2K credits) is the same cost as a 400-token call to Opus. Make sure Opus is the right tool before committing your vault to it; see the [Credits & Pricing](/guides/credits#cost-optimization-tips) tips.
+If you're unsure why an application keeps getting rejected, contact [support@hapuppy.com](mailto:support@hapuppy.com) with your account email.
 
 <Info>
-  Approval is per account, not per API key. If you generate a new key, your Opus access carries over automatically.
+  Approval is per account, not per API key. If you generate a new key, your Claude access carries over automatically.
 </Info>

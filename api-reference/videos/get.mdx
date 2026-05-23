@@ -4,7 +4,7 @@ description: "Retrieve the status and details of a video generation job."
 ---
 
 ```
-GET https://api.hapuppy.com/v1/videos/{video_id}
+GET https://beta.hapuppy.com/v1/videos/{video_id}
 ```
 
 Fetches the current state of a video generation job. Poll this endpoint after [Create Video](/api-reference/videos/create) to detect when generation completes. Stops being meaningful once you call [Delete Video](/api-reference/videos/delete) — the job will return 404.
@@ -44,7 +44,7 @@ Fetches the current state of a video generation job. Poll this endpoint after [C
 import requests
 
 resp = requests.get(
-    "https://api.hapuppy.com/v1/videos/video_abc123",
+    "https://beta.hapuppy.com/v1/videos/video_abc123",
     headers={"Authorization": "Bearer sk-hapuppy-xxx"},
 )
 
@@ -57,7 +57,7 @@ if job["status"] == "completed":
 
 ```typescript TypeScript
 const resp = await fetch(
-  "https://api.hapuppy.com/v1/videos/video_abc123",
+  "https://beta.hapuppy.com/v1/videos/video_abc123",
   { headers: { Authorization: "Bearer sk-hapuppy-xxx" } }
 );
 
@@ -66,7 +66,7 @@ console.log(`${job.status} — ${job.progress}%`);
 ```
 
 ```bash cURL
-curl https://api.hapuppy.com/v1/videos/video_abc123 \
+curl https://beta.hapuppy.com/v1/videos/video_abc123 \
   -H "Authorization: Bearer sk-hapuppy-xxx"
 ```
 
@@ -82,7 +82,7 @@ def wait_for_video(video_id, max_wait=600):
     delay, elapsed = 2, 0
     while elapsed < max_wait:
         job = requests.get(
-            f"https://api.hapuppy.com/v1/videos/{video_id}",
+            f"https://beta.hapuppy.com/v1/videos/{video_id}",
             headers=headers
         ).json()
         if job["status"] in ("completed", "failed", "cancelled"):

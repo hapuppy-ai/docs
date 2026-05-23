@@ -4,7 +4,7 @@ description: "Generate vector embeddings from text for semantic search, clusteri
 ---
 
 ```
-POST https://api.hapuppy.com/v1/embeddings
+POST https://beta.hapuppy.com/v1/embeddings
 ```
 
 Converts text into a fixed-length vector that captures its semantic meaning. Use embeddings for semantic search, document clustering, recommendation systems, RAG pipelines, and similarity comparisons.
@@ -67,7 +67,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://api.hapuppy.com/v1"
+    base_url="https://beta.hapuppy.com/v1"
 )
 
 resp = client.embeddings.create(
@@ -84,7 +84,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://api.hapuppy.com/v1",
+  baseURL: "https://beta.hapuppy.com/v1",
 });
 
 const resp = await client.embeddings.create({
@@ -96,7 +96,7 @@ console.log(`Dimensions: ${resp.data[0].embedding.length}`);
 ```
 
 ```bash cURL
-curl https://api.hapuppy.com/v1/embeddings \
+curl https://beta.hapuppy.com/v1/embeddings \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -H "Content-Type: application/json" \
   -d '{

@@ -29,7 +29,6 @@
             "pages": [
               "guides/authentication",
               "guides/credits",
-              "guides/errors",
               "guides/integrations"
             ]
           },
@@ -79,16 +78,6 @@
             ]
           },
           {
-            "group": "Video",
-            "pages": [
-              "api-reference/videos/create",
-              "api-reference/videos/list",
-              "api-reference/videos/get",
-              "api-reference/videos/download",
-              "api-reference/videos/delete"
-            ]
-          },
-          {
             "group": "Moderations",
             "pages": [
               "api-reference/moderations/create"
@@ -108,10 +97,6 @@
   "navbar": {
     "links": [
       {
-        "label": "Credits & Pricing",
-        "href": "https://hapuppy.com/credits"
-      },
-      {
         "label": "Support",
         "href": "mailto:support@hapuppy.com"
       }
@@ -119,7 +104,7 @@
     "primary": {
       "type": "button",
       "label": "Dashboard",
-      "href": "https://hapuppy.com/dashboard"
+      "href": "https://hapuppy.com/en/dashboard"
     }
   },
   "footer": {

@@ -4,7 +4,7 @@ description: "List all models available to your API key."
 ---
 
 ```
-GET https://api.hapuppy.com/v1/models
+GET https://beta.hapuppy.com/v1/models
 ```
 
 Returns the complete list of models available through Hapuppy. Use this endpoint to programmatically discover model IDs, owners, and creation timestamps — useful for building model pickers, filtering by provider, or detecting newly added models.
@@ -47,7 +47,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://api.hapuppy.com/v1"
+    base_url="https://beta.hapuppy.com/v1"
 )
 
 models = client.models.list()
@@ -61,7 +61,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://api.hapuppy.com/v1",
+  baseURL: "https://beta.hapuppy.com/v1",
 });
 
 const models = await client.models.list();
@@ -72,7 +72,7 @@ for (const m of models.data) {
 ```
 
 ```bash cURL
-curl https://api.hapuppy.com/v1/models \
+curl https://beta.hapuppy.com/v1/models \
   -H "Authorization: Bearer sk-hapuppy-xxx"
 ```
 
@@ -84,7 +84,7 @@ curl https://api.hapuppy.com/v1/models \
 from collections import defaultdict
 from openai import OpenAI
 
-client = OpenAI(api_key="sk-hapuppy-xxx", base_url="https://api.hapuppy.com/v1")
+client = OpenAI(api_key="sk-hapuppy-xxx", base_url="https://beta.hapuppy.com/v1")
 
 grouped = defaultdict(list)
 for m in client.models.list().data:
@@ -131,16 +131,14 @@ for provider, ids in sorted(grouped.items()):
 | `anthropic` | Anthropic | Claude Opus, Claude Sonnet, Claude Haiku |
 | `openai` | OpenAI | GPT-5, GPT-4o, GPT-4o-mini, o1, o3 |
 | `google` | Google | Gemini Pro, Gemini Flash |
-| `xai` | xAI | Grok |
 | `deepseek` | DeepSeek | DeepSeek Chat, DeepSeek Coder |
 | `zhipu` | Zhipu AI | GLM |
 | `moonshot` | Moonshot | Kimi |
 | `qwen` | Alibaba | Qwen |
 | `meta` | Meta | Llama |
-| `mistral` | Mistral | Mistral, Mixtral |
 | `perplexity` | Perplexity | Sonar |
 | `other` | Other providers | — |
 
 <Info>
-  The full curated catalog (with capabilities, context windows, and credit multipliers) lives at [hapuppy.com/models](https://hapuppy.com/models). This endpoint is the source of truth for programmatic access.
+  The full curated catalog (with capabilities, context windows, and credit multipliers) lives at the [Models](https://hapuppy.com/en/dashboard/models) page. This endpoint is the source of truth for programmatic access.
 </Info>

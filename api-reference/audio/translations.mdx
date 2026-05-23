@@ -4,7 +4,7 @@ description: "Translate audio in any supported language directly into English te
 ---
 
 ```
-POST https://api.hapuppy.com/v1/audio/translations
+POST https://beta.hapuppy.com/v1/audio/translations
 ```
 
 Takes a non-English audio file and produces an **English text transcript** in one step. The model both transcribes and translates — there is no intermediate source-language text.
@@ -50,7 +50,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://api.hapuppy.com/v1"
+    base_url="https://beta.hapuppy.com/v1"
 )
 
 with open("japanese_podcast.mp3", "rb") as audio:
@@ -68,7 +68,7 @@ import fs from "fs";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://api.hapuppy.com/v1",
+  baseURL: "https://beta.hapuppy.com/v1",
 });
 
 const result = await client.audio.translations.create({
@@ -80,7 +80,7 @@ console.log(result.text);  // English
 ```
 
 ```bash cURL
-curl https://api.hapuppy.com/v1/audio/translations \
+curl https://beta.hapuppy.com/v1/audio/translations \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -F file="@japanese_podcast.mp3" \
   -F model="whisper-1"

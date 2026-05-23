@@ -9,7 +9,7 @@ description: "Send messages and receive AI-generated responses using the Chat Co
 POST https://beta.hapuppy.com/v1/chat/completions
 ```
 
-The Chat Completions API is fully compatible with the [OpenAI Chat Completions](https://platform.openai.com/docs/api-reference/chat) format. Any existing code using the OpenAI API can be pointed to Hapuppy by changing the base URL and API key.
+The Chat Completions API is fully compatible with the OpenAI Chat Completions format. Any existing code using the OpenAI API can be pointed to Hapuppy by changing the base URL and API key.
 
 ## Basic Request
 
@@ -78,7 +78,7 @@ curl https://beta.hapuppy.com/v1/chat/completions \
 
 | Parameter | Type | Required | Description |
 |-----------|------|----------|-------------|
-| `model` | string | Yes | The model ID to use (e.g., `claude-sonnet-4-20250514`, `gpt-4o`). See [Models](https://hapuppy.com/models). |
+| `model` | string | Yes | The model ID to use (e.g., `claude-sonnet-4-20250514`, `gpt-4o`). See [Models](https://hapuppy.com/en/dashboard/models). |
 | `messages` | array | Yes | Array of message objects with `role` and `content`. |
 | `temperature` | number | No | Sampling temperature between 0 and 2. Default varies by model. |
 | `max_tokens` | integer | No | Maximum number of tokens to generate. |
@@ -345,5 +345,5 @@ print(response.choices[0].message.content)
 ```
 
 <Info>
-  Not all models support vision. Check the [Models](https://hapuppy.com/models) page for capabilities.
+  Not all models support vision. Check the [Models](https://hapuppy.com/en/dashboard/models) page for capabilities.
 </Info>
