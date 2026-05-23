@@ -11,7 +11,7 @@ description: "Frequently asked questions about Hapuppy."
 
 <Accordion title="How is Hapuppy different from using provider APIs directly?">
   - **One API key** for all models — no need to manage separate accounts and keys for each provider
-  - **Flat-rate pricing** — predictable monthly cost instead of per-token billing
+  - **One-time pricing** — pay once for a credit pack that never expires, instead of per-token billing
   - **OpenAI-compatible** — works with any tool or SDK that supports the OpenAI format
   - **Easy model switching** — change the `model` parameter to try different models instantly
 </Accordion>
@@ -35,20 +35,24 @@ description: "Frequently asked questions about Hapuppy."
 </Accordion>
 
 <Accordion title="How does pricing work?">
-  Hapuppy offers three monthly subscription plans:
-  - **Lite** — $9.99/mo with 1M daily credits
-  - **Standard** — $19.99/mo with 4M daily credits
-  - **Pro** — $36.99/mo with 8M daily credits
+  Hapuppy offers a free tier plus three one-time credit packs:
+  - **Free** — 100K credits per day (resets daily), basic models
+  - **Lite** — $9.99 one-time, 30M credits, all 100+ models
+  - **Standard** — $19.99 one-time, 120M credits, all models (most popular)
+  - **Pro** — $36.99 one-time, 240M credits, all models + priority routing
 
-  All plans include access to every model. Credits are consumed based on token usage with per-model multipliers. See [Credits](/credits) for details.
+  Purchased credits enter your **vault** and never expire. Credits are consumed based on token usage with per-model multipliers. See [Credits & Pricing](https://hapuppy.com/credits) for details.
 </Accordion>
 
-<Accordion title="Do unused credits roll over?">
-  Yes. Credits accumulate daily and do not reset. Your balance grows by your plan's daily allowance every day at midnight Beijing time (UTC 16:00).
+<Accordion title="Do credits expire?">
+  Credits in your **vault** (purchased via a one-time pack) never expire — use them at your own pace. Free-tier credits reset each day; whatever's left at the end of the day does not carry over.
 </Accordion>
 
 <Accordion title="What happens when I run out of credits?">
-  API requests will return a `429` error. Credits refresh at the next midnight Beijing time (UTC 16:00). You can also upgrade your plan for a higher daily allowance.
+  API requests will return a `429` error.
+
+  - **Free tier**: your 100K daily allowance resets the next day. You can also purchase any credit pack to top up your vault.
+  - **Paid users**: purchase another credit pack from the [dashboard](https://hapuppy.com/dashboard) — newly purchased credits stack into your vault.
 </Accordion>
 
 <Accordion title="What is the rate limit?">
@@ -68,8 +72,8 @@ description: "Frequently asked questions about Hapuppy."
 </Accordion>
 
 <Accordion title="How do I get an API key?">
-  1. Sign up at [hapuppy.com/register](https://hapuppy.com/register)
-  2. Subscribe to a plan
+  1. Sign up at [hapuppy.com/register](https://hapuppy.com/register) — you start on the free tier with 100K daily credits
+  2. (Optional) Purchase a one-time credit pack from the dashboard to unlock all 100+ models
   3. Generate an API key from the dashboard
 
   See the [Quickstart](/quickstart) guide for step-by-step instructions.
@@ -79,8 +83,12 @@ description: "Frequently asked questions about Hapuppy."
   Payments are processed via Creem. Credit/debit cards are accepted.
 </Accordion>
 
-<Accordion title="How do I cancel my subscription?">
-  You can cancel your subscription at any time from the [Dashboard](https://hapuppy.com/dashboard). Your access continues until the end of the current billing period.
+<Accordion title="Are there subscriptions or recurring charges?">
+  No. Hapuppy uses one-time credit packs — you pay once, and the credits go into your vault and never expire. There is nothing to cancel.
+</Accordion>
+
+<Accordion title="Can I get a refund?">
+  Yes, within 7 days of purchase as long as you have not consumed a significant portion of the credit pack. Contact [support@hapuppy.com](mailto:support@hapuppy.com) with your order details.
 </Accordion>
 
 <Accordion title="How do I contact support?">
