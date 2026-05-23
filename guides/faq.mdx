@@ -17,7 +17,19 @@ description: "Frequently asked questions about Hapuppy."
 </Accordion>
 
 <Accordion title="Which models are supported?">
-  Hapuppy supports 100+ models from providers including Anthropic (Claude), OpenAI (GPT), Google (Gemini), xAI (Grok), DeepSeek, Mistral, Meta (Llama), and Zhipu (GLM). See the [Models](https://hapuppy.com/models) page for the full list.
+  Hapuppy supports 100+ models from providers including Anthropic (Claude), OpenAI (GPT), Google (Gemini), xAI (Grok), DeepSeek, Mistral, Meta (Llama), and Zhipu (GLM). See the [Models](https://hapuppy.com/models) page for the curated catalog, or call [List Models](/api-reference/models/list) programmatically.
+</Accordion>
+
+<Accordion title="Which API endpoints are supported?">
+  Hapuppy mirrors the OpenAI API surface across modalities:
+
+  - **Chat** — [Create Chat Completion](/api-reference/chat/completions) with streaming, function calling, and vision
+  - **Embeddings** — [Create Embeddings](/api-reference/embeddings/create) for semantic search and RAG
+  - **Images** — [Generate](/api-reference/images/generations) and [Edit](/api-reference/images/edits) (DALL-E 3, Flux, Midjourney, etc.)
+  - **Audio** — [TTS](/api-reference/audio/speech), [Transcription](/api-reference/audio/transcriptions), [Translation](/api-reference/audio/translations)
+  - **Video** — [Create](/api-reference/videos/create), [List](/api-reference/videos/list), [Get](/api-reference/videos/get), [Download](/api-reference/videos/download), [Delete](/api-reference/videos/delete)
+  - **Moderation** — [Create Moderation](/api-reference/moderations/create) for content safety
+  - **Models** — [List](/api-reference/models/list) and [Get](/api-reference/models/get) for model discovery
 </Accordion>
 
 <Accordion title="Is Hapuppy compatible with the OpenAI SDK?">
@@ -91,8 +103,47 @@ description: "Frequently asked questions about Hapuppy."
   Yes, within 7 days of purchase as long as you have not consumed a significant portion of the credit pack. Contact [support@hapuppy.com](mailto:support@hapuppy.com) with your order details.
 </Accordion>
 
+<Accordion title="How does Prompt Caching work?">
+  Anthropic Claude models support automatic prompt caching. Repeated system prompts and large stable context blocks are cached on the upstream side after the first request — subsequent calls with the same prefix save **~90%** on those cached tokens.
+
+  Claude Code's 40K-token system prompt is the canonical example: the first request to Claude through Hapuppy pays the full token cost; every subsequent request in the cache window pays a fraction. You don't need to change your client code — caching is transparent.
+
+  Other providers may have caching too; check the provider's docs for specifics.
+</Accordion>
+
+<Accordion title="How do I verify my account?">
+  See [Verify Account](/guides/verify-account) for the full flow. Verification is fast (usually minutes), unlocks premium models, and is a prerequisite for [Claude Apply](/guides/claude-apply).
+</Accordion>
+
+<Accordion title="How do I get access to Claude Opus?">
+  After verifying your account, submit a Claude Apply request via **Dashboard → Models → Claude Apply**. Reviews typically take 1–3 business days. See [Claude Apply](/guides/claude-apply) for prerequisites and what to write in the application.
+</Accordion>
+
+<Accordion title="Why am I getting a 403 / model_access_denied error?">
+  The model exists but your account isn't entitled to call it. Common reasons:
+
+  - **Account not verified** — see [Verify Account](/guides/verify-account)
+  - **Plan too low** — premium models (Opus, o1, Midjourney) require Standard or Pro
+  - **No Claude Apply approval** — Opus specifically requires the application step
+
+  Check the error message body for the exact reason.
+</Accordion>
+
+<Accordion title="Why am I getting 429 errors?">
+  Two distinct causes — the error code tells you which:
+
+  - `rate_limit_exceeded` — you've sent more than 100 requests in the last minute. Add exponential backoff (see [Errors](/guides/errors#retry-strategy)).
+  - `insufficient_credits` — free-tier allowance is used up, or your vault is empty. Free users wait for the next day's reset, paid users purchase another credit pack.
+</Accordion>
+
+<Accordion title="Where do I report a bug or share feedback?">
+  - Email [support@hapuppy.com](mailto:support@hapuppy.com) for account or billing issues
+  - Join our [Discord](https://discord.gg/YWayJmZKCu) to chat with the team and other users
+  - Include your request ID (from response headers `x-request-id` or the error message body) when reporting API issues
+</Accordion>
+
 <Accordion title="How do I contact support?">
-  Email us at [support@hapuppy.com](mailto:support@hapuppy.com).
+  Email us at [support@hapuppy.com](mailto:support@hapuppy.com), or join our [Discord](https://discord.gg/YWayJmZKCu).
 </Accordion>
 
 </AccordionGroup>
