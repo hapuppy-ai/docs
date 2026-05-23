@@ -44,7 +44,7 @@ description: "Get up and running with Hapuppy in under 5 minutes."
 
   client = OpenAI(
       api_key="sk-hapuppy-xxx",
-      base_url="https://beta.hapuppy.com/v1"
+      base_url="https://api.hapuppy.com/v1"
   )
 
   response = client.chat.completions.create(
@@ -62,7 +62,7 @@ description: "Get up and running with Hapuppy in under 5 minutes."
 
   const client = new OpenAI({
     apiKey: "sk-hapuppy-xxx",
-    baseURL: "https://beta.hapuppy.com/v1",
+    baseURL: "https://api.hapuppy.com/v1",
   });
 
   const response = await client.chat.completions.create({
@@ -76,7 +76,7 @@ description: "Get up and running with Hapuppy in under 5 minutes."
   ```
 
   ```bash cURL
-  curl https://beta.hapuppy.com/v1/chat/completions \
+  curl https://api.hapuppy.com/v1/chat/completions \
     -H "Authorization: Bearer sk-hapuppy-xxx" \
     -H "Content-Type: application/json" \
     -d '{

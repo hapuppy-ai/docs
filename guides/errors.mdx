@@ -109,7 +109,7 @@ from openai import OpenAI, APIError, RateLimitError
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://beta.hapuppy.com/v1"
+    base_url="https://api.hapuppy.com/v1"
 )
 
 def chat_with_retry(messages, model="claude-sonnet-4-20250514", max_retries=3):
@@ -142,7 +142,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://beta.hapuppy.com/v1",
+  baseURL: "https://api.hapuppy.com/v1",
 });
 
 async function chatWithRetry(
@@ -175,7 +175,7 @@ async function chatWithRetry(
 <AccordionGroup>
   <Accordion title="My requests are timing out">
     - Check your network connection
-    - Ensure `https://beta.hapuppy.com` is reachable from your environment
+    - Ensure `https://api.hapuppy.com` is reachable from your environment
     - For long-running requests (e.g., large context windows), increase your client timeout setting
     - Try using streaming (`stream: true`) for long responses
   </Accordion>
@@ -183,7 +183,7 @@ async function chatWithRetry(
     - Ensure the `Authorization` header format is `Bearer sk-hapuppy-xxx` (not just the key alone)
     - Check for trailing whitespace or newlines in the key
     - Verify the key hasn't been revoked in your dashboard
-    - Make sure you're using the correct base URL: `https://beta.hapuppy.com/v1`
+    - Make sure you're using the correct base URL: `https://api.hapuppy.com/v1`
   </Accordion>
   <Accordion title="Responses differ from the model's native API">
     Hapuppy translates between the OpenAI format and each provider's native format. Minor differences in formatting or metadata may occur. The core model output remains the same.
