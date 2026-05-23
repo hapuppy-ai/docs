@@ -1,0 +1,91 @@
+---
+title: "Get Model"
+description: "Retrieve details about a specific model."
+---
+
+```
+GET https://api.hapuppy.com/v1/models/{model_id}
+```
+
+Returns metadata for a single model. Useful to confirm a model is currently available before sending a chat/embedding/image request, or to check the provider that backs it.
+
+## Path Parameters
+
+<ParamField path="model_id" type="string" required>
+  The model identifier (e.g., `gpt-4o`, `claude-sonnet-4-20250514`). See [List Models](/api-reference/models/list) to discover valid IDs.
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="string">
+  The model identifier.
+</ResponseField>
+
+<ResponseField name="object" type="string">
+  Always `model`.
+</ResponseField>
+
+<ResponseField name="created" type="integer">
+  Unix timestamp of when the model first became available on Hapuppy.
+</ResponseField>
+
+<ResponseField name="owned_by" type="string">
+  The upstream provider (`anthropic`, `openai`, `google`, etc.). See the [List Models](/api-reference/models/list#common-owned-by-values) page for the full list.
+</ResponseField>
+
+## Examples
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://api.hapuppy.com/v1"
+)
+
+model = client.models.retrieve("claude-sonnet-4-20250514")
+print(model.id, model.owned_by)
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://api.hapuppy.com/v1",
+});
+
+const model = await client.models.retrieve("claude-sonnet-4-20250514");
+console.log(model.id, model.owned_by);
+```
+
+```bash cURL
+curl https://api.hapuppy.com/v1/models/claude-sonnet-4-20250514 \
+  -H "Authorization: Bearer sk-hapuppy-xxx"
+```
+
+</CodeGroup>
+
+## Response Example
+
+```json
+{
+  "id": "claude-sonnet-4-20250514",
+  "object": "model",
+  "created": 1715630400,
+  "owned_by": "anthropic"
+}
+```
+
+## Errors
+
+| Status | Code | Meaning |
+|---|---|---|
+| `404` | `model_not_found` | The model ID does not exist or is not exposed by Hapuppy. |
+| `401` | `invalid_api_key` | API key is missing, malformed, or revoked. |
+
+<Info>
+  This endpoint is a thin metadata lookup — it does not validate that your plan grants access to the model. Some Claude/Opus tier models also require a separate application; see [Claude Apply](/guides/claude-apply).
+</Info>

@@ -1,0 +1,157 @@
+---
+title: "Create Moderation"
+description: "Classify text for potentially harmful content across safety categories."
+---
+
+```
+POST https://api.hapuppy.com/v1/moderations
+```
+
+Checks whether text contains potentially harmful content (hate, harassment, self-harm, sexual, violence, etc.). Use this before forwarding user-generated content to a chat model, posting to a feed, or storing in a public surface.
+
+## Request Body
+
+<ParamField body="input" type="string | string[]" required>
+  Text to classify. Pass a single string or an array to batch classify multiple snippets.
+</ParamField>
+
+<ParamField body="model" type="string" default="omni-moderation-latest">
+  The moderation model. Defaults to the latest multilingual model. Other options include `text-moderation-latest` and `text-moderation-stable`.
+</ParamField>
+
+## Response
+
+<ResponseField name="id" type="string">Unique identifier for this moderation request.</ResponseField>
+<ResponseField name="model" type="string">The model that performed the classification.</ResponseField>
+<ResponseField name="results" type="array">
+  One result object per input.
+
+  <Expandable title="Result object">
+    <ResponseField name="flagged" type="boolean">`true` if **any** category is violated.</ResponseField>
+    <ResponseField name="categories" type="object">Per-category boolean flags (e.g., `hate`, `harassment`, `self-harm`, `sexual`, `violence`, plus sub-categories like `hate/threatening`).</ResponseField>
+    <ResponseField name="category_scores" type="object">Per-category confidence scores between 0 and 1.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Examples
+
+### Single input
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://api.hapuppy.com/v1"
+)
+
+resp = client.moderations.create(
+    model="omni-moderation-latest",
+    input="I want to learn about chemistry."
+)
+
+result = resp.results[0]
+if result.flagged:
+    print("Content flagged.")
+else:
+    print("OK to proceed.")
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://api.hapuppy.com/v1",
+});
+
+const resp = await client.moderations.create({
+  model: "omni-moderation-latest",
+  input: "I want to learn about chemistry.",
+});
+
+console.log(resp.results[0].flagged ? "flagged" : "ok");
+```
+
+```bash cURL
+curl https://api.hapuppy.com/v1/moderations \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "omni-moderation-latest",
+    "input": "I want to learn about chemistry."
+  }'
+```
+
+</CodeGroup>
+
+### Batch inputs
+
+```python Python
+resp = client.moderations.create(
+    model="omni-moderation-latest",
+    input=[
+        "Hello, how are you?",
+        "Some questionable text here.",
+        "Plain factual statement."
+    ]
+)
+
+for i, r in enumerate(resp.results):
+    print(f"[{i}] flagged={r.flagged}")
+```
+
+## Response Example
+
+```json
+{
+  "id": "modr-abc123",
+  "model": "omni-moderation-latest",
+  "results": [
+    {
+      "flagged": false,
+      "categories": {
+        "hate": false,
+        "hate/threatening": false,
+        "harassment": false,
+        "harassment/threatening": false,
+        "self-harm": false,
+        "self-harm/intent": false,
+        "self-harm/instructions": false,
+        "sexual": false,
+        "sexual/minors": false,
+        "violence": false,
+        "violence/graphic": false
+      },
+      "category_scores": {
+        "hate": 0.00001,
+        "harassment": 0.00003,
+        "self-harm": 0.00000,
+        "sexual": 0.00002,
+        "violence": 0.00001
+      }
+    }
+  ]
+}
+```
+
+## Threshold-Based Filtering
+
+The default `flagged` boolean is suitable for most cases. If you need stricter or looser policies, evaluate `category_scores` against your own thresholds.
+
+```python Python
+resp = client.moderations.create(
+    model="omni-moderation-latest",
+    input=user_text
+)
+
+scores = resp.results[0].category_scores
+if scores.violence > 0.3 or scores.harassment > 0.3:
+    raise ValueError("Content too risky to forward")
+```
+
+<Info>
+  Moderation is free or near-free on most plans (see [Credits & Pricing](https://hapuppy.com/credits)). Run it on every user-submitted prompt before forwarding to a chat model — it's the cheapest safety layer you can add.
+</Info>

@@ -1,0 +1,210 @@
+---
+title: "Create Embeddings"
+description: "Generate vector embeddings from text for semantic search, clustering, and retrieval-augmented generation."
+---
+
+```
+POST https://api.hapuppy.com/v1/embeddings
+```
+
+Converts text into a fixed-length vector that captures its semantic meaning. Use embeddings for semantic search, document clustering, recommendation systems, RAG pipelines, and similarity comparisons.
+
+## Request Body
+
+<ParamField body="model" type="string" required>
+  The embedding model to use, e.g., `text-embedding-3-small`, `text-embedding-3-large`, `text-embedding-ada-002`.
+</ParamField>
+
+<ParamField body="input" type="string | string[]" required>
+  Text to embed. Pass a single string for one vector, or an array of strings to batch up to 2048 inputs in a single request. Each input is capped at the model's token limit (typically 8192 tokens).
+</ParamField>
+
+<ParamField body="encoding_format" type="string" default="float">
+  Output encoding. `float` returns standard JSON floats; `base64` returns a base64-encoded binary string (smaller payload, useful for large batches).
+</ParamField>
+
+<ParamField body="dimensions" type="integer">
+  Number of dimensions to return. Only supported by `text-embedding-3-*` models. Defaults to the model's native size (1536 for `text-embedding-3-small`, 3072 for `text-embedding-3-large`).
+</ParamField>
+
+<ParamField body="user" type="string">
+  An optional stable identifier for the end-user, used for abuse detection.
+</ParamField>
+
+## Response
+
+<ResponseField name="object" type="string">
+  Always `list`.
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of embedding objects, one per input.
+
+  <Expandable title="Embedding object">
+    <ResponseField name="object" type="string">Always `embedding`.</ResponseField>
+    <ResponseField name="index" type="integer">Position of this embedding in the input array.</ResponseField>
+    <ResponseField name="embedding" type="number[] | string">The vector, either as an array of floats or a base64 string depending on `encoding_format`.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="model" type="string">The model used to produce the embeddings.</ResponseField>
+
+<ResponseField name="usage" type="object">
+  <Expandable title="properties">
+    <ResponseField name="prompt_tokens" type="integer">Total tokens in the input(s).</ResponseField>
+    <ResponseField name="total_tokens" type="integer">Same as `prompt_tokens` for this endpoint.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Examples
+
+### Single input
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://api.hapuppy.com/v1"
+)
+
+resp = client.embeddings.create(
+    model="text-embedding-3-small",
+    input="A vector embedding captures semantic meaning."
+)
+
+vector = resp.data[0].embedding
+print(f"Dimensions: {len(vector)}")
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://api.hapuppy.com/v1",
+});
+
+const resp = await client.embeddings.create({
+  model: "text-embedding-3-small",
+  input: "A vector embedding captures semantic meaning.",
+});
+
+console.log(`Dimensions: ${resp.data[0].embedding.length}`);
+```
+
+```bash cURL
+curl https://api.hapuppy.com/v1/embeddings \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "text-embedding-3-small",
+    "input": "A vector embedding captures semantic meaning."
+  }'
+```
+
+</CodeGroup>
+
+### Batch inputs
+
+<CodeGroup>
+
+```python Python
+docs = [
+    "Cats are small carnivorous mammals.",
+    "The capital of France is Paris.",
+    "Pandas is a Python data analysis library."
+]
+
+resp = client.embeddings.create(
+    model="text-embedding-3-small",
+    input=docs
+)
+
+for i, item in enumerate(resp.data):
+    print(f"Doc {i}: {len(item.embedding)}-d vector")
+```
+
+```typescript TypeScript
+const docs = [
+  "Cats are small carnivorous mammals.",
+  "The capital of France is Paris.",
+  "Pandas is a Python data analysis library.",
+];
+
+const resp = await client.embeddings.create({
+  model: "text-embedding-3-small",
+  input: docs,
+});
+
+resp.data.forEach((item, i) => {
+  console.log(`Doc ${i}: ${item.embedding.length}-d vector`);
+});
+```
+
+</CodeGroup>
+
+### Reduce dimensions
+
+Useful when you need smaller vectors to save storage cost in a vector database.
+
+```python Python
+resp = client.embeddings.create(
+    model="text-embedding-3-large",
+    input="Reduce my dimensions.",
+    dimensions=256
+)
+
+print(len(resp.data[0].embedding))  # 256
+```
+
+## Response Example
+
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "object": "embedding",
+      "index": 0,
+      "embedding": [-0.0067, 0.0143, ..., -0.0021]
+    }
+  ],
+  "model": "text-embedding-3-small",
+  "usage": {
+    "prompt_tokens": 8,
+    "total_tokens": 8
+  }
+}
+```
+
+## Use Cases
+
+<CardGroup cols={2}>
+  <Card title="Semantic search" icon="magnifying-glass">
+    Embed documents and queries, then rank by cosine similarity.
+  </Card>
+  <Card title="RAG" icon="brain">
+    Retrieve relevant context chunks before sending to a chat model.
+  </Card>
+  <Card title="Clustering" icon="diagram-project">
+    Group similar documents with K-means or HDBSCAN on the vectors.
+  </Card>
+  <Card title="Deduplication" icon="copy">
+    Detect near-duplicate content by cosine similarity threshold.
+  </Card>
+</CardGroup>
+
+## Model Comparison
+
+| Model | Native dimensions | Notes |
+|---|---|---|
+| `text-embedding-3-small` | 1536 | Default choice — best price/performance. |
+| `text-embedding-3-large` | 3072 | Higher accuracy on retrieval benchmarks. Supports `dimensions` param to truncate. |
+| `text-embedding-ada-002` | 1536 | Legacy. Use the `-3-*` models for new work. |
+
+<Info>
+  Embeddings are deterministic for the same input + model. Cache them in your application or vector store to avoid re-computing.
+</Info>

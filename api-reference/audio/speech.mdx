@@ -1,0 +1,150 @@
+---
+title: "Create Speech (TTS)"
+description: "Convert text into spoken audio."
+---
+
+```
+POST https://api.hapuppy.com/v1/audio/speech
+```
+
+Synthesizes natural-sounding speech from a text input. Useful for voice assistants, narration, accessibility features, and audio content generation. Returns raw audio bytes in the chosen format.
+
+## Request Body
+
+<ParamField body="model" type="string" required>
+  TTS model identifier. Options: `tts-1` (lower latency), `tts-1-hd` (higher quality), or newer models like `gpt-4o-mini-tts`.
+</ParamField>
+
+<ParamField body="input" type="string" required>
+  Text to synthesize. Maximum 4096 characters per request.
+</ParamField>
+
+<ParamField body="voice" type="string" required>
+  Voice preset. Supported values: `alloy`, `echo`, `fable`, `onyx`, `nova`, `shimmer`, `coral`, `sage`. Each has a distinct timbre — try a few to find the right fit for your application.
+</ParamField>
+
+<ParamField body="response_format" type="string" default="mp3">
+  Audio format. Options: `mp3`, `opus`, `aac`, `flac`, `wav`, `pcm`. Use `opus` for low-latency streaming, `flac`/`wav` for lossless archival, `mp3` for general use.
+</ParamField>
+
+<ParamField body="speed" type="number" default="1.0">
+  Playback speed multiplier. Range `0.25` (slowest) to `4.0` (fastest).
+</ParamField>
+
+## Response
+
+Returns binary audio data with `Content-Type` matching `response_format` (e.g., `audio/mpeg` for mp3).
+
+## Examples
+
+### Save to file
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://api.hapuppy.com/v1"
+)
+
+response = client.audio.speech.create(
+    model="tts-1-hd",
+    voice="nova",
+    input="Welcome to Hapuppy. One API key, every AI model."
+)
+
+response.stream_to_file("welcome.mp3")
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+import fs from "fs";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://api.hapuppy.com/v1",
+});
+
+const response = await client.audio.speech.create({
+  model: "tts-1-hd",
+  voice: "nova",
+  input: "Welcome to Hapuppy. One API key, every AI model.",
+});
+
+const buffer = Buffer.from(await response.arrayBuffer());
+fs.writeFileSync("welcome.mp3", buffer);
+```
+
+```bash cURL
+curl https://api.hapuppy.com/v1/audio/speech \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "tts-1-hd",
+    "voice": "nova",
+    "input": "Welcome to Hapuppy. One API key, every AI model."
+  }' \
+  --output welcome.mp3
+```
+
+</CodeGroup>
+
+### Stream to a browser
+
+For real-time playback, request `opus` or `mp3` and pipe the response stream directly to an audio element.
+
+```python Python
+# Server-side: stream chunks to the client
+from fastapi.responses import StreamingResponse
+
+@app.get("/tts")
+def tts(text: str):
+    audio = client.audio.speech.create(
+        model="tts-1",
+        voice="alloy",
+        input=text,
+        response_format="opus"
+    )
+    return StreamingResponse(audio.iter_bytes(), media_type="audio/ogg")
+```
+
+### Adjust speed for narration
+
+```python Python
+# Slower for narration / accessibility
+response = client.audio.speech.create(
+    model="tts-1-hd",
+    voice="onyx",
+    input="Chapter one. The fog rolled in off the bay...",
+    speed=0.9
+)
+```
+
+## Voice Catalog
+
+| Voice | Character |
+|---|---|
+| `alloy` | Neutral, balanced — good default |
+| `echo` | Warm, conversational |
+| `fable` | Storyteller, expressive |
+| `onyx` | Deep, authoritative |
+| `nova` | Bright, energetic |
+| `shimmer` | Soft, friendly |
+| `coral` | Calm, professional |
+| `sage` | Mature, contemplative |
+
+## Format Selection Guide
+
+| Use case | Format |
+|---|---|
+| General playback | `mp3` |
+| Low-latency streaming | `opus` |
+| Lossless archival | `flac` or `wav` |
+| Apple ecosystem | `aac` |
+| Custom DSP / further processing | `pcm` (raw 24kHz mono) |
+
+<Info>
+  TTS uses **fixed credit costs** per character of input, not token-based billing. `tts-1-hd` costs more credits than `tts-1`. See the credit table at [hapuppy.com/credits](https://hapuppy.com/credits).
+</Info>

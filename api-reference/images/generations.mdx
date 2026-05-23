@@ -1,0 +1,180 @@
+---
+title: "Create Image"
+description: "Generate images from a text prompt."
+---
+
+```
+POST https://api.hapuppy.com/v1/images/generations
+```
+
+Generates one or more images from a text prompt. Supports multiple image models including DALL-E 3, GPT-Image-1, Stable Diffusion variants, and Midjourney-compatible endpoints.
+
+## Request Body
+
+<ParamField body="model" type="string" required>
+  The image model. Examples: `dall-e-3`, `gpt-image-1`, `flux-pro`, `flux-schnell`, `midjourney`, `stable-diffusion-3.5-large`.
+</ParamField>
+
+<ParamField body="prompt" type="string" required>
+  Text description of the desired image. Max length depends on the model (DALL-E 3: 4000 chars; others vary).
+</ParamField>
+
+<ParamField body="n" type="integer" default="1">
+  Number of images to generate. DALL-E 3 only supports `n=1`; other models may allow up to 10.
+</ParamField>
+
+<ParamField body="size" type="string" default="1024x1024">
+  Image dimensions. Common values: `1024x1024`, `1024x1792` (portrait), `1792x1024` (landscape), `512x512`, `256x256`. Supported sizes vary by model.
+</ParamField>
+
+<ParamField body="quality" type="string" default="standard">
+  `standard` or `hd`. HD costs more credits but produces sharper detail. DALL-E 3 only.
+</ParamField>
+
+<ParamField body="style" type="string" default="vivid">
+  `vivid` or `natural`. DALL-E 3 only — vivid is more hyperrealistic and dramatic, natural is more muted.
+</ParamField>
+
+<ParamField body="response_format" type="string" default="url">
+  `url` returns a temporary CDN URL valid for ~1 hour. `b64_json` returns base64-encoded image bytes inline.
+</ParamField>
+
+<ParamField body="user" type="string">
+  Optional stable identifier for the end-user, used for abuse detection.
+</ParamField>
+
+## Response
+
+<ResponseField name="created" type="integer">Unix timestamp of generation.</ResponseField>
+
+<ResponseField name="data" type="array">
+  Array of generated images.
+
+  <Expandable title="Image object">
+    <ResponseField name="url" type="string">Temporary CDN URL (when `response_format=url`).</ResponseField>
+    <ResponseField name="b64_json" type="string">Base64-encoded image data (when `response_format=b64_json`).</ResponseField>
+    <ResponseField name="revised_prompt" type="string">For DALL-E 3 — the auto-revised prompt actually used for generation.</ResponseField>
+  </Expandable>
+</ResponseField>
+
+## Examples
+
+### Basic generation
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://api.hapuppy.com/v1"
+)
+
+resp = client.images.generate(
+    model="dall-e-3",
+    prompt="A cute corgi astronaut floating in a nebula, vibrant colors",
+    size="1024x1024",
+    quality="hd",
+    n=1
+)
+
+print(resp.data[0].url)
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://api.hapuppy.com/v1",
+});
+
+const resp = await client.images.generate({
+  model: "dall-e-3",
+  prompt: "A cute corgi astronaut floating in a nebula, vibrant colors",
+  size: "1024x1024",
+  quality: "hd",
+  n: 1,
+});
+
+console.log(resp.data[0].url);
+```
+
+```bash cURL
+curl https://api.hapuppy.com/v1/images/generations \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "dall-e-3",
+    "prompt": "A cute corgi astronaut floating in a nebula, vibrant colors",
+    "size": "1024x1024",
+    "quality": "hd"
+  }'
+```
+
+</CodeGroup>
+
+### Download to local file
+
+```python Python
+import requests
+
+resp = client.images.generate(
+    model="dall-e-3",
+    prompt="Minimalist line-art logo of a fox",
+    size="1024x1024"
+)
+
+img_bytes = requests.get(resp.data[0].url).content
+with open("fox.png", "wb") as f:
+    f.write(img_bytes)
+```
+
+### Inline base64 (no separate download)
+
+```python Python
+import base64
+
+resp = client.images.generate(
+    model="dall-e-3",
+    prompt="A serene mountain landscape at dawn",
+    response_format="b64_json"
+)
+
+with open("mountain.png", "wb") as f:
+    f.write(base64.b64decode(resp.data[0].b64_json))
+```
+
+## Response Example
+
+```json
+{
+  "created": 1715367049,
+  "data": [
+    {
+      "url": "https://cdn.hapuppy.com/img/abc123.png",
+      "revised_prompt": "A cute corgi wearing a white astronaut helmet, floating peacefully in a colorful nebula with stars and cosmic dust, vibrant purple, pink, and blue hues."
+    }
+  ]
+}
+```
+
+## Model Comparison
+
+| Model | Strengths | Notes |
+|---|---|---|
+| `dall-e-3` | Excellent prompt adherence, supports HD, auto-revises prompts | `n=1` only; up to 1792×1024 |
+| `gpt-image-1` | Strong text rendering in images, fine-grained control | OpenAI's newest image model |
+| `flux-pro` | Photorealism, high detail | Black Forest Labs |
+| `flux-schnell` | Very fast, draft quality | Use for previews |
+| `midjourney` | Stylized, artistic | Highest credit cost |
+| `stable-diffusion-3.5-large` | Open-source style, customizable | Lower cost |
+
+<Warning>
+  URLs returned with `response_format=url` expire after ~1 hour. Download and store images immediately if you need them long-term.
+</Warning>
+
+<Info>
+  Image generation uses **fixed credit costs** per image, not token-based billing. See the credit table at [hapuppy.com/credits](https://hapuppy.com/credits).
+</Info>
