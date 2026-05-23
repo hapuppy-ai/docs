@@ -39,7 +39,7 @@ All keys start with the `sk-hapuppy-` prefix. If your key does not match this fo
 Include your API key in the `Authorization` header of every request:
 
 ```bash cURL
-curl https://api.hapuppy.com/v1/chat/completions \
+curl https://beta.hapuppy.com/v1/chat/completions \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -H "Content-Type: application/json" \
   -d '{"model": "claude-sonnet-4-20250514", "messages": [{"role": "user", "content": "Hello"}]}'
@@ -56,7 +56,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://api.hapuppy.com/v1"
+    base_url="https://beta.hapuppy.com/v1"
 )
 ```
 
@@ -65,7 +65,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://api.hapuppy.com/v1",
+  baseURL: "https://beta.hapuppy.com/v1",
 });
 ```
 
@@ -81,7 +81,7 @@ We recommend storing your API key in environment variables rather than hardcodin
 
     ```bash
     export OPENAI_API_KEY="sk-hapuppy-xxx"
-    export OPENAI_BASE_URL="https://api.hapuppy.com/v1"
+    export OPENAI_BASE_URL="https://beta.hapuppy.com/v1"
     ```
 
     Then reload your shell:
@@ -95,7 +95,7 @@ We recommend storing your API key in environment variables rather than hardcodin
 
     ```powershell
     [System.Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "sk-hapuppy-xxx", "User")
-    [System.Environment]::SetEnvironmentVariable("OPENAI_BASE_URL", "https://api.hapuppy.com/v1", "User")
+    [System.Environment]::SetEnvironmentVariable("OPENAI_BASE_URL", "https://beta.hapuppy.com/v1", "User")
     ```
   </Tab>
   <Tab title=".env File">
@@ -103,7 +103,7 @@ We recommend storing your API key in environment variables rather than hardcodin
 
     ```env
     OPENAI_API_KEY=sk-hapuppy-xxx
-    OPENAI_BASE_URL=https://api.hapuppy.com/v1
+    OPENAI_BASE_URL=https://beta.hapuppy.com/v1
     ```
 
     Load it with a library like `python-dotenv` (Python) or `dotenv` (Node.js).

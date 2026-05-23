@@ -48,7 +48,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://api.hapuppy.com/v1"
+    base_url="https://beta.hapuppy.com/v1"
 )
 
 response = client.chat.completions.create(
@@ -66,7 +66,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://api.hapuppy.com/v1",
+  baseURL: "https://beta.hapuppy.com/v1",
 });
 
 const response = await client.chat.completions.create({
@@ -80,7 +80,7 @@ console.log(response.choices[0].message.content);
 ```
 
 ```bash cURL
-curl https://api.hapuppy.com/v1/chat/completions \
+curl https://beta.hapuppy.com/v1/chat/completions \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -H "Content-Type: application/json" \
   -d '{

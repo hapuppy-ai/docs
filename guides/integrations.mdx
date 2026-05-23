@@ -12,7 +12,7 @@ Hapuppy is fully compatible with the OpenAI API format, making it easy to integr
 Add the following to your shell profile (`~/.bashrc`, `~/.zshrc`, or `~/.profile`):
 
 ```bash
-export ANTHROPIC_BASE_URL=https://api.hapuppy.com
+export ANTHROPIC_BASE_URL=https://beta.hapuppy.com
 export ANTHROPIC_API_KEY=sk-hapuppy-xxx
 ```
 
@@ -39,7 +39,7 @@ claude
     Set the following:
 
     - **OpenAI API Key**: `sk-hapuppy-xxx`
-    - **Override OpenAI Base URL**: `https://api.hapuppy.com/v1`
+    - **Override OpenAI Base URL**: `https://beta.hapuppy.com/v1`
   </Step>
   <Step title="Select a model">
     Choose any model available through Hapuppy (e.g., `claude-sonnet-4-20250514`, `gpt-4o`).
@@ -65,7 +65,7 @@ claude
     Set the following fields:
 
     - **API Key**: `sk-hapuppy-xxx`
-    - **Base URL**: `https://api.hapuppy.com/v1`
+    - **Base URL**: `https://beta.hapuppy.com/v1`
     - **Model ID**: your preferred model (e.g., `claude-sonnet-4-20250514`)
   </Step>
 </Steps>
@@ -82,14 +82,14 @@ claude
       "provider": "openai",
       "model": "claude-sonnet-4-20250514",
       "apiKey": "sk-hapuppy-xxx",
-      "apiBase": "https://api.hapuppy.com/v1"
+      "apiBase": "https://beta.hapuppy.com/v1"
     },
     {
       "title": "Hapuppy - GPT-4o",
       "provider": "openai",
       "model": "gpt-4o",
       "apiKey": "sk-hapuppy-xxx",
-      "apiBase": "https://api.hapuppy.com/v1"
+      "apiBase": "https://beta.hapuppy.com/v1"
     }
   ]
 }
@@ -110,7 +110,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://api.hapuppy.com/v1"
+    base_url="https://beta.hapuppy.com/v1"
 )
 
 response = client.chat.completions.create(
@@ -128,7 +128,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://api.hapuppy.com/v1",
+  baseURL: "https://beta.hapuppy.com/v1",
 });
 
 const response = await client.chat.completions.create({
@@ -149,7 +149,7 @@ Set these environment variables so the SDK picks them up automatically:
 
 ```bash
 export OPENAI_API_KEY="sk-hapuppy-xxx"
-export OPENAI_BASE_URL="https://api.hapuppy.com/v1"
+export OPENAI_BASE_URL="https://beta.hapuppy.com/v1"
 ```
 
 Then simply:
@@ -167,5 +167,5 @@ Any tool or library that supports the OpenAI API format can be configured with:
 | Setting | Value |
 |---------|-------|
 | **API Key** | Your `sk-hapuppy-xxx` key |
-| **Base URL** | `https://api.hapuppy.com/v1` |
+| **Base URL** | `https://beta.hapuppy.com/v1` |
 | **Model** | Any [supported model](https://hapuppy.com/models) |

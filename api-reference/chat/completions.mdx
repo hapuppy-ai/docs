@@ -6,7 +6,7 @@ description: "Send messages and receive AI-generated responses using the Chat Co
 ## Endpoint
 
 ```
-POST https://api.hapuppy.com/v1/chat/completions
+POST https://beta.hapuppy.com/v1/chat/completions
 ```
 
 The Chat Completions API is fully compatible with the [OpenAI Chat Completions](https://platform.openai.com/docs/api-reference/chat) format. Any existing code using the OpenAI API can be pointed to Hapuppy by changing the base URL and API key.
@@ -20,7 +20,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://api.hapuppy.com/v1"
+    base_url="https://beta.hapuppy.com/v1"
 )
 
 response = client.chat.completions.create(
@@ -41,7 +41,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://api.hapuppy.com/v1",
+  baseURL: "https://beta.hapuppy.com/v1",
 });
 
 const response = await client.chat.completions.create({
@@ -58,7 +58,7 @@ console.log(response.choices[0].message.content);
 ```
 
 ```bash cURL
-curl https://api.hapuppy.com/v1/chat/completions \
+curl https://beta.hapuppy.com/v1/chat/completions \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -136,7 +136,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://api.hapuppy.com/v1"
+    base_url="https://beta.hapuppy.com/v1"
 )
 
 stream = client.chat.completions.create(
@@ -157,7 +157,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://api.hapuppy.com/v1",
+  baseURL: "https://beta.hapuppy.com/v1",
 });
 
 const stream = await client.chat.completions.create({
@@ -175,7 +175,7 @@ for await (const chunk of stream) {
 ```
 
 ```bash cURL
-curl https://api.hapuppy.com/v1/chat/completions \
+curl https://beta.hapuppy.com/v1/chat/completions \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -213,7 +213,7 @@ import json
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://api.hapuppy.com/v1"
+    base_url="https://beta.hapuppy.com/v1"
 )
 
 tools = [
@@ -275,7 +275,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://api.hapuppy.com/v1",
+  baseURL: "https://beta.hapuppy.com/v1",
 });
 
 const tools: OpenAI.ChatCompletionTool[] = [
