@@ -1,23 +1,27 @@
 ---
 title: "Claude Apply"
-description: "Apply for access to Claude models on Hapuppy — including role-play–capable hapuppy/ variants."
+description: "Apply for free access to the unprefixed Claude models on Hapuppy."
 ---
 
 Hapuppy offers Claude models in two flavours:
 
-- **Unprefixed** (e.g. `claude-opus-4-7`, `claude-sonnet-4-6`) — the standard Claude experience.
-- **`hapuppy/` prefix** (e.g. `hapuppy/claude-opus-4-7`, `hapuppy/claude-sonnet-4-6`) — the same underlying models, but configured to allow **role-play (RP)** scenarios that the standard variants refuse.
+- **Unprefixed** (e.g. `claude-opus-4-7`, `claude-sonnet-4-6`) — the standard Claude experience. **Requires Claude Apply approval**; free to use after approval.
+- **`hapuppy/` prefix** (e.g. `hapuppy/claude-opus-4-7`, `hapuppy/claude-sonnet-4-6`) — the same underlying models, but configured to allow **role-play (RP)** scenarios that the standard variants refuse. **No application required** — pay-as-you-go from any credit pack.
 
-Both variants are gated by a single application at [Claude Apply](https://hapuppy.com/zh/dashboard/claude-apply). Reviews are **manual** — we read each application by hand to prevent abuse of upstream capacity.
+<Warning>
+  **Free, unprefixed Claude models do NOT support role-play (RP).** They follow standard Claude safety policies and will refuse RP-style prompts. If you need RP, use the paid **`hapuppy/`** prefix instead — no application required.
+</Warning>
+
+This page only covers the **unprefixed** Claude application flow. For `hapuppy/`-prefixed models, just top up credits and call them directly.
 
 ## Who needs to apply?
 
 | Variant | Examples | Access |
 |---|---|---|
-| Unprefixed Claude | `claude-opus-4-7`, `claude-sonnet-4-6`, `claude-haiku-4-5-*` | Free for all approved users — submit a Claude Apply request to unlock |
-| `hapuppy/` prefix (RP-enabled) | `hapuppy/claude-opus-4-7`, `hapuppy/claude-sonnet-4-6`, `hapuppy/claude-haiku-4-5-*` | Paid — requires Claude Apply approval **and** a credit pack; consumed at the `hapuppy/` multiplier (see [Credits & Pricing](/guides/credits#chat-models)) |
+| Unprefixed Claude (no RP) | `claude-opus-4-7`, `claude-sonnet-4-6`, `claude-haiku-4-5-*` | **Application required** — free to use after manual approval |
+| `hapuppy/` prefix (RP-enabled) | `hapuppy/claude-opus-4-7`, `hapuppy/claude-sonnet-4-6`, `hapuppy/claude-haiku-4-5-*` | **No application required** — paid; consumed at the `hapuppy/` multiplier (see [Credits & Pricing](/guides/credits#chat-models)) |
 
-In short: **everyone who wants any Claude model needs to apply.** The application is the same — approval unlocks both variants at once. Whether you actually use the `hapuppy/` prefix is then your choice on a per-request basis.
+In short: **only the free, unprefixed variant requires approval.** If you only need RP-capable Claude, skip the application and pay-as-you-go with the `hapuppy/` prefix.
 
 ## Prerequisites
 
@@ -25,8 +29,8 @@ Before applying, you must:
 
 1. Have a **verified account** — see [Verify Account](/guides/verify-account).
 2. Understand the variant policy:
-   - Unprefixed Claude is **free to use** after approval.
-   - `hapuppy/`-prefixed Claude is **paid** and draws from your credit pack at the multipliers shown on the [Models](https://hapuppy.com/en/dashboard/models) page.
+   - Unprefixed Claude is **free to use** after approval, but **does not allow RP**.
+   - `hapuppy/`-prefixed Claude is **paid** (no application required) and draws from your credit pack at the multipliers shown on the [Models](https://hapuppy.com/en/dashboard/models) page.
 3. Have a brief description of your intended use case ready.
 
 ## How to apply
@@ -40,12 +44,11 @@ Before applying, you must:
 <Step title="Describe your use case">
   Provide a short summary (a few sentences) of:
 
-  - What you're building (production app, research, agent, internal tool, role-play companion, etc.)
-  - Whether you intend to use the `hapuppy/` RP variants
+  - What you're building (production app, research, agent, internal tool, etc.)
   - Rough expected request volume
 
   <Note>
-    You do not need to share proprietary details. A general description is sufficient — for example, "code review agent for an internal team, ~5K requests/day" or "interactive fiction prototype using hapuppy/claude-sonnet-4-6".
+    You do not need to share proprietary details. A general description is sufficient — for example, "code review agent for an internal team, ~5K requests/day".
   </Note>
 </Step>
 
@@ -58,16 +61,16 @@ Before applying, you must:
 </Step>
 
 <Step title="Start using Claude">
-  Once the page shows your application as approved, Claude model IDs start working immediately — no client-side change required.
+  Once the page shows your application as approved, unprefixed Claude model IDs start working immediately — no client-side change required.
 
   ```python Python
-  # Unprefixed — free Claude access after approval
+  # Unprefixed — free Claude access after approval (RP not supported)
   resp = client.chat.completions.create(
       model="claude-opus-4-7",
       messages=[{"role": "user", "content": "Hello!"}]
   )
 
-  # hapuppy/ prefix — paid, RP-enabled variant
+  # hapuppy/ prefix — no application required, paid, RP-enabled
   resp = client.chat.completions.create(
       model="hapuppy/claude-opus-4-7",
       messages=[{"role": "user", "content": "Hello!"}]
@@ -80,6 +83,8 @@ Before applying, you must:
 ## What if I'm rejected?
 
 A rejection just means the manual review didn't pass this time. There's no cooldown — you can **submit a new application right away** from the same [Claude Apply](https://hapuppy.com/zh/dashboard/claude-apply) page.
+
+Meanwhile, you can still use Claude through the **`hapuppy/`** prefix — it doesn't require an application, just top up credits and go.
 
 If you're unsure why an application keeps getting rejected, contact [support@hapuppy.com](mailto:support@hapuppy.com) with your account email.
 

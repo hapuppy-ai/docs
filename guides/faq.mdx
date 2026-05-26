@@ -116,16 +116,19 @@ description: "Frequently asked questions about Hapuppy."
 </Accordion>
 
 <Accordion title="How do I get access to Claude models?">
-  All Claude models on Hapuppy (both unprefixed like `claude-opus-4-7` and the `hapuppy/`-prefixed RP-enabled variants) are gated behind a single manual application. Submit it from **Dashboard → [Claude Apply](https://hapuppy.com/zh/dashboard/claude-apply)** after you've verified your account.
+  It depends on which variant you want:
 
-  Reviews are done by hand — there's no email notification, so check the application page in the dashboard for the status update. See [Claude Apply](/guides/claude-apply) for what to write and how the two variants differ.
+  - **Unprefixed Claude** (e.g. `claude-opus-4-7`) — free after a manual application at **Dashboard → [Claude Apply](https://hapuppy.com/zh/dashboard/claude-apply)**. Does **not** support role-play (RP).
+  - **`hapuppy/`-prefixed Claude** (e.g. `hapuppy/claude-opus-4-7`) — **no application required**, paid pay-as-you-go, RP-enabled.
+
+  Reviews for the unprefixed variant are done by hand — there's no email notification, so check the application page in the dashboard for the status update. See [Claude Apply](/guides/claude-apply) for details.
 </Accordion>
 
 <Accordion title="Why am I getting a 403 / model_access_denied error?">
   The model exists but your account isn't entitled to call it. Common reasons:
 
   - **Account not verified** — bind your Discord account first, see [Verify Account](/guides/verify-account)
-  - **No Claude Apply approval** — any Claude model (prefixed or unprefixed) requires the application step, see [Claude Apply](/guides/claude-apply)
+  - **No Claude Apply approval** — required only for **unprefixed** Claude models, see [Claude Apply](/guides/claude-apply)
   - **Missing credits for paid variants** — `hapuppy/`-prefixed Claude models are paid; top up from the [Credits Packs](https://hapuppy.com/en/dashboard/billing) page if your vault is empty
 
   Check the error message body for the exact reason.
