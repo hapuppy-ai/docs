@@ -114,7 +114,7 @@ You'd get roughly **1,800 calls** from the same vault.
 
 ## Rate Limiting
 
-All API keys share a single rate limit: **100 requests per minute (RPM)**. Exceeding this returns a `429` error with:
+Rate limits depend on your plan: the **Free tier is 10 RPM**, while all **paid tiers get 100 RPM (requests per minute)**. Exceeding your limit returns a `429` error with:
 
 ```json
 {

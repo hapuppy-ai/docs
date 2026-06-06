@@ -65,7 +65,7 @@ When a request fails, Hapuppy returns a JSON error response:
 }
 ```
 
-**Fix:** All plans have a 100 RPM (requests per minute) rate limit. Reduce your request frequency or add retry logic with exponential backoff.
+**Fix:** The Free tier is limited to 10 RPM (requests per minute); paid tiers get 100 RPM. Reduce your request frequency or add retry logic with exponential backoff.
 
 ### 429 — Credits Exhausted
 

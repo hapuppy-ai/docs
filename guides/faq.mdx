@@ -67,7 +67,7 @@ description: "Frequently asked questions about Hapuppy."
 </Accordion>
 
 <Accordion title="What is the rate limit?">
-  All plans have a rate limit of 100 requests per minute (RPM). If you exceed this limit, you'll receive a `429` error.
+  The Free tier is limited to 10 requests per minute (RPM); all paid tiers get 100 RPM. If you exceed your limit, you'll receive a `429` error.
 </Accordion>
 
 <Accordion title="Does Hapuppy support streaming?">
@@ -137,7 +137,7 @@ description: "Frequently asked questions about Hapuppy."
 <Accordion title="Why am I getting 429 errors?">
   Two distinct causes — the error code tells you which:
 
-  - `rate_limit_exceeded` — you've sent more than 100 requests in the last minute. Add exponential backoff to your retry logic.
+  - `rate_limit_exceeded` — you've exceeded your plan's per-minute request limit (10 RPM on Free, 100 RPM on paid tiers). Add exponential backoff to your retry logic.
   - `insufficient_credits` — free-tier allowance is used up, or your vault is empty. Free users wait for the next day's reset, paid users purchase another credit pack.
 </Accordion>
 
