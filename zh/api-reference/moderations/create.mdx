@@ -1,0 +1,157 @@
+---
+title: "创建审核"
+description: "针对各安全类别对文本进行潜在有害内容的分类。"
+---
+
+```
+POST https://beta.hapuppy.com/v1/moderations
+```
+
+检查文本是否包含潜在有害内容(仇恨、骚扰、自残、色情、暴力等)。在将用户生成的内容转发给对话模型、发布到信息流或存入公开场景之前,请先调用本接口。
+
+## 请求体
+
+<ParamField body="input" type="string | string[]" required>
+  待分类的文本。可传入单个字符串,或传入数组以批量分类多段文本。
+</ParamField>
+
+<ParamField body="model" type="string" default="omni-moderation-latest">
+  审核模型。默认使用最新的多语言模型。其他可选项包括 `text-moderation-latest` 和 `text-moderation-stable`。
+</ParamField>
+
+## 响应
+
+<ResponseField name="id" type="string">本次审核请求的唯一标识符。</ResponseField>
+<ResponseField name="model" type="string">执行本次分类的模型。</ResponseField>
+<ResponseField name="results" type="array">
+  每条输入对应一个结果对象。
+
+  <Expandable title="Result object">
+    <ResponseField name="flagged" type="boolean">若**任一**类别被判定违规,则为 `true`。</ResponseField>
+    <ResponseField name="categories" type="object">各类别的布尔标记(例如 `hate`、`harassment`、`self-harm`、`sexual`、`violence`,以及 `hate/threatening` 等子类别)。</ResponseField>
+    <ResponseField name="category_scores" type="object">各类别的置信度分数,取值介于 0 与 1 之间。</ResponseField>
+  </Expandable>
+</ResponseField>
+
+## 示例
+
+### 单条输入
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://beta.hapuppy.com/v1"
+)
+
+resp = client.moderations.create(
+    model="omni-moderation-latest",
+    input="I want to learn about chemistry."
+)
+
+result = resp.results[0]
+if result.flagged:
+    print("Content flagged.")
+else:
+    print("OK to proceed.")
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://beta.hapuppy.com/v1",
+});
+
+const resp = await client.moderations.create({
+  model: "omni-moderation-latest",
+  input: "I want to learn about chemistry.",
+});
+
+console.log(resp.results[0].flagged ? "flagged" : "ok");
+```
+
+```bash cURL
+curl https://beta.hapuppy.com/v1/moderations \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "omni-moderation-latest",
+    "input": "I want to learn about chemistry."
+  }'
+```
+
+</CodeGroup>
+
+### 批量输入
+
+```python Python
+resp = client.moderations.create(
+    model="omni-moderation-latest",
+    input=[
+        "Hello, how are you?",
+        "Some questionable text here.",
+        "Plain factual statement."
+    ]
+)
+
+for i, r in enumerate(resp.results):
+    print(f"[{i}] flagged={r.flagged}")
+```
+
+## 响应示例
+
+```json
+{
+  "id": "modr-abc123",
+  "model": "omni-moderation-latest",
+  "results": [
+    {
+      "flagged": false,
+      "categories": {
+        "hate": false,
+        "hate/threatening": false,
+        "harassment": false,
+        "harassment/threatening": false,
+        "self-harm": false,
+        "self-harm/intent": false,
+        "self-harm/instructions": false,
+        "sexual": false,
+        "sexual/minors": false,
+        "violence": false,
+        "violence/graphic": false
+      },
+      "category_scores": {
+        "hate": 0.00001,
+        "harassment": 0.00003,
+        "self-harm": 0.00000,
+        "sexual": 0.00002,
+        "violence": 0.00001
+      }
+    }
+  ]
+}
+```
+
+## 基于阈值的过滤
+
+默认的 `flagged` 布尔值适用于大多数场景。如果你需要更严格或更宽松的策略,可以将 `category_scores` 与自定义阈值进行比较。
+
+```python Python
+resp = client.moderations.create(
+    model="omni-moderation-latest",
+    input=user_text
+)
+
+scores = resp.results[0].category_scores
+if scores.violence > 0.3 or scores.harassment > 0.3:
+    raise ValueError("Content too risky to forward")
+```
+
+<Info>
+  在大多数计划中,审核是免费或近乎免费的(参见 [积分与定价](https://hapuppy.com/en/dashboard/models))。在将每一条用户提交的提示词转发给对话模型之前都先运行一次审核 —— 这是你能加上的成本最低的安全防线。
+</Info>

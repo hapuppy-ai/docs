@@ -1,0 +1,150 @@
+---
+title: "语音合成(TTS)"
+description: "将文本转换为语音音频。"
+---
+
+```
+POST https://beta.hapuppy.com/v1/audio/speech
+```
+
+根据文本输入合成自然流畅的语音。适用于语音助手、旁白配音、无障碍功能以及音频内容生成。以所选格式返回原始音频字节。
+
+## 请求体
+
+<ParamField body="model" type="string" required>
+  TTS 模型标识符。可选值:`tts-1`(更低延迟)、`tts-1-hd`(更高质量),或更新的模型,如 `gpt-4o-mini-tts`。
+</ParamField>
+
+<ParamField body="input" type="string" required>
+  要合成的文本。每次请求最多 4096 字符。
+</ParamField>
+
+<ParamField body="voice" type="string" required>
+  语音预设。支持的取值:`alloy`、`echo`、`fable`、`onyx`、`nova`、`shimmer`、`coral`、`sage`。每种都有独特的音色 —— 不妨多试几种,为你的应用找到最合适的那一个。
+</ParamField>
+
+<ParamField body="response_format" type="string" default="mp3">
+  音频格式。可选值:`mp3`、`opus`、`aac`、`flac`、`wav`、`pcm`。低延迟流式播放用 `opus`,无损归档用 `flac`/`wav`,常规用途用 `mp3`。
+</ParamField>
+
+<ParamField body="speed" type="number" default="1.0">
+  播放速度倍率。范围 `0.25`(最慢)至 `4.0`(最快)。
+</ParamField>
+
+## 响应
+
+返回二进制音频数据,`Content-Type` 与 `response_format` 相匹配(例如 mp3 对应 `audio/mpeg`)。
+
+## 示例
+
+### 保存到文件
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://beta.hapuppy.com/v1"
+)
+
+response = client.audio.speech.create(
+    model="tts-1-hd",
+    voice="nova",
+    input="Welcome to Hapuppy. One API key, every AI model."
+)
+
+response.stream_to_file("welcome.mp3")
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+import fs from "fs";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://beta.hapuppy.com/v1",
+});
+
+const response = await client.audio.speech.create({
+  model: "tts-1-hd",
+  voice: "nova",
+  input: "Welcome to Hapuppy. One API key, every AI model.",
+});
+
+const buffer = Buffer.from(await response.arrayBuffer());
+fs.writeFileSync("welcome.mp3", buffer);
+```
+
+```bash cURL
+curl https://beta.hapuppy.com/v1/audio/speech \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "tts-1-hd",
+    "voice": "nova",
+    "input": "Welcome to Hapuppy. One API key, every AI model."
+  }' \
+  --output welcome.mp3
+```
+
+</CodeGroup>
+
+### 流式传输到浏览器
+
+如需实时播放,请求 `opus` 或 `mp3` 格式,并将响应流直接接入音频元素。
+
+```python Python
+# Server-side: stream chunks to the client
+from fastapi.responses import StreamingResponse
+
+@app.get("/tts")
+def tts(text: str):
+    audio = client.audio.speech.create(
+        model="tts-1",
+        voice="alloy",
+        input=text,
+        response_format="opus"
+    )
+    return StreamingResponse(audio.iter_bytes(), media_type="audio/ogg")
+```
+
+### 为旁白调整语速
+
+```python Python
+# Slower for narration / accessibility
+response = client.audio.speech.create(
+    model="tts-1-hd",
+    voice="onyx",
+    input="Chapter one. The fog rolled in off the bay...",
+    speed=0.9
+)
+```
+
+## 人声目录
+
+| 人声 | 特点 |
+|---|---|
+| `alloy` | 中性、均衡 —— 适合作为默认 |
+| `echo` | 温暖、对话感 |
+| `fable` | 讲述者风格,富有表现力 |
+| `onyx` | 低沉、权威 |
+| `nova` | 明亮、有活力 |
+| `shimmer` | 柔和、亲切 |
+| `coral` | 平静、专业 |
+| `sage` | 成熟、沉思 |
+
+## 格式选择指南
+
+| 使用场景 | 格式 |
+|---|---|
+| 常规播放 | `mp3` |
+| 低延迟流式播放 | `opus` |
+| 无损归档 | `flac` 或 `wav` |
+| Apple 生态 | `aac` |
+| 自定义 DSP / 后续处理 | `pcm`(原始 24kHz 单声道) |
+
+<Info>
+  TTS 按输入的每个字符收取**固定积分费用**,而非按 token 计费。`tts-1-hd` 比 `tts-1` 消耗更多积分。详见 [hapuppy.com/credits](https://hapuppy.com/en/dashboard/models) 的积分表。
+</Info>

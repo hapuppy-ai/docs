@@ -1,0 +1,144 @@
+---
+title: "列出模型"
+description: "列出你的 API 密钥可访问的全部模型。"
+---
+
+```
+GET https://beta.hapuppy.com/v1/models
+```
+
+返回 Hapuppy 提供的完整模型列表。可通过本端点以编程方式发现模型 ID、归属方与创建时间戳 —— 适用于构建模型选择器、按提供方筛选,或检测新增的模型。
+
+## 身份验证
+
+需要在 `Authorization` 请求头中提供有效的 `sk-hapuppy-*` API 密钥。参见[身份验证](/zh/guides/authentication)。
+
+## 响应
+
+<ResponseField name="object" type="string">
+  恒为 `list`。
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  模型对象数组。
+
+  <Expandable title="Model object">
+    <ResponseField name="id" type="string">
+      模型标识符(例如 `claude-sonnet-4-20250514`)。在其他端点的 `model` 参数中使用该值。
+    </ResponseField>
+    <ResponseField name="object" type="string">
+      恒为 `model`。
+    </ResponseField>
+    <ResponseField name="created" type="integer">
+      该模型在 Hapuppy 上首次可用时的 Unix 时间戳。
+    </ResponseField>
+    <ResponseField name="owned_by" type="string">
+      拥有该模型的上游提供方(见下表)。
+    </ResponseField>
+  </Expandable>
+</ResponseField>
+
+## 示例
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://beta.hapuppy.com/v1"
+)
+
+models = client.models.list()
+
+for m in models.data:
+    print(f"{m.id} — {m.owned_by}")
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://beta.hapuppy.com/v1",
+});
+
+const models = await client.models.list();
+
+for (const m of models.data) {
+  console.log(`${m.id} — ${m.owned_by}`);
+}
+```
+
+```bash cURL
+curl https://beta.hapuppy.com/v1/models \
+  -H "Authorization: Bearer sk-hapuppy-xxx"
+```
+
+</CodeGroup>
+
+### 按提供方分组
+
+```python Python
+from collections import defaultdict
+from openai import OpenAI
+
+client = OpenAI(api_key="sk-hapuppy-xxx", base_url="https://beta.hapuppy.com/v1")
+
+grouped = defaultdict(list)
+for m in client.models.list().data:
+    grouped[m.owned_by].append(m.id)
+
+for provider, ids in sorted(grouped.items()):
+    print(f"\n{provider}:")
+    for mid in sorted(ids):
+        print(f"  - {mid}")
+```
+
+## 响应示例
+
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "id": "claude-sonnet-4-20250514",
+      "object": "model",
+      "created": 1715630400,
+      "owned_by": "anthropic"
+    },
+    {
+      "id": "gpt-4o",
+      "object": "model",
+      "created": 1715367049,
+      "owned_by": "openai"
+    },
+    {
+      "id": "gemini-2.5-pro-preview-05-06",
+      "object": "model",
+      "created": 1714694400,
+      "owned_by": "google"
+    }
+  ]
+}
+```
+
+## 常见的 `owned_by` 取值
+
+| `owned_by` | 提供方 | 示例模型 |
+|---|---|---|
+| `anthropic` | Anthropic | Claude Opus、Claude Sonnet、Claude Haiku |
+| `openai` | OpenAI | GPT-5、GPT-4o、GPT-4o-mini、o1、o3 |
+| `google` | Google | Gemini Pro、Gemini Flash |
+| `deepseek` | DeepSeek | DeepSeek Chat、DeepSeek Coder |
+| `zhipu` | 智谱 AI | GLM |
+| `moonshot` | Moonshot | Kimi |
+| `qwen` | 阿里巴巴 | Qwen |
+| `meta` | Meta | Llama |
+| `perplexity` | Perplexity | Sonar |
+| `other` | 其他提供方 | — |
+
+<Info>
+  完整的精选模型目录(含能力、上下文窗口与积分倍率)位于 [Models](https://hapuppy.com/en/dashboard/models) 页面。本端点是以编程方式访问时的权威来源。
+</Info>

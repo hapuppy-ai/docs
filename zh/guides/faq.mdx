@@ -1,0 +1,154 @@
+---
+title: "常见问题"
+description: "关于 Hapuppy 的常见问题。"
+---
+
+<AccordionGroup>
+
+<Accordion title="什么是 Hapuppy?">
+  Hapuppy 是一个 AI API 网关,让你通过单个 API 密钥访问 100+ 个 AI 模型(Claude、GPT、Gemini、DeepSeek、Llama、GLM 等)。它与 OpenAI API 格式完全兼容,因此可作为直接替代品,用于任何支持 OpenAI 的工具或 SDK。
+</Accordion>
+
+<Accordion title="Hapuppy 与直接使用各家厂商的 API 有何不同?">
+  - **一个 API 密钥**通用于所有模型 —— 无需为每家厂商分别管理账户和密钥
+  - **一次性定价** —— 购买一次永不过期的积分包,而非按 token 计费
+  - **兼容 OpenAI** —— 适用于任何支持 OpenAI 格式的工具或 SDK
+  - **轻松切换模型** —— 修改 `model` 参数即可即时尝试不同的模型
+</Accordion>
+
+<Accordion title="支持哪些模型?">
+  Hapuppy 支持来自多家厂商的 100+ 个模型,包括 Anthropic(Claude)、OpenAI(GPT)、Google(Gemini)、DeepSeek、Meta(Llama)与智谱(GLM)。请查看 [Models](https://hapuppy.com/en/dashboard/models) 页面,获取附有最新积分倍率的精选目录,或以编程方式调用[列出模型](/zh/api-reference/models/list)。
+</Accordion>
+
+<Accordion title="支持哪些 API 端点?">
+  Hapuppy 在各模态上都对齐了 OpenAI 的 API 接口:
+
+  - **对话** —— [创建对话补全](/zh/api-reference/chat/completions),支持流式输出、函数调用与视觉
+  - **嵌入** —— [创建嵌入](/zh/api-reference/embeddings/create),用于语义搜索与 RAG
+  - **图像** —— [生成](/zh/api-reference/images/generations)与[编辑](/zh/api-reference/images/edits)(gpt-image、Flux、Midjourney、Recraft 等)
+  - **音频** —— [文本转语音](/zh/api-reference/audio/speech)、[转录](/zh/api-reference/audio/transcriptions)、[翻译](/zh/api-reference/audio/translations)
+  - **审核** —— [创建审核](/zh/api-reference/moderations/create),用于内容安全
+  - **模型** —— [列出](/zh/api-reference/models/list)与[获取](/zh/api-reference/models/get),用于模型发现
+</Accordion>
+
+<Accordion title="Hapuppy 兼容 OpenAI SDK 吗?">
+  兼容。Hapuppy 是 OpenAI API 的直接替代品。只需将你的 base URL 设为 `https://beta.hapuppy.com/v1`,并使用你的 Hapuppy API 密钥即可。Python 与 TypeScript 版的 OpenAI SDK 均完全支持。
+</Accordion>
+
+<Accordion title="Hapuppy 能与哪些工具配合使用?">
+  Hapuppy 可与任何支持 OpenAI API 格式的工具配合使用,包括:
+  - **Claude Code** —— Anthropic 的 CLI 工具
+  - **Cursor** —— AI 代码编辑器
+  - **Cline** —— VS Code AI 助手
+  - **Continue** —— 开源 AI 代码助手
+
+  设置说明请参阅[集成](/zh/guides/integrations)页面。
+</Accordion>
+
+<Accordion title="定价是如何运作的?">
+  Hapuppy 提供一个免费套餐,外加三个一次性积分包:
+  - **Free** —— 注册即送 200K 积分(一次性),可用基础模型
+  - **Lite** —— 一次性 $9.99,30M 积分,可用全部 100+ 个模型
+  - **Standard** —— 一次性 $19.99,120M 积分,可用全部模型(最受欢迎)
+  - **Pro** —— 一次性 $36.99,240M 积分,可用全部模型 + 优先路由
+
+  购买的积分会进入你的**金库**,永不过期。对话模型按 `prompt_tokens × input_multiplier + completion_tokens × output_multiplier` 计费;固定费用端点(图像、文本转语音、转录、嵌入、审核)则每次调用扣除固定额度。计费公式与当前倍率请参阅[积分与定价](/zh/guides/credits)。
+</Accordion>
+
+<Accordion title="积分会过期吗?">
+  你**金库**中的积分(通过一次性积分包购买)永不过期 —— 可按自己的节奏使用。免费套餐的积分是注册时的一次性赠送;一旦用完便不再补充。
+</Accordion>
+
+<Accordion title="积分用完后会怎样?">
+  API 请求会返回 `429` 错误。
+
+  - **免费套餐**:你注册赠送的 200K 积分已用完。购买任意积分包即可为金库充值。
+  - **付费用户**:从[积分包(Credits Packs)](https://hapuppy.com/en/dashboard/billing)页面再购买一个积分包 —— 新购买的积分会叠加进你的金库。
+</Accordion>
+
+<Accordion title="速率限制是多少?">
+  免费套餐限制为每分钟 10 次请求(RPM);所有付费套餐为 100 RPM。如果超出限制,你会收到 `429` 错误。
+</Accordion>
+
+<Accordion title="Hapuppy 支持流式输出吗?">
+  支持。在请求中设置 `stream: true`,即可在 token 生成时逐步接收。示例请参阅[对话补全](/zh/api-reference/chat/completions#streaming)文档。
+</Accordion>
+
+<Accordion title="Hapuppy 支持函数调用吗?">
+  支持。对于原生支持函数调用(工具使用)的模型,均可使用,包括 Claude Sonnet/Opus、GPT-4o 与 Gemini Pro。示例请参阅[对话补全](/zh/api-reference/chat/completions#function-calling)。
+</Accordion>
+
+<Accordion title="Hapuppy 支持视觉 / 图像输入吗?">
+  支持。对于支持多模态输入的模型(Claude Sonnet/Opus、GPT-4o、Gemini),你可以在消息中发送图像。详情请参阅[对话补全](/zh/api-reference/chat/completions#vision)。
+</Accordion>
+
+<Accordion title="如何获取 API 密钥?">
+  1. 在 [hapuppy.com/register](https://hapuppy.com/register) 注册 —— 你将以免费套餐起步,并获得 200K 注册赠送积分
+  2. 通过绑定 Discord 账户验证你的账户 —— 参见[验证账户](/zh/guides/verify-account)
+  3.(可选)从[积分包(Credits Packs)](https://hapuppy.com/en/dashboard/billing)页面购买一个一次性积分包,以解锁全部 100+ 个模型
+  4. 在控制台中生成 API 密钥
+
+  分步说明请参阅[快速开始](/zh/quickstart)指南。
+</Accordion>
+
+<Accordion title="支持哪些支付方式?">
+  支付通过 Creem 处理。支持信用卡 / 借记卡。
+</Accordion>
+
+<Accordion title="是否有订阅或周期性扣费?">
+  没有。Hapuppy 采用一次性积分包 —— 你只需付费一次,积分便会进入你的金库并永不过期。没有任何需要取消的订阅。
+</Accordion>
+
+<Accordion title="可以退款吗?">
+  可以,在购买后 7 天内、且你尚未消耗积分包中较大比例的前提下可退款。请联系 [support@hapuppy.com](mailto:support@hapuppy.com) 并提供你的订单详情。
+</Accordion>
+
+<Accordion title="Prompt 缓存是如何运作的?">
+  Anthropic Claude 模型支持自动 Prompt 缓存。重复的系统提示与大段稳定的上下文,会在首次请求后在上游侧被缓存 —— 后续使用相同前缀的调用,在这些被缓存的 token 上可节省 **约 90%**。
+
+  Claude Code 那段 40K token 的系统提示就是典型例子:通过 Hapuppy 向 Claude 发出的首次请求需支付完整的 token 费用;而缓存窗口内的每一次后续请求仅需支付其中一小部分。你无需改动客户端代码 —— 缓存是透明的。
+
+  其他厂商可能也有缓存;具体请查阅相应厂商的文档。
+</Accordion>
+
+<Accordion title="如何验证我的账户?">
+  Hapuppy 的验证方式是在我们的官方服务器中将你的账户与一个 Discord 账户绑定。完整流程 —— 包括控制台横幅、邀请链接以及 1:1 绑定规则 —— 都在[验证账户](/zh/guides/verify-account)中。没有完成该绑定,即使是免费套餐,API 也会拒绝你的请求。
+</Accordion>
+
+<Accordion title="如何获得 Claude 模型的访问权限?">
+  这取决于你想要哪种形态:
+
+  - **无前缀 Claude**(如 `claude-opus-4-7`)—— 在 **控制台 → [Claude 申请](https://hapuppy.com/zh/dashboard/claude-apply)** 完成人工申请后免费使用。**不支持**角色扮演(RP)。
+  - **`hapuppy/` 前缀的 Claude**(如 `hapuppy/claude-opus-4-7`)—— **无需申请**,按量付费,启用 RP。
+
+  无前缀形态的审核为人工进行 —— 没有邮件通知,因此请到控制台中的申请页面查看状态更新。详情请参阅 [Claude 申请](/zh/guides/claude-apply)。
+</Accordion>
+
+<Accordion title="为什么我会收到 403 / model_access_denied 错误?">
+  该模型存在,但你的账户无权调用它。常见原因:
+
+  - **账户未验证** —— 请先绑定你的 Discord 账户,参见[验证账户](/zh/guides/verify-account)
+  - **未通过 Claude 申请审核** —— 仅**无前缀**的 Claude 模型需要,参见 [Claude 申请](/zh/guides/claude-apply)
+  - **付费形态积分不足** —— `hapuppy/` 前缀的 Claude 模型为付费;如果你的金库已空,请从[积分包(Credits Packs)](https://hapuppy.com/en/dashboard/billing)页面充值
+
+  请查看错误消息正文,了解确切原因。
+</Accordion>
+
+<Accordion title="为什么我会收到 429 错误?">
+  有两种不同的原因 —— 错误码会告诉你是哪一种:
+
+  - `rate_limit_exceeded` —— 你已超出套餐的每分钟请求限制(免费套餐 10 RPM,付费套餐 100 RPM)。请在重试逻辑中加入指数退避。
+  - `insufficient_credits` —— 免费套餐额度已用完,或你的金库已空。免费用户需等待次日重置,付费用户则需再购买一个积分包。
+</Accordion>
+
+<Accordion title="在哪里报告 Bug 或反馈意见?">
+  - 账户或账单问题请发邮件至 [support@hapuppy.com](mailto:support@hapuppy.com)
+  - 加入我们的 [Discord](https://discord.gg/YWayJmZKCu),与团队和其他用户交流
+  - 报告 API 问题时,请附上你的请求 ID(来自响应头 `x-request-id` 或错误消息正文)
+</Accordion>
+
+<Accordion title="如何联系支持团队?">
+  发邮件至 [support@hapuppy.com](mailto:support@hapuppy.com),或加入我们的 [Discord](https://discord.gg/YWayJmZKCu)。
+</Accordion>
+
+</AccordionGroup>

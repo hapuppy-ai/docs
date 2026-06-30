@@ -1,0 +1,210 @@
+---
+title: "创建嵌入"
+description: "从文本生成向量嵌入,用于语义搜索、聚类和检索增强生成(RAG)。"
+---
+
+```
+POST https://beta.hapuppy.com/v1/embeddings
+```
+
+将文本转换为定长向量,以捕捉其语义含义。嵌入可用于语义搜索、文档聚类、推荐系统、RAG 流程以及相似度比较。
+
+## 请求体
+
+<ParamField body="model" type="string" required>
+  要使用的嵌入模型,例如 `text-embedding-3-small`、`text-embedding-3-large`、`text-embedding-ada-002`。
+</ParamField>
+
+<ParamField body="input" type="string | string[]" required>
+  要嵌入的文本。传入单个字符串可得到一个向量,或传入字符串数组,在单次请求中批量处理至多 2048 条输入。每条输入受模型 token 上限的限制(通常为 8192 个 token)。
+</ParamField>
+
+<ParamField body="encoding_format" type="string" default="float">
+  输出编码方式。`float` 返回标准 JSON 浮点数;`base64` 返回 base64 编码的二进制字符串(载荷更小,适合大批量场景)。
+</ParamField>
+
+<ParamField body="dimensions" type="integer">
+  返回的维度数。仅 `text-embedding-3-*` 系列模型支持。默认为模型的原生维度(`text-embedding-3-small` 为 1536,`text-embedding-3-large` 为 3072)。
+</ParamField>
+
+<ParamField body="user" type="string">
+  可选的终端用户稳定标识符,用于滥用检测。
+</ParamField>
+
+## 响应
+
+<ResponseField name="object" type="string">
+  始终为 `list`。
+</ResponseField>
+
+<ResponseField name="data" type="array">
+  由嵌入对象组成的数组,每条输入对应一个。
+
+  <Expandable title="Embedding object">
+    <ResponseField name="object" type="string">始终为 `embedding`。</ResponseField>
+    <ResponseField name="index" type="integer">该嵌入在输入数组中的位置。</ResponseField>
+    <ResponseField name="embedding" type="number[] | string">向量,根据 `encoding_format` 表示为浮点数数组或 base64 字符串。</ResponseField>
+  </Expandable>
+</ResponseField>
+
+<ResponseField name="model" type="string">用于生成这些嵌入的模型。</ResponseField>
+
+<ResponseField name="usage" type="object">
+  <Expandable title="properties">
+    <ResponseField name="prompt_tokens" type="integer">输入中的 token 总数。</ResponseField>
+    <ResponseField name="total_tokens" type="integer">对于本端点,与 `prompt_tokens` 相同。</ResponseField>
+  </Expandable>
+</ResponseField>
+
+## 示例
+
+### 单条输入
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://beta.hapuppy.com/v1"
+)
+
+resp = client.embeddings.create(
+    model="text-embedding-3-small",
+    input="A vector embedding captures semantic meaning."
+)
+
+vector = resp.data[0].embedding
+print(f"Dimensions: {len(vector)}")
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://beta.hapuppy.com/v1",
+});
+
+const resp = await client.embeddings.create({
+  model: "text-embedding-3-small",
+  input: "A vector embedding captures semantic meaning.",
+});
+
+console.log(`Dimensions: ${resp.data[0].embedding.length}`);
+```
+
+```bash cURL
+curl https://beta.hapuppy.com/v1/embeddings \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "text-embedding-3-small",
+    "input": "A vector embedding captures semantic meaning."
+  }'
+```
+
+</CodeGroup>
+
+### 批量输入
+
+<CodeGroup>
+
+```python Python
+docs = [
+    "Cats are small carnivorous mammals.",
+    "The capital of France is Paris.",
+    "Pandas is a Python data analysis library."
+]
+
+resp = client.embeddings.create(
+    model="text-embedding-3-small",
+    input=docs
+)
+
+for i, item in enumerate(resp.data):
+    print(f"Doc {i}: {len(item.embedding)}-d vector")
+```
+
+```typescript TypeScript
+const docs = [
+  "Cats are small carnivorous mammals.",
+  "The capital of France is Paris.",
+  "Pandas is a Python data analysis library.",
+];
+
+const resp = await client.embeddings.create({
+  model: "text-embedding-3-small",
+  input: docs,
+});
+
+resp.data.forEach((item, i) => {
+  console.log(`Doc ${i}: ${item.embedding.length}-d vector`);
+});
+```
+
+</CodeGroup>
+
+### 降低维度
+
+当你需要更小的向量以节省向量数据库的存储成本时,这一功能很有用。
+
+```python Python
+resp = client.embeddings.create(
+    model="text-embedding-3-large",
+    input="Reduce my dimensions.",
+    dimensions=256
+)
+
+print(len(resp.data[0].embedding))  # 256
+```
+
+## 响应示例
+
+```json
+{
+  "object": "list",
+  "data": [
+    {
+      "object": "embedding",
+      "index": 0,
+      "embedding": [-0.0067, 0.0143, ..., -0.0021]
+    }
+  ],
+  "model": "text-embedding-3-small",
+  "usage": {
+    "prompt_tokens": 8,
+    "total_tokens": 8
+  }
+}
+```
+
+## 应用场景
+
+<CardGroup cols={2}>
+  <Card title="语义搜索" icon="magnifying-glass">
+    对文档和查询进行嵌入,再按余弦相似度排序。
+  </Card>
+  <Card title="RAG" icon="brain">
+    在发送给对话模型前,先检索出相关的上下文片段。
+  </Card>
+  <Card title="聚类" icon="diagram-project">
+    在向量上使用 K-means 或 HDBSCAN 将相似文档归为一组。
+  </Card>
+  <Card title="去重" icon="copy">
+    通过余弦相似度阈值检测近似重复的内容。
+  </Card>
+</CardGroup>
+
+## 模型对比
+
+| 模型 | 原生维度 | 备注 |
+|---|---|---|
+| `text-embedding-3-small` | 1536 | 默认选择 —— 性价比最佳。 |
+| `text-embedding-3-large` | 3072 | 在检索基准测试上准确率更高。支持 `dimensions` 参数进行截断。 |
+| `text-embedding-ada-002` | 1536 | 旧版模型。新项目请使用 `-3-*` 系列模型。 |
+
+<Info>
+  对于相同的输入 + 模型,嵌入结果是确定性的。请在你的应用或向量存储中缓存它们,以避免重复计算。
+</Info>

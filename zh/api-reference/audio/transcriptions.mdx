@@ -1,0 +1,193 @@
+---
+title: "创建转录"
+description: "将音频转录为源语言的文本。"
+---
+
+```
+POST https://beta.hapuppy.com/v1/audio/transcriptions
+```
+
+将音频文件转换为与音频**相同语言**的文本。适用于播客转录、会议记录、语音留言处理、语音指令识别以及无障碍字幕等场景。
+
+如需将音频翻译为英文,请改用[创建翻译](/zh/api-reference/audio/translations)。
+
+此端点接受 `multipart/form-data`。
+
+## 请求体(multipart/form-data)
+
+<ParamField body="file" type="file" required>
+  音频文件。支持的格式:`mp3`、`mp4`、`mpeg`、`mpga`、`m4a`、`wav`、`webm`、`flac`、`ogg`。最大文件大小:25 MB。
+</ParamField>
+
+<ParamField body="model" type="string" required>
+  转录模型。可选值:`whisper-1`、`gpt-4o-transcribe`、`gpt-4o-mini-transcribe`。
+</ParamField>
+
+<ParamField body="language" type="string">
+  ISO-639-1 语言代码(例如 `en`、`zh`、`es`、`ja`)。已知语言时指定可提升准确率并降低延迟。省略时将自动检测。
+</ParamField>
+
+<ParamField body="prompt" type="string">
+  可选文本,用于引导模型的风格或提供上下文 —— 例如专有名词、缩写,或上一段转录的片段以保持一致性。
+</ParamField>
+
+<ParamField body="response_format" type="string" default="json">
+  输出格式:`json`、`text`、`srt`、`verbose_json`、`vtt`。字幕文件请用 `srt` 或 `vtt`,词级时间戳请用 `verbose_json`。
+</ParamField>
+
+<ParamField body="temperature" type="number" default="0">
+  采样温度(0–1)。值越高,变化越大;0 时最确定。
+</ParamField>
+
+<ParamField body="timestamp_granularities" type="string[]">
+  当 `response_format=verbose_json` 时,可在 `segment` 和/或 `word` 级别包含时间戳。
+</ParamField>
+
+## 响应
+
+当 `response_format=json`(默认)时:
+
+<ResponseField name="text" type="string">转录后的文本。</ResponseField>
+
+当 `response_format=verbose_json` 时:额外包含 `language`、`duration`,以及一个带起止时间戳的 `segments` 数组(可选包含 `words`)。
+
+## 示例
+
+### 简单转录
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://beta.hapuppy.com/v1"
+)
+
+with open("meeting.mp3", "rb") as audio:
+    transcript = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=audio
+    )
+
+print(transcript.text)
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+import fs from "fs";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://beta.hapuppy.com/v1",
+});
+
+const transcript = await client.audio.transcriptions.create({
+  model: "whisper-1",
+  file: fs.createReadStream("meeting.mp3"),
+});
+
+console.log(transcript.text);
+```
+
+```bash cURL
+curl https://beta.hapuppy.com/v1/audio/transcriptions \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -F file="@meeting.mp3" \
+  -F model="whisper-1"
+```
+
+</CodeGroup>
+
+### 生成 SRT 字幕
+
+<CodeGroup>
+
+```python Python
+with open("lecture.mp4", "rb") as audio:
+    srt = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=audio,
+        response_format="srt"
+    )
+
+with open("lecture.srt", "w") as f:
+    f.write(srt)
+```
+
+```bash cURL
+curl https://beta.hapuppy.com/v1/audio/transcriptions \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -F file="@lecture.mp4" \
+  -F model="whisper-1" \
+  -F response_format="srt" \
+  --output lecture.srt
+```
+
+</CodeGroup>
+
+### 词级时间戳
+
+```python Python
+with open("interview.wav", "rb") as audio:
+    result = client.audio.transcriptions.create(
+        model="whisper-1",
+        file=audio,
+        response_format="verbose_json",
+        timestamp_granularities=["word"]
+    )
+
+for word in result.words:
+    print(f"[{word.start:.2f}–{word.end:.2f}] {word.word}")
+```
+
+### 用 prompt 提示
+
+```python Python
+# 引导专有名词的拼写
+transcript = client.audio.transcriptions.create(
+    model="whisper-1",
+    file=audio_file,
+    prompt="Speakers: Alice, Bob. Discussing Kubernetes and gRPC."
+)
+```
+
+## 响应示例(json)
+
+```json
+{
+  "text": "Hello, and welcome to the show. Today we'll be talking about..."
+}
+```
+
+## 响应示例(verbose_json)
+
+```json
+{
+  "task": "transcribe",
+  "language": "en",
+  "duration": 14.32,
+  "text": "Hello, and welcome to the show.",
+  "segments": [
+    {
+      "id": 0,
+      "start": 0.0,
+      "end": 3.2,
+      "text": " Hello, and welcome to the show."
+    }
+  ]
+}
+```
+
+## 限制与提示
+
+| 约束 | 取值 |
+|---|---|
+| 最大文件大小 | 25 MB |
+| 最大音频时长 | 约 2 小时(取决于比特率/压缩方式) |
+| 支持的语言 | Whisper 支持 90+ 种;准确率因语言而异 |
+
+<Info>
+  对于超过 25 MB 的音频,请将其切分成多个片段(使用 `pydub` 或 `ffmpeg`),再把各段转录拼接在一起。将上一段转录的末尾作为下一片段的 `prompt` 传入,以保持一致性。
+</Info>

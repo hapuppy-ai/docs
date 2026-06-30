@@ -1,0 +1,349 @@
+---
+title: "对话补全"
+description: "使用 Chat Completions API 发送消息并接收 AI 生成的响应。"
+---
+
+## 端点
+
+```
+POST https://beta.hapuppy.com/v1/chat/completions
+```
+
+Chat Completions API 完全兼容 OpenAI 的 Chat Completions 格式。任何使用 OpenAI API 的现有代码,只需更换 base URL 和 API 密钥,即可切换到 Hapuppy。
+
+## 基础请求
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://beta.hapuppy.com/v1"
+)
+
+response = client.chat.completions.create(
+    model="claude-sonnet-4-20250514",
+    messages=[
+        {"role": "system", "content": "You are a helpful assistant."},
+        {"role": "user", "content": "Explain recursion in programming."}
+    ],
+    temperature=0.7,
+    max_tokens=1024
+)
+
+print(response.choices[0].message.content)
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://beta.hapuppy.com/v1",
+});
+
+const response = await client.chat.completions.create({
+  model: "claude-sonnet-4-20250514",
+  messages: [
+    { role: "system", content: "You are a helpful assistant." },
+    { role: "user", content: "Explain recursion in programming." }
+  ],
+  temperature: 0.7,
+  max_tokens: 1024,
+});
+
+console.log(response.choices[0].message.content);
+```
+
+```bash cURL
+curl https://beta.hapuppy.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-sonnet-4-20250514",
+    "messages": [
+      {"role": "system", "content": "You are a helpful assistant."},
+      {"role": "user", "content": "Explain recursion in programming."}
+    ],
+    "temperature": 0.7,
+    "max_tokens": 1024
+  }'
+```
+
+</CodeGroup>
+
+## 请求参数
+
+| 参数 | 类型 | 必填 | 描述 |
+|-----------|------|----------|-------------|
+| `model` | string | 是 | 要使用的模型 ID(例如 `claude-sonnet-4-20250514`、`gpt-4o`)。参见 [Models](https://hapuppy.com/en/dashboard/models)。 |
+| `messages` | array | 是 | 由消息对象组成的数组,每个对象包含 `role` 和 `content`。 |
+| `temperature` | number | 否 | 采样温度,取值范围 0 到 2。默认值因模型而异。 |
+| `max_tokens` | integer | 否 | 生成的最大 token 数。 |
+| `stream` | boolean | 否 | 若为 `true`,返回流式响应。默认 `false`。 |
+| `top_p` | number | 否 | 核采样参数。默认 `1`。 |
+| `frequency_penalty` | number | 否 | 对高频 token 施加惩罚。取值范围:-2.0 到 2.0。默认 `0`。 |
+| `presence_penalty` | number | 否 | 对已出现的 token 施加惩罚。取值范围:-2.0 到 2.0。默认 `0`。 |
+| `stop` | string or array | 否 | 模型应停止生成的序列。 |
+| `tools` | array | 否 | 模型可调用的工具(函数)列表。 |
+| `tool_choice` | string or object | 否 | 控制工具的使用方式:`auto`、`none`,或指定某个具体工具。 |
+
+### 消息角色
+
+| 角色 | 描述 |
+|------|-------------|
+| `system` | 设定助手的行为与上下文。 |
+| `user` | 来自用户的消息。 |
+| `assistant` | 助手此前的回复(用于多轮对话)。 |
+| `tool` | 工具/函数调用的结果。 |
+
+## 响应格式
+
+```json
+{
+  "id": "chatcmpl-abc123",
+  "object": "chat.completion",
+  "created": 1710000000,
+  "model": "claude-sonnet-4-20250514",
+  "choices": [
+    {
+      "index": 0,
+      "message": {
+        "role": "assistant",
+        "content": "Recursion is a programming technique where..."
+      },
+      "finish_reason": "stop"
+    }
+  ],
+  "usage": {
+    "prompt_tokens": 25,
+    "completion_tokens": 150,
+    "total_tokens": 175
+  }
+}
+```
+
+## 流式输出
+
+启用流式输出可在 token 生成的同时实时接收。这非常适合需要实时显示的界面。
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://beta.hapuppy.com/v1"
+)
+
+stream = client.chat.completions.create(
+    model="claude-sonnet-4-20250514",
+    messages=[
+        {"role": "user", "content": "Write a short poem about coding."}
+    ],
+    stream=True
+)
+
+for chunk in stream:
+    if chunk.choices[0].delta.content is not None:
+        print(chunk.choices[0].delta.content, end="")
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://beta.hapuppy.com/v1",
+});
+
+const stream = await client.chat.completions.create({
+  model: "claude-sonnet-4-20250514",
+  messages: [
+    { role: "user", content: "Write a short poem about coding." }
+  ],
+  stream: true,
+});
+
+for await (const chunk of stream) {
+  const content = chunk.choices[0]?.delta?.content;
+  if (content) process.stdout.write(content);
+}
+```
+
+```bash cURL
+curl https://beta.hapuppy.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-sonnet-4-20250514",
+    "messages": [
+      {"role": "user", "content": "Write a short poem about coding."}
+    ],
+    "stream": true
+  }'
+```
+
+</CodeGroup>
+
+每个流式数据块均遵循 Server-Sent Events(SSE)格式:
+
+```
+data: {"id":"chatcmpl-abc","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":"Hello"},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-abc","object":"chat.completion.chunk","choices":[{"index":0,"delta":{"content":" world"},"finish_reason":null}]}
+
+data: {"id":"chatcmpl-abc","object":"chat.completion.chunk","choices":[{"index":0,"delta":{},"finish_reason":"stop"}]}
+
+data: [DONE]
+```
+
+## 函数调用
+
+使用工具/函数,让模型能够与外部系统交互。
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+import json
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://beta.hapuppy.com/v1"
+)
+
+tools = [
+    {
+        "type": "function",
+        "function": {
+            "name": "get_weather",
+            "description": "Get the current weather for a location",
+            "parameters": {
+                "type": "object",
+                "properties": {
+                    "location": {
+                        "type": "string",
+                        "description": "City name, e.g. 'San Francisco, CA'"
+                    }
+                },
+                "required": ["location"]
+            }
+        }
+    }
+]
+
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {"role": "user", "content": "What's the weather in Tokyo?"}
+    ],
+    tools=tools,
+    tool_choice="auto"
+)
+
+# Check if the model wants to call a function
+message = response.choices[0].message
+if message.tool_calls:
+    tool_call = message.tool_calls[0]
+    args = json.loads(tool_call.function.arguments)
+    print(f"Function: {tool_call.function.name}")
+    print(f"Arguments: {args}")
+
+    # After calling your function, send the result back
+    follow_up = client.chat.completions.create(
+        model="gpt-4o",
+        messages=[
+            {"role": "user", "content": "What's the weather in Tokyo?"},
+            message,
+            {
+                "role": "tool",
+                "tool_call_id": tool_call.id,
+                "content": json.dumps({"temperature": "22°C", "condition": "Sunny"})
+            }
+        ],
+        tools=tools
+    )
+    print(follow_up.choices[0].message.content)
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://beta.hapuppy.com/v1",
+});
+
+const tools: OpenAI.ChatCompletionTool[] = [
+  {
+    type: "function",
+    function: {
+      name: "get_weather",
+      description: "Get the current weather for a location",
+      parameters: {
+        type: "object",
+        properties: {
+          location: {
+            type: "string",
+            description: "City name, e.g. 'San Francisco, CA'",
+          },
+        },
+        required: ["location"],
+      },
+    },
+  },
+];
+
+const response = await client.chat.completions.create({
+  model: "gpt-4o",
+  messages: [
+    { role: "user", content: "What's the weather in Tokyo?" }
+  ],
+  tools,
+  tool_choice: "auto",
+});
+
+const message = response.choices[0].message;
+if (message.tool_calls) {
+  const toolCall = message.tool_calls[0];
+  const args = JSON.parse(toolCall.function.arguments);
+  console.log(`Function: ${toolCall.function.name}`);
+  console.log(`Arguments:`, args);
+}
+```
+
+</CodeGroup>
+
+## 视觉
+
+向支持视觉的多模态模型(例如 `gpt-4o`、`claude-sonnet-4-20250514`)发送图像。
+
+```python Python
+response = client.chat.completions.create(
+    model="gpt-4o",
+    messages=[
+        {
+            "role": "user",
+            "content": [
+                {"type": "text", "text": "What's in this image?"},
+                {
+                    "type": "image_url",
+                    "image_url": {
+                        "url": "https://example.com/photo.jpg"
+                    }
+                }
+            ]
+        }
+    ]
+)
+
+print(response.choices[0].message.content)
+```
+
+<Info>
+  并非所有模型都支持视觉。请在 [Models](https://hapuppy.com/en/dashboard/models) 页面查看各模型的能力。
+</Info>

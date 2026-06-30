@@ -1,0 +1,130 @@
+---
+title: "Hapuppy — AI API 网关"
+sidebarTitle: "简介"
+description: "通过单个 API 密钥访问 100+ AI 模型。兼容 OpenAI,统一定价。"
+---
+
+## 开始使用
+
+用一个 API 密钥即可开始使用 100+ AI 模型,所需的一切都在这里。
+
+<CardGroup cols={2}>
+  <Card title="快速开始" icon="bolt" href="/zh/quickstart">
+    5 分钟内即可上手运行。
+  </Card>
+  <Card title="身份验证" icon="key" href="/zh/guides/authentication">
+    了解如何为你的 API 请求进行身份验证。
+  </Card>
+  <Card title="API 参考" icon="code" href="/zh/api-reference/chat/completions">
+    浏览全部端点 —— 对话、嵌入、图像、音频、审核、模型。
+  </Card>
+  <Card title="浏览模型" icon="layer-group" href="https://hapuppy.com/en/dashboard/models">
+    查看全部 100+ 个可用 AI 模型。
+  </Card>
+</CardGroup>
+
+## 为什么选择 Hapuppy?
+
+<CardGroup cols={3}>
+  <Card title="兼容 OpenAI" icon="plug">
+    可直接替换 OpenAI API,适用于任何支持 OpenAI 格式的 SDK 或工具。
+  </Card>
+  <Card title="100+ 模型" icon="robot">
+    通过一个 API 密钥即可访问 Claude、GPT、Gemini、DeepSeek、Llama、GLM 等众多模型。
+  </Card>
+  <Card title="一次性付费" icon="tag">
+    一次性积分包,低至 $9.99。积分存入你的金库,永不过期 —— 没有订阅,也不会有 token 计费的意外。
+  </Card>
+</CardGroup>
+
+## 快速示例
+
+几秒钟即可发出你的第一个请求:
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://beta.hapuppy.com/v1"
+)
+
+response = client.chat.completions.create(
+    model="claude-sonnet-4-20250514",
+    messages=[
+        {"role": "user", "content": "Hello from Hapuppy!"}
+    ]
+)
+
+print(response.choices[0].message.content)
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://beta.hapuppy.com/v1",
+});
+
+const response = await client.chat.completions.create({
+  model: "claude-sonnet-4-20250514",
+  messages: [
+    { role: "user", content: "Hello from Hapuppy!" }
+  ],
+});
+
+console.log(response.choices[0].message.content);
+```
+
+```bash cURL
+curl https://beta.hapuppy.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "claude-sonnet-4-20250514",
+    "messages": [
+      {"role": "user", "content": "Hello from Hapuppy!"}
+    ]
+  }'
+```
+
+</CodeGroup>
+
+## 你能做什么
+
+Hapuppy 在所有主要模态上都兼容 OpenAI。
+
+<CardGroup cols={3}>
+  <Card title="对话" icon="comments" href="/zh/api-reference/chat/completions">
+    流式输出、函数调用、视觉 —— 覆盖 Claude、GPT、Gemini、GLM 等众多模型。
+  </Card>
+  <Card title="嵌入" icon="diagram-project" href="/zh/api-reference/embeddings/create">
+    用于语义搜索、RAG 和聚类的向量嵌入。
+  </Card>
+  <Card title="图像生成" icon="image" href="/zh/api-reference/images/generations">
+    DALL-E 3、GPT-Image-1、Flux、Midjourney、Stable Diffusion。
+  </Card>
+  <Card title="文本转语音" icon="microphone" href="/zh/api-reference/audio/speech">
+    8+ 种预设的自然人声,支持多种输出格式。
+  </Card>
+  <Card title="语音转录" icon="closed-captioning" href="/zh/api-reference/audio/transcriptions">
+    Whisper 级别的转录,支持词级时间戳。
+  </Card>
+  <Card title="内容审核" icon="shield" href="/zh/api-reference/moderations/create">
+    在转发用户输入前进行免费 / 近乎免费的安全分类。
+  </Card>
+</CardGroup>
+
+## 集成
+
+Hapuppy 与你常用的 AI 工具无缝协作:
+
+<CardGroup cols={4}>
+  <Card title="Claude Code" icon="terminal" href="/zh/guides/integrations#claude-code" />
+  <Card title="Cursor" icon="code" href="/zh/guides/integrations#cursor" />
+  <Card title="Cline" icon="wand-magic-sparkles" href="/zh/guides/integrations#cline" />
+  <Card title="Continue" icon="forward" href="/zh/guides/integrations#continue" />
+</CardGroup>

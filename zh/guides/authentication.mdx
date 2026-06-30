@@ -1,0 +1,137 @@
+---
+title: "身份验证"
+description: "如何为发往 Hapuppy 的 API 请求进行身份验证。"
+---
+
+## API 密钥
+
+所有发往 Hapuppy API 的请求都需要通过 `Authorization` 请求头中的 Bearer token 进行身份验证。
+
+```bash
+Authorization: Bearer sk-hapuppy-xxxxxxxxxxxxxxxxxxxxx
+```
+
+### 密钥格式
+
+Hapuppy API 密钥遵循以下格式:
+
+```
+sk-hapuppy-<random-string>
+```
+
+所有密钥都以 `sk-hapuppy-` 前缀开头。如果你的密钥不符合该格式,则它是无效的。
+
+### 获取你的密钥
+
+1. 登录你的 [Hapuppy 控制台](https://hapuppy.com/en/dashboard)
+2. 进入 **API Keys**
+3. 点击 **Create Key**
+4. 复制并妥善保管你的密钥
+
+## 使用你的密钥
+
+### HTTP 请求头
+
+在每个请求的 `Authorization` 请求头中携带你的 API 密钥:
+
+```bash cURL
+curl https://beta.hapuppy.com/v1/chat/completions \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -H "Content-Type: application/json" \
+  -d '{"model": "claude-sonnet-4-20250514", "messages": [{"role": "user", "content": "Hello"}]}'
+```
+
+### OpenAI SDK
+
+将你的密钥作为 `api_key` 参数传入,并配合 Hapuppy 的 base URL:
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://beta.hapuppy.com/v1"
+)
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://beta.hapuppy.com/v1",
+});
+```
+
+</CodeGroup>
+
+## 环境变量
+
+我们建议将 API 密钥存放在环境变量中,而不是硬编码在代码里。
+
+<Tabs>
+  <Tab title="macOS / Linux">
+    添加到你的 `~/.bashrc`、`~/.zshrc` 或 `~/.profile`:
+
+    ```bash
+    export OPENAI_API_KEY="sk-hapuppy-xxx"
+    export OPENAI_BASE_URL="https://beta.hapuppy.com/v1"
+    ```
+
+    然后重新加载你的 shell:
+
+    ```bash
+    source ~/.zshrc
+    ```
+  </Tab>
+  <Tab title="Windows">
+    通过 PowerShell 设置环境变量:
+
+    ```powershell
+    [System.Environment]::SetEnvironmentVariable("OPENAI_API_KEY", "sk-hapuppy-xxx", "User")
+    [System.Environment]::SetEnvironmentVariable("OPENAI_BASE_URL", "https://beta.hapuppy.com/v1", "User")
+    ```
+  </Tab>
+  <Tab title=".env File">
+    在你的项目根目录创建一个 `.env` 文件:
+
+    ```env
+    OPENAI_API_KEY=sk-hapuppy-xxx
+    OPENAI_BASE_URL=https://beta.hapuppy.com/v1
+    ```
+
+    使用 `python-dotenv`(Python)或 `dotenv`(Node.js)之类的库来加载它。
+
+    <Warning>
+      将 `.env` 加入你的 `.gitignore`,以防意外提交。
+    </Warning>
+  </Tab>
+</Tabs>
+
+设置好环境变量后,OpenAI SDK 会自动读取它们:
+
+```python Python
+from openai import OpenAI
+
+# No need to pass api_key or base_url explicitly
+client = OpenAI()
+```
+
+## 安全最佳实践
+
+<AccordionGroup>
+  <Accordion title="切勿在源代码中硬编码密钥">
+    请使用环境变量或密钥管理工具(如 AWS Secrets Manager、HashiCorp Vault),而不是将密钥直接嵌入代码中。
+  </Accordion>
+  <Accordion title="切勿将密钥提交到版本控制">
+    将 `.env` 文件加入 `.gitignore`。使用 `git-secrets` 或 `trufflehog` 等工具扫描是否有意外提交的密钥。
+  </Accordion>
+  <Accordion title="定期轮换密钥">
+    定期生成新的 API 密钥,并在控制台中吊销旧密钥。
+  </Accordion>
+  <Accordion title="监控密钥使用情况">
+    定期查看你的控制台,留意可能预示密钥已泄露的异常使用模式。
+  </Accordion>
+</AccordionGroup>

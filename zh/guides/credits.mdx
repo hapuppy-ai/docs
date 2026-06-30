@@ -1,0 +1,181 @@
+---
+title: "积分与定价"
+description: "了解积分、模型系数、金库与速率限制的运作方式。"
+---
+
+Hapuppy 采用**基于积分**的计费系统。你一次性购买积分,积分进入你的**金库**,且永不过期。每次 API 调用都会根据所用模型及其实际工作量扣除积分。
+
+## 套餐
+
+| 套餐 | 价格 | 积分 | 模型 | 说明 |
+|------|-------|---------|--------|-------|
+| Free | $0 | 注册赠送 200K | 基础模型 | 一次性赠送;**不会**每日补充 |
+| Lite | $9.99 一次性 | 30M | 全部 100+ 模型 | 金库积分永不过期 |
+| Standard | $19.99 一次性 | 120M | 全部模型 | 最受欢迎 |
+| Pro | $36.99 一次性 | 240M | 全部模型 + **优先路由** | 最低延迟层级 |
+
+请在[积分包(Credits Packs)](https://hapuppy.com/en/dashboard/billing)页面购买。支付经由 Creem 处理;如果你尚未消耗积分包的较大部分,可在 7 天内申请退款。
+
+## 金库
+
+你购买的积分会进入与账户绑定的个人**金库**。
+
+- **永不过期** —— 按自己的节奏使用
+- **可叠加累积** —— 在 Lite 套餐尚未用完时再购买 Standard 套餐,只会在你的剩余余额上再加 120M
+- **大量使用后不可退款** —— 详见控制台上的退款政策
+
+## 积分如何计算
+
+根据端点不同,有两种计费公式:
+
+### 按 token 计费(对话)
+
+输入 token 与输出 token 分别计费,各自使用不同的系数:
+
+```
+credits_charged
+  = prompt_tokens     × input_multiplier
+  + completion_tokens × output_multiplier
+```
+
+其中:
+- `prompt_tokens` 和 `completion_tokens` 来自每次响应的 `usage` 对象
+- `input_multiplier` 和 `output_multiplier` 按模型分别公布(见下表)
+
+### 固定费用(图像、TTS、转录、嵌入、审核)
+
+```
+credits_charged = fixed_base_cost
+```
+
+这类请求每次调用扣除固定金额,与 token 数量无关。具体费用取决于模型(对于某些端点,还取决于分辨率、时长等参数)。
+
+## 模型系数(示例)
+
+确切的系数与固定费用维护在[模型(Models)](https://hapuppy.com/en/dashboard/models)页面 —— 请始终以该页面的最新数值为准。下表中的数字仅作示意,可能随上游价格变化而调整。
+
+### 对话模型
+
+| 模型 | 输入系数 | 输出系数 | 所需层级 |
+|---|---|---|---|
+| `claude-opus-4-5-20251101` | 1× | 5× | Free |
+| `claude-opus-4-6` | 1× | 5× | Free |
+| `claude-opus-4-7` | 1× | 5× | Free |
+| `claude-sonnet-4-6` | 0.6× | 3× | Free |
+| `hapuppy/claude-haiku-4-5-20251001` | 0.8× | 4× | Pro |
+| `hapuppy/claude-opus-4-6` | 2.4× | 12× | Pro |
+| `hapuppy/claude-opus-4-7` | 2.4× | 12× | Pro |
+| `hapuppy/claude-sonnet-4-6` | 1.6× | 8× | Pro |
+
+### 固定费用端点
+
+| 类别 | 模型 | 每次调用积分 |
+|---|---|---|
+| Image | `gpt-image-1` | 12,000 |
+| Image | `gpt-image-1.5` | 8,000 |
+| Image | `gpt-image-2` | 10,000 |
+| Image | `flux-kontext-pro` | 3,000 |
+| Image | `flux-kontext-max` | 3,000 |
+| Image | `recraft-v3` | 1,000 |
+| Image | `midjourney` | 75,000 |
+| TTS | `gpt-4o-mini-tts` | 250 |
+| TTS | `tts-1` | 75 |
+| TTS | `tts-1-hd` | 150 |
+| Transcription | `gpt-4o-mini-transcribe` | 20 |
+| Transcription | `gpt-4o-transcribe` | 50 |
+| Transcription | `whisper-1` | 10 |
+| Embedding | `text-embedding-3-small` | 50 |
+| Embedding | `text-embedding-3-large` | 50 |
+| Moderation | `omni-moderation-latest` | 0(免费) |
+
+## 计算示例
+
+大多数对话模型对输入和输出 token 分别计费:
+
+```
+credits_charged = prompt_tokens × input_multiplier + completion_tokens × output_multiplier
+```
+
+假设你向 `claude-sonnet-4-6`(输入 0.6×,输出 3×)发送一个提示,包含 800 个 prompt token,并收到一个 1,200 token 的响应:
+
+```
+credits_charged = 800 × 0.6 + 1200 × 3 = 480 + 3600 = 4,080 credits
+```
+
+如果你的金库有 30M 积分,在需要充值之前,这样的调用大约可以执行 **7,300 次**。
+
+对于像 `hapuppy/claude-opus-4-7`(输入 2.4×,输出 12×)这样费用更高的模型:
+
+```
+credits_charged = 800 × 2.4 + 1200 × 12 = 1920 + 14400 = 16,320 credits
+```
+
+同样的金库大约能支持 **1,800 次**调用。
+
+## 速率限制
+
+速率限制取决于你的套餐:**免费层级为 10 RPM**,而所有**付费层级为 100 RPM(每分钟请求数)**。超出限制会返回 `429` 错误,内容如下:
+
+```json
+{
+  "error": {
+    "message": "Rate limit exceeded. Please retry after 1 second.",
+    "type": "rate_limit_error",
+    "code": "rate_limit_exceeded"
+  }
+}
+```
+
+正确的做法是采用指数退避。OpenAI SDK 已内置重试机制(`max_retries=N`),你也可以自行实现:
+
+```python Python
+import time
+from openai import OpenAI, RateLimitError, APIError
+
+client = OpenAI(api_key="sk-hapuppy-xxx", base_url="https://beta.hapuppy.com/v1")
+
+def chat_with_retry(messages, model="claude-sonnet-4-20250514", max_retries=5):
+    for attempt in range(max_retries):
+        try:
+            return client.chat.completions.create(model=model, messages=messages)
+        except RateLimitError:
+            wait = min(2 ** attempt, 30)
+            time.sleep(wait)
+        except APIError as e:
+            if e.status_code in (500, 502, 503):
+                time.sleep(min(2 ** attempt, 30))
+            else:
+                raise
+    raise RuntimeError("max retries exceeded")
+```
+
+## 查看余额
+
+请访问[控制台](https://hapuppy.com/en/dashboard) —— 你的金库余额、注册赠送积分以及近期用量都会在那里展示。目前还没有用于查询余额的公开 API;此功能已列入路线图。
+
+## 成本优化技巧
+
+<CardGroup cols={2}>
+  <Card title="使用提示缓存" icon="bolt">
+    Anthropic 模型会自动缓存重复的系统提示。Claude Code 的 40K 系统提示在首次调用后即被缓存 —— 后续调用可在已缓存的 token 上节省约 90%。
+  </Card>
+  <Card title="选择合适的模型" icon="scale-balanced">
+    不要凡事都默认用 Opus。大多数任务用 Sonnet 或 Haiku 即可胜任;把 Opus 留给高难度推理,或那些质量比成本更重要的生产级智能体。
+  </Card>
+  <Card title="限制 `max_tokens`" icon="ruler">
+    为响应长度设置硬性上限。输出 token 按更高的系数计费(例如 Opus 输出为 12×)—— 失控的补全会迅速烧掉积分。
+  </Card>
+  <Card title="尽可能批量处理" icon="layer-group">
+    对于嵌入,在一次请求中发送输入数组,而不是每个条目都单独调用一次 —— token 成本相同,触发速率限制的次数更少。
+  </Card>
+  <Card title="善用流式输出" icon="play">
+    流式输出本身并不会更便宜,但它让你在用户已经得到所需内容时提前取消 —— 而这*确实*能节省积分。
+  </Card>
+  <Card title="低成本审核" icon="shield">
+    在将用户输入转发给高系数对话模型之前,先对其运行[内容审核](/zh/api-reference/moderations/create)。它几乎免费,能在不良提示产生费用之前将其拦截。
+  </Card>
+</CardGroup>
+
+<Info>
+  对确切定价有疑问时,权威来源是[模型(Models)](https://hapuppy.com/en/dashboard/models)页面 —— 每当上游供应商价格变动时,它都会更新。
+</Info>

@@ -1,0 +1,171 @@
+---
+title: "工具集成"
+description: "在 Claude Code、Cursor、Cline、Continue 以及 OpenAI SDK 中配置 Hapuppy。"
+---
+
+Hapuppy 完全兼容 OpenAI API 格式,因此能轻松集成到主流的 AI 开发工具中。
+
+## Claude Code
+
+[Claude Code](https://docs.anthropic.com/en/docs/claude-code) 是 Anthropic 的官方 CLI 工具。通过设置环境变量,即可将其配置为使用 Hapuppy。
+
+将以下内容添加到你的 shell 配置文件(`~/.bashrc`、`~/.zshrc` 或 `~/.profile`):
+
+```bash
+export ANTHROPIC_BASE_URL=https://beta.hapuppy.com
+export ANTHROPIC_API_KEY=sk-hapuppy-xxx
+```
+
+重新加载 shell,然后照常使用 Claude Code:
+
+```bash
+source ~/.zshrc
+claude
+```
+
+<Info>
+  Claude Code 原生使用 Anthropic API 格式,Hapuppy 会自动完成格式转换。
+</Info>
+
+## Cursor
+
+[Cursor](https://cursor.sh) 是一款 AI 驱动的代码编辑器。可将其配置为以 Hapuppy 作为 API 后端。
+
+<Steps>
+  <Step title="打开 Cursor 设置">
+    进入 **Cursor Settings → Models**。
+  </Step>
+  <Step title="配置 API">
+    设置如下内容:
+
+    - **OpenAI API Key**:`sk-hapuppy-xxx`
+    - **Override OpenAI Base URL**:`https://beta.hapuppy.com/v1`
+  </Step>
+  <Step title="选择模型">
+    选择任意通过 Hapuppy 提供的模型(例如 `claude-sonnet-4-20250514`、`gpt-4o`)。
+  </Step>
+</Steps>
+
+<Note>
+  保存后,请重启 Cursor 以使更改生效。
+</Note>
+
+## Cline
+
+[Cline](https://github.com/cline/cline) 是一款适用于 VS Code 的 AI 编程助手。
+
+<Steps>
+  <Step title="打开 Cline 设置">
+    在 VS Code 中,打开 Cline 扩展侧边栏,点击**设置齿轮**图标。
+  </Step>
+  <Step title="选择 API 提供方">
+    将 **OpenAI Compatible** 选为 API 提供方。
+  </Step>
+  <Step title="配置连接">
+    设置以下字段:
+
+    - **API Key**:`sk-hapuppy-xxx`
+    - **Base URL**:`https://beta.hapuppy.com/v1`
+    - **Model ID**:你偏好的模型(例如 `claude-sonnet-4-20250514`)
+  </Step>
+</Steps>
+
+## Continue
+
+[Continue](https://continue.dev) 是一款开源的 AI 代码助手。在 `~/.continue/config.json` 中进行配置。
+
+```json config.json
+{
+  "models": [
+    {
+      "title": "Hapuppy - Claude Sonnet",
+      "provider": "openai",
+      "model": "claude-sonnet-4-20250514",
+      "apiKey": "sk-hapuppy-xxx",
+      "apiBase": "https://beta.hapuppy.com/v1"
+    },
+    {
+      "title": "Hapuppy - GPT-4o",
+      "provider": "openai",
+      "model": "gpt-4o",
+      "apiKey": "sk-hapuppy-xxx",
+      "apiBase": "https://beta.hapuppy.com/v1"
+    }
+  ]
+}
+```
+
+<Info>
+  你可以添加多个模型配置,以便在 Continue 中轻松切换。
+</Info>
+
+## OpenAI SDK
+
+由于 Hapuppy 兼容 OpenAI,任何使用 OpenAI SDK 的应用都可开箱即用。
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://beta.hapuppy.com/v1"
+)
+
+response = client.chat.completions.create(
+    model="claude-sonnet-4-20250514",
+    messages=[
+        {"role": "user", "content": "Explain quantum computing in simple terms."}
+    ]
+)
+
+print(response.choices[0].message.content)
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://beta.hapuppy.com/v1",
+});
+
+const response = await client.chat.completions.create({
+  model: "claude-sonnet-4-20250514",
+  messages: [
+    { role: "user", content: "Explain quantum computing in simple terms." }
+  ],
+});
+
+console.log(response.choices[0].message.content);
+```
+
+</CodeGroup>
+
+### 使用环境变量
+
+设置以下环境变量,SDK 便会自动读取:
+
+```bash
+export OPENAI_API_KEY="sk-hapuppy-xxx"
+export OPENAI_BASE_URL="https://beta.hapuppy.com/v1"
+```
+
+然后只需:
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI()  # automatically uses env vars
+```
+
+## 其他工具
+
+任何支持 OpenAI API 格式的工具或库,都可以按如下方式配置:
+
+| 设置项 | 值 |
+|---------|-------|
+| **API Key** | 你的 `sk-hapuppy-xxx` 密钥 |
+| **Base URL** | `https://beta.hapuppy.com/v1` |
+| **Model** | 任意[受支持的模型](https://hapuppy.com/en/dashboard/models) |

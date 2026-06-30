@@ -1,0 +1,180 @@
+---
+title: "图像生成"
+description: "根据文本提示词生成图像。"
+---
+
+```
+POST https://beta.hapuppy.com/v1/images/generations
+```
+
+根据文本提示词生成一张或多张图像。支持多种图像模型,包括 DALL-E 3、GPT-Image-1、Stable Diffusion 系列,以及兼容 Midjourney 的端点。
+
+## 请求体
+
+<ParamField body="model" type="string" required>
+  图像模型。示例:`dall-e-3`、`gpt-image-1`、`flux-pro`、`flux-schnell`、`midjourney`、`stable-diffusion-3.5-large`。
+</ParamField>
+
+<ParamField body="prompt" type="string" required>
+  对目标图像的文字描述。最大长度取决于模型(DALL-E 3:4000 字符;其他模型各不相同)。
+</ParamField>
+
+<ParamField body="n" type="integer" default="1">
+  生成图像的数量。DALL-E 3 仅支持 `n=1`;其他模型最多可生成 10 张。
+</ParamField>
+
+<ParamField body="size" type="string" default="1024x1024">
+  图像尺寸。常用取值:`1024x1024`、`1024x1792`(竖向)、`1792x1024`(横向)、`512x512`、`256x256`。支持的尺寸因模型而异。
+</ParamField>
+
+<ParamField body="quality" type="string" default="standard">
+  `standard` 或 `hd`。HD 消耗更多积分,但能呈现更锐利的细节。仅 DALL-E 3 支持。
+</ParamField>
+
+<ParamField body="style" type="string" default="vivid">
+  `vivid` 或 `natural`。仅 DALL-E 3 支持 —— vivid 更超写实、更具戏剧性,natural 则更柔和淡雅。
+</ParamField>
+
+<ParamField body="response_format" type="string" default="url">
+  `url` 返回一个有效期约 1 小时的临时 CDN 链接。`b64_json` 则在响应中内联返回 base64 编码的图像字节。
+</ParamField>
+
+<ParamField body="user" type="string">
+  可选的终端用户稳定标识符,用于滥用检测。
+</ParamField>
+
+## 响应
+
+<ResponseField name="created" type="integer">生成时的 Unix 时间戳。</ResponseField>
+
+<ResponseField name="data" type="array">
+  生成的图像数组。
+
+  <Expandable title="Image object">
+    <ResponseField name="url" type="string">临时 CDN 链接(当 `response_format=url` 时)。</ResponseField>
+    <ResponseField name="b64_json" type="string">base64 编码的图像数据(当 `response_format=b64_json` 时)。</ResponseField>
+    <ResponseField name="revised_prompt" type="string">仅 DALL-E 3 —— 实际用于生成的、自动改写后的提示词。</ResponseField>
+  </Expandable>
+</ResponseField>
+
+## 示例
+
+### 基础生成
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://beta.hapuppy.com/v1"
+)
+
+resp = client.images.generate(
+    model="dall-e-3",
+    prompt="A cute corgi astronaut floating in a nebula, vibrant colors",
+    size="1024x1024",
+    quality="hd",
+    n=1
+)
+
+print(resp.data[0].url)
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://beta.hapuppy.com/v1",
+});
+
+const resp = await client.images.generate({
+  model: "dall-e-3",
+  prompt: "A cute corgi astronaut floating in a nebula, vibrant colors",
+  size: "1024x1024",
+  quality: "hd",
+  n: 1,
+});
+
+console.log(resp.data[0].url);
+```
+
+```bash cURL
+curl https://beta.hapuppy.com/v1/images/generations \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "model": "dall-e-3",
+    "prompt": "A cute corgi astronaut floating in a nebula, vibrant colors",
+    "size": "1024x1024",
+    "quality": "hd"
+  }'
+```
+
+</CodeGroup>
+
+### 下载到本地文件
+
+```python Python
+import requests
+
+resp = client.images.generate(
+    model="dall-e-3",
+    prompt="Minimalist line-art logo of a fox",
+    size="1024x1024"
+)
+
+img_bytes = requests.get(resp.data[0].url).content
+with open("fox.png", "wb") as f:
+    f.write(img_bytes)
+```
+
+### 内联 base64(无需单独下载)
+
+```python Python
+import base64
+
+resp = client.images.generate(
+    model="dall-e-3",
+    prompt="A serene mountain landscape at dawn",
+    response_format="b64_json"
+)
+
+with open("mountain.png", "wb") as f:
+    f.write(base64.b64decode(resp.data[0].b64_json))
+```
+
+## 响应示例
+
+```json
+{
+  "created": 1715367049,
+  "data": [
+    {
+      "url": "https://cdn.hapuppy.com/img/abc123.png",
+      "revised_prompt": "A cute corgi wearing a white astronaut helmet, floating peacefully in a colorful nebula with stars and cosmic dust, vibrant purple, pink, and blue hues."
+    }
+  ]
+}
+```
+
+## 模型对比
+
+| 模型 | 优势 | 备注 |
+|---|---|---|
+| `dall-e-3` | 提示词遵循度极佳,支持 HD,自动改写提示词 | 仅支持 `n=1`;最高 1792×1024 |
+| `gpt-image-1` | 图像内文字渲染出色,可精细控制 | OpenAI 最新的图像模型 |
+| `flux-pro` | 照片级真实感,高细节 | Black Forest Labs |
+| `flux-schnell` | 速度极快,草稿级质量 | 适合用于预览 |
+| `midjourney` | 风格化、艺术化 | 积分消耗最高 |
+| `stable-diffusion-3.5-large` | 开源风格,可定制 | 成本更低 |
+
+<Warning>
+  使用 `response_format=url` 返回的链接会在约 1 小时后失效。如需长期保存,请立即下载并存储图像。
+</Warning>
+
+<Info>
+  图像生成按每张图像收取**固定积分费用**,而非按 token 计费。详见 [hapuppy.com/credits](https://hapuppy.com/en/dashboard/models) 的积分表。
+</Info>

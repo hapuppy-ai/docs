@@ -1,0 +1,127 @@
+---
+title: "创建翻译"
+description: "将任意受支持语言的音频直接翻译为英文文本。"
+---
+
+```
+POST https://beta.hapuppy.com/v1/audio/translations
+```
+
+接收一段非英文音频文件,一步生成**英文文本转录**。模型同时完成转录与翻译 —— 中间不会产生源语言文本。
+
+如需同语言转录,请改用[创建转录](/zh/api-reference/audio/transcriptions)。
+
+此端点接受 `multipart/form-data`。
+
+## 请求体(multipart/form-data)
+
+<ParamField body="file" type="file" required>
+  源语言的音频文件。支持的格式:`mp3`、`mp4`、`mpeg`、`mpga`、`m4a`、`wav`、`webm`、`flac`、`ogg`。最大 25 MB。
+</ParamField>
+
+<ParamField body="model" type="string" required>
+  翻译模型 —— 目前为 `whisper-1`。
+</ParamField>
+
+<ParamField body="prompt" type="string">
+  可选的英文 prompt,用于引导风格或提供专有名词。无论源音频是何种语言,该 prompt 都必须是英文。
+</ParamField>
+
+<ParamField body="response_format" type="string" default="json">
+  输出格式:`json`、`text`、`srt`、`verbose_json`、`vtt`。
+</ParamField>
+
+<ParamField body="temperature" type="number" default="0">
+  采样温度(0–1)。
+</ParamField>
+
+## 响应
+
+结构与[创建转录](/zh/api-reference/audio/transcriptions#response)相同。`text` 字段始终为英文。
+
+## 示例
+
+### 翻译一段音频
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://beta.hapuppy.com/v1"
+)
+
+with open("japanese_podcast.mp3", "rb") as audio:
+    result = client.audio.translations.create(
+        model="whisper-1",
+        file=audio
+    )
+
+print(result.text)  # English
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+import fs from "fs";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://beta.hapuppy.com/v1",
+});
+
+const result = await client.audio.translations.create({
+  model: "whisper-1",
+  file: fs.createReadStream("japanese_podcast.mp3"),
+});
+
+console.log(result.text);  // English
+```
+
+```bash cURL
+curl https://beta.hapuppy.com/v1/audio/translations \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -F file="@japanese_podcast.mp3" \
+  -F model="whisper-1"
+```
+
+</CodeGroup>
+
+### 从外语音频生成英文字幕视频
+
+```python Python
+with open("foreign_lecture.mp4", "rb") as audio:
+    srt = client.audio.translations.create(
+        model="whisper-1",
+        file=audio,
+        response_format="srt"
+    )
+
+with open("lecture_en.srt", "w") as f:
+    f.write(srt)
+```
+
+### 引导专有名词的拼写
+
+即便音频不是英文,`prompt` 也必须用英文。
+
+```python Python
+result = client.audio.translations.create(
+    model="whisper-1",
+    file=audio_file,
+    prompt="The speakers are discussing the BeiDou satellite navigation system."
+)
+```
+
+## 响应示例
+
+```json
+{
+  "text": "Hello, today we will discuss the history of the silk road and its modern revival."
+}
+```
+
+<Info>
+  翻译是单向的:**仅翻译为英文**。如需其他目标语言,请先用[创建转录](/zh/api-reference/audio/transcriptions)进行转录,再将结果通过[对话补全](/zh/api-reference/chat/completions)配合翻译提示词处理。
+</Info>

@@ -1,0 +1,93 @@
+---
+title: "Claude 申请"
+description: "申请免费使用 Hapuppy 上无前缀的 Claude 模型。"
+---
+
+Hapuppy 提供两种形态的 Claude 模型:
+
+- **无前缀**(如 `claude-opus-4-7`、`claude-sonnet-4-6`)—— 标准的 Claude 体验。**需要通过 Claude 申请审核**;审核通过后即可免费使用。
+- **`hapuppy/` 前缀**(如 `hapuppy/claude-opus-4-7`、`hapuppy/claude-sonnet-4-6`)—— 底层是同样的模型,但经过配置,允许标准形态会拒绝的**角色扮演(RP)**场景。**无需申请** —— 用任意积分包按量付费即可。
+
+<Warning>
+  **免费的无前缀 Claude 模型不支持角色扮演(RP)。**它们遵循标准的 Claude 安全策略,会拒绝 RP 类提示。如果你需要 RP,请改用付费的 **`hapuppy/`** 前缀 —— 无需申请。
+</Warning>
+
+本页仅介绍**无前缀** Claude 的申请流程。对于 `hapuppy/` 前缀的模型,只需充值积分并直接调用即可。
+
+## 谁需要申请?
+
+| 形态 | 示例 | 访问方式 |
+|---|---|---|
+| 无前缀 Claude(不支持 RP) | `claude-opus-4-7`、`claude-sonnet-4-6`、`claude-haiku-4-5-*` | **需要申请** —— 人工审核通过后免费使用 |
+| `hapuppy/` 前缀(启用 RP) | `hapuppy/claude-opus-4-7`、`hapuppy/claude-sonnet-4-6`、`hapuppy/claude-haiku-4-5-*` | **无需申请** —— 付费;按 `hapuppy/` 倍率扣费(参见[积分与定价](/zh/guides/credits#chat-models)) |
+
+简而言之:**只有免费的无前缀形态才需要审核。**如果你只需要支持 RP 的 Claude,可跳过申请,直接用 `hapuppy/` 前缀按量付费。
+
+## 前置条件
+
+申请前,你需要:
+
+1. 拥有一个**已验证的账户** —— 参见[验证账户](/zh/guides/verify-account)。
+2. 理解两种形态的策略:
+   - 无前缀 Claude 在审核通过后**可免费使用**,但**不允许 RP**。
+   - `hapuppy/` 前缀的 Claude 为**付费**(无需申请),会按 [Models](https://hapuppy.com/en/dashboard/models) 页面所示的倍率从你的积分包中扣费。
+3. 准备好对预期用途的简要说明。
+
+## 如何申请
+
+<Steps>
+
+<Step title="打开申请表单">
+  在控制台中,前往 **Models → [Claude 申请](https://hapuppy.com/zh/dashboard/claude-apply)**。
+</Step>
+
+<Step title="描述你的用途">
+  用几句话简要说明:
+
+  - 你正在构建什么(生产应用、研究、智能体、内部工具等)
+  - 预计的大致请求量
+
+  <Note>
+    你无需透露专有细节。提供一个大致描述即可 —— 例如「面向内部团队的代码审查智能体,约 5K 请求/天」。
+  </Note>
+</Step>
+
+<Step title="提交并等待人工审核">
+  所有申请都由人工审核。处理通常在几天内完成,但没有硬性的服务等级承诺(SLA)。
+
+  <Warning>
+    **我们不会发送审批邮件。**请不时查看控制台中的 [Claude 申请](https://hapuppy.com/zh/dashboard/claude-apply)页面 —— 一旦作出决定,申请状态会在那里更新。
+  </Warning>
+</Step>
+
+<Step title="开始使用 Claude">
+  一旦页面显示你的申请已通过,无前缀的 Claude 模型 ID 便会立即可用 —— 无需改动客户端代码。
+
+  ```python Python
+  # Unprefixed — free Claude access after approval (RP not supported)
+  resp = client.chat.completions.create(
+      model="claude-opus-4-7",
+      messages=[{"role": "user", "content": "Hello!"}]
+  )
+
+  # hapuppy/ prefix — no application required, paid, RP-enabled
+  resp = client.chat.completions.create(
+      model="hapuppy/claude-opus-4-7",
+      messages=[{"role": "user", "content": "Hello!"}]
+  )
+  ```
+</Step>
+
+</Steps>
+
+## 如果被拒了怎么办?
+
+被拒只是意味着本次人工审核未通过。没有冷却期 —— 你可以从同一个 [Claude 申请](https://hapuppy.com/zh/dashboard/claude-apply)页面**立即重新提交申请**。
+
+与此同时,你仍然可以通过 **`hapuppy/`** 前缀使用 Claude —— 它无需申请,充值积分即可直接使用。
+
+如果你不确定为什么申请屡屡被拒,请用你的账户邮箱联系 [support@hapuppy.com](mailto:support@hapuppy.com)。
+
+<Info>
+  审批是按账户而非按 API 密钥进行的。即使你重新生成新的密钥,你的 Claude 访问权限也会自动延续。
+</Info>

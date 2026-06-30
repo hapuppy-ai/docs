@@ -1,0 +1,140 @@
+---
+title: "图像编辑"
+description: "使用文本提示词和可选的遮罩,编辑或扩展现有图像。"
+---
+
+```
+POST https://beta.hapuppy.com/v1/images/edits
+```
+
+根据文本提示词修改现有图像。使用透明**遮罩**(mask)来指定模型应重新生成哪些像素(局部重绘 / inpainting),或省略遮罩,让模型按指令编辑整张图像(指令式编辑)。
+
+由于需要上传图像文件,该端点接收 `multipart/form-data`。
+
+## 请求体(multipart/form-data)
+
+<ParamField body="model" type="string" required>
+  图像编辑模型。常用取值:`gpt-image-1`、`dall-e-2`、`flux-pro-edit`。
+</ParamField>
+
+<ParamField body="image" type="file" required>
+  待编辑的源图像。PNG 文件,正方形(DALL-E 2)或任意尺寸(gpt-image-1),小于 4MB。
+</ParamField>
+
+<ParamField body="prompt" type="string" required>
+  对目标结果的描述。请明确说明应当改变什么。
+</ParamField>
+
+<ParamField body="mask" type="file">
+  带透明像素的 PNG,用于标记要替换的区域。必须与源图像尺寸一致。若省略,模型将根据提示词编辑整张图像。
+</ParamField>
+
+<ParamField body="n" type="integer" default="1">
+  生成的编辑结果数量。取值范围因模型而异。
+</ParamField>
+
+<ParamField body="size" type="string" default="1024x1024">
+  输出图像尺寸。对于 DALL-E 2,必须与源图像一致。
+</ParamField>
+
+<ParamField body="response_format" type="string" default="url">
+  `url` 或 `b64_json`。链接会在约 1 小时后失效。
+</ParamField>
+
+## 响应
+
+结构与[图像生成](/zh/api-reference/images/generations#response)相同。
+
+## 示例
+
+### 使用遮罩进行局部重绘
+
+<CodeGroup>
+
+```python Python
+from openai import OpenAI
+
+client = OpenAI(
+    api_key="sk-hapuppy-xxx",
+    base_url="https://beta.hapuppy.com/v1"
+)
+
+with open("portrait.png", "rb") as img, open("mask.png", "rb") as mask:
+    resp = client.images.edit(
+        model="gpt-image-1",
+        image=img,
+        mask=mask,
+        prompt="Replace the background with a sunset beach scene",
+        size="1024x1024"
+    )
+
+print(resp.data[0].url)
+```
+
+```typescript TypeScript
+import OpenAI from "openai";
+import fs from "fs";
+
+const client = new OpenAI({
+  apiKey: "sk-hapuppy-xxx",
+  baseURL: "https://beta.hapuppy.com/v1",
+});
+
+const resp = await client.images.edit({
+  model: "gpt-image-1",
+  image: fs.createReadStream("portrait.png"),
+  mask: fs.createReadStream("mask.png"),
+  prompt: "Replace the background with a sunset beach scene",
+  size: "1024x1024",
+});
+
+console.log(resp.data[0].url);
+```
+
+```bash cURL
+curl https://beta.hapuppy.com/v1/images/edits \
+  -H "Authorization: Bearer sk-hapuppy-xxx" \
+  -F model="gpt-image-1" \
+  -F image="@portrait.png" \
+  -F mask="@mask.png" \
+  -F prompt="Replace the background with a sunset beach scene" \
+  -F size="1024x1024"
+```
+
+</CodeGroup>
+
+### 不使用遮罩进行编辑(指令式编辑)
+
+```python Python
+with open("sketch.png", "rb") as img:
+    resp = client.images.edit(
+        model="gpt-image-1",
+        image=img,
+        prompt="Colorize this pencil sketch with warm autumn tones"
+    )
+```
+
+## 生成遮罩
+
+遮罩是与源图像尺寸相同的 PNG。透明像素(`alpha=0`)标记要重新生成的区域;不透明像素则被保留。
+
+```python Python
+# Create a circular mask programmatically
+from PIL import Image, ImageDraw
+
+src = Image.open("portrait.png")
+mask = Image.new("RGBA", src.size, (0, 0, 0, 255))
+draw = ImageDraw.Draw(mask)
+# Transparent circle in the center
+w, h = src.size
+draw.ellipse((w//4, h//4, 3*w//4, 3*h//4), fill=(0, 0, 0, 0))
+mask.save("mask.png")
+```
+
+<Warning>
+  遮罩的 alpha 约定:**透明 = 将被重新生成**,**不透明 = 予以保留**。部分图像工具的约定与此相反 —— 提交前请务必确认。
+</Warning>
+
+<Info>
+  要在 `gpt-image-1` 上获得最佳效果,请同时描述**要改变什么**与**要保留什么**。例如:“Replace the sky with stormy clouds, keep the foreground exactly as it is.”
+</Info>

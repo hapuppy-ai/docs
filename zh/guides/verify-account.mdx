@@ -1,0 +1,66 @@
+---
+title: "验证账户"
+description: "将你的 Hapuppy 账户绑定到 Discord 账户,以解锁 API 访问权限。"
+---
+
+注册完成后,每个 Hapuppy 账户都必须完成一次性的验证步骤,才能使用 API。验证的方式是通过我们的官方 Discord 服务器,将你的账户与一个 Discord 账户绑定。
+
+## 为什么要验证?
+
+- **防止滥用** —— 阻止自动化爬虫与共享密钥
+- **将每个账户与唯一真实用户对应** —— 一个 Hapuppy 账户,对应一个 Discord 身份
+- **解锁 API 访问** —— 未完成验证,即使是免费套餐,请求也会被拒绝
+
+## 验证步骤
+
+<Steps>
+
+<Step title="登录控制台">
+  打开[控制台](https://hapuppy.com/en/dashboard),使用你注册时的邮箱登录。
+
+  你会在页面顶部看到一条横幅,提示你在 API 接受请求之前先完成验证。
+</Step>
+
+<Step title="加入 Hapuppy Discord 服务器">
+  点击验证横幅中的链接,或直接通过 [discord.gg/YWayJmZKCu](https://discord.gg/YWayJmZKCu) 加入。
+</Step>
+
+<Step title="绑定你的 Discord 账户">
+  在控制台的验证横幅中,点击 **Bind Discord**,并授权 Hapuppy 机器人读取你的 Discord 身份。
+
+  <Warning>
+    一个 Hapuppy 账户只能绑定**一个** Discord 账户,而一个 Discord 账户也只能验证**一个** Hapuppy 账户。该绑定不可复用 —— 请谨慎选择。
+  </Warning>
+</Step>
+
+<Step title="开始使用 API">
+  绑定成功后,验证横幅会随即消失,你的 API 密钥也会立即开始接受请求。
+</Step>
+
+</Steps>
+
+<Info>
+  验证可解锁通用的 API 访问权限。访问 **Claude** 模型需要单独申请 —— 关于前置条件与提交方式,请参阅 [Claude 申请](/zh/guides/claude-apply)。
+</Info>
+
+## 故障排查
+
+<AccordionGroup>
+
+<Accordion title="绑定后验证横幅仍未消失">
+  先刷新一次控制台。如果仍然存在,请退出登录后再重新登录 —— 会话中可能残留了过期的验证状态。
+</Accordion>
+
+<Accordion title="该 Discord 账户已绑定到另一个 Hapuppy 账户">
+  每个 Discord 账户只能绑定一个 Hapuppy 账户。如果你有一个不再使用的旧 Hapuppy 账户,请在重试前联系 [support@hapuppy.com](mailto:support@hapuppy.com) 解除该绑定。
+</Accordion>
+
+<Accordion title="我无法加入 Discord 服务器">
+  请确认你的 Discord 账户状态正常(未被 Discord 限流、满足年龄要求)。如果邀请链接已过期,请从控制台横幅或页脚获取一个新的链接。
+</Accordion>
+
+<Accordion title="我想更换已绑定的 Discord 账户">
+  重新绑定无法自助完成 —— 请用你注册时的邮箱发送邮件至 [support@hapuppy.com](mailto:support@hapuppy.com),并附上旧的与新的 Discord 用户名。
+</Accordion>
+
+</AccordionGroup>
