@@ -9,3 +9,6 @@
 # Internal docs / scratch
 补充文档.md
 *.local.md
+
+# Tooling / debug artifacts
+.playwright-mcp/
