@@ -4,7 +4,7 @@ description: "Delete a video job and its associated assets."
 ---
 
 ```
-DELETE https://beta.hapuppy.com/v1/videos/{video_id}
+DELETE https://api.hapuppy.com/v1/videos/{video_id}
 ```
 
 Permanently deletes a video job and its rendered file. Use this to clean up after you've downloaded and stored the video yourself, or to cancel an in-progress job (no refund of partially consumed credits).
@@ -29,7 +29,7 @@ Permanently deletes a video job and its rendered file. Use this to clean up afte
 import requests
 
 resp = requests.delete(
-    "https://beta.hapuppy.com/v1/videos/video_abc123",
+    "https://api.hapuppy.com/v1/videos/video_abc123",
     headers={"Authorization": "Bearer sk-hapuppy-xxx"},
 )
 print(resp.json())
@@ -37,7 +37,7 @@ print(resp.json())
 
 ```typescript TypeScript
 const resp = await fetch(
-  "https://beta.hapuppy.com/v1/videos/video_abc123",
+  "https://api.hapuppy.com/v1/videos/video_abc123",
   {
     method: "DELETE",
     headers: { Authorization: "Bearer sk-hapuppy-xxx" },
@@ -47,7 +47,7 @@ console.log(await resp.json());
 ```
 
 ```bash cURL
-curl -X DELETE https://beta.hapuppy.com/v1/videos/video_abc123 \
+curl -X DELETE https://api.hapuppy.com/v1/videos/video_abc123 \
   -H "Authorization: Bearer sk-hapuppy-xxx"
 ```
 
@@ -63,13 +63,13 @@ import time, requests
 HEADERS = {"Authorization": "Bearer sk-hapuppy-xxx"}
 cutoff = int(time.time()) - 7 * 86400
 
-jobs = requests.get("https://beta.hapuppy.com/v1/videos",
+jobs = requests.get("https://api.hapuppy.com/v1/videos",
                     headers=HEADERS, params={"limit": 100}).json()["data"]
 
 for job in jobs:
     if job["created_at"] < cutoff:
         requests.delete(
-            f"https://beta.hapuppy.com/v1/videos/{job['id']}",
+            f"https://api.hapuppy.com/v1/videos/{job['id']}",
             headers=HEADERS
         )
         print(f"Deleted {job['id']}")

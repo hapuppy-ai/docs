@@ -6,20 +6,19 @@ description: "Get up and running with Hapuppy in under 5 minutes."
 <Steps>
 
 <Step title="Create an account">
-  Sign up for a free account at [hapuppy.com/register](https://hapuppy.com/register).
+  Sign up for an account at [hapuppy.com/register](https://hapuppy.com/register).
 </Step>
 
-<Step title="Choose a plan">
-  Start free, or purchase a one-time credit pack. Credits in the vault never expire.
+<Step title="Buy a credit pack">
+  Purchase a one-time credit pack. Credits in the vault never expire, and any paid account can call every model.
 
-  | Plan | Price | Credits | Notes |
+  | Pack | Price | Credits | Notes |
   |------|-------|---------|-------|
-  | Free | $0 | 200K on sign-up | Basic models, one-time grant |
-  | Lite | $9.99 one-time | 30M | All 100+ models, never expires |
+  | Lite | $9.99 one-time | 30M | All models, never expires |
   | Standard | $19.99 one-time | 120M | All models, never expires (popular) |
   | Pro | $36.99 one-time | 240M | All models + priority routing, never expires |
 
-  Paid tiers share a 100 RPM rate limit; the Free tier is 10 RPM. Purchase through the [Credits Packs](https://hapuppy.com/en/dashboard/billing) page; payments are processed via Creem.
+  Every account gets a 100 RPM rate limit. Purchase through the [Credits Packs](https://hapuppy.com/en/dashboard/billing) page; payments are processed via Creem.
 </Step>
 
 <Step title="Generate an API key">
@@ -44,7 +43,7 @@ description: "Get up and running with Hapuppy in under 5 minutes."
 
   client = OpenAI(
       api_key="sk-hapuppy-xxx",
-      base_url="https://beta.hapuppy.com/v1"
+      base_url="https://api.hapuppy.com/v1"
   )
 
   response = client.chat.completions.create(
@@ -62,7 +61,7 @@ description: "Get up and running with Hapuppy in under 5 minutes."
 
   const client = new OpenAI({
     apiKey: "sk-hapuppy-xxx",
-    baseURL: "https://beta.hapuppy.com/v1",
+    baseURL: "https://api.hapuppy.com/v1",
   });
 
   const response = await client.chat.completions.create({
@@ -76,7 +75,7 @@ description: "Get up and running with Hapuppy in under 5 minutes."
   ```
 
   ```bash cURL
-  curl https://beta.hapuppy.com/v1/chat/completions \
+  curl https://api.hapuppy.com/v1/chat/completions \
     -H "Authorization: Bearer sk-hapuppy-xxx" \
     -H "Content-Type: application/json" \
     -d '{
@@ -91,7 +90,7 @@ description: "Get up and running with Hapuppy in under 5 minutes."
 </Step>
 
 <Step title="Try different models">
-  Swap the `model` parameter to try any of our 100+ supported models:
+  Swap the `model` parameter to try any supported model (see the live list on the [Models](https://hapuppy.com/en/dashboard/models) page):
 
   ```python Python
   # Try GPT-4o

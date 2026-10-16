@@ -12,7 +12,7 @@ Hapuppy 完全兼容 OpenAI API 格式,因此能轻松集成到主流的 AI 开�
 将以下内容添加到你的 shell 配置文件(`~/.bashrc`、`~/.zshrc` 或 `~/.profile`):
 
 ```bash
-export ANTHROPIC_BASE_URL=https://beta.hapuppy.com
+export ANTHROPIC_BASE_URL=https://api.hapuppy.com
 export ANTHROPIC_API_KEY=sk-hapuppy-xxx
 ```
 
@@ -39,7 +39,7 @@ claude
     设置如下内容:
 
     - **OpenAI API Key**:`sk-hapuppy-xxx`
-    - **Override OpenAI Base URL**:`https://beta.hapuppy.com/v1`
+    - **Override OpenAI Base URL**:`https://api.hapuppy.com/v1`
   </Step>
   <Step title="选择模型">
     选择任意通过 Hapuppy 提供的模型(例如 `claude-sonnet-4-20250514`、`gpt-4o`)。
@@ -65,7 +65,7 @@ claude
     设置以下字段:
 
     - **API Key**:`sk-hapuppy-xxx`
-    - **Base URL**:`https://beta.hapuppy.com/v1`
+    - **Base URL**:`https://api.hapuppy.com/v1`
     - **Model ID**:你偏好的模型(例如 `claude-sonnet-4-20250514`)
   </Step>
 </Steps>
@@ -82,14 +82,14 @@ claude
       "provider": "openai",
       "model": "claude-sonnet-4-20250514",
       "apiKey": "sk-hapuppy-xxx",
-      "apiBase": "https://beta.hapuppy.com/v1"
+      "apiBase": "https://api.hapuppy.com/v1"
     },
     {
       "title": "Hapuppy - GPT-4o",
       "provider": "openai",
       "model": "gpt-4o",
       "apiKey": "sk-hapuppy-xxx",
-      "apiBase": "https://beta.hapuppy.com/v1"
+      "apiBase": "https://api.hapuppy.com/v1"
     }
   ]
 }
@@ -110,7 +110,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://beta.hapuppy.com/v1"
+    base_url="https://api.hapuppy.com/v1"
 )
 
 response = client.chat.completions.create(
@@ -128,7 +128,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://beta.hapuppy.com/v1",
+  baseURL: "https://api.hapuppy.com/v1",
 });
 
 const response = await client.chat.completions.create({
@@ -149,7 +149,7 @@ console.log(response.choices[0].message.content);
 
 ```bash
 export OPENAI_API_KEY="sk-hapuppy-xxx"
-export OPENAI_BASE_URL="https://beta.hapuppy.com/v1"
+export OPENAI_BASE_URL="https://api.hapuppy.com/v1"
 ```
 
 然后只需:
@@ -167,5 +167,5 @@ client = OpenAI()  # automatically uses env vars
 | 设置项 | 值 |
 |---------|-------|
 | **API Key** | 你的 `sk-hapuppy-xxx` 密钥 |
-| **Base URL** | `https://beta.hapuppy.com/v1` |
+| **Base URL** | `https://api.hapuppy.com/v1` |
 | **Model** | 任意[受支持的模型](https://hapuppy.com/en/dashboard/models) |

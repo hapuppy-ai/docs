@@ -4,7 +4,7 @@ description: "Convert text into spoken audio."
 ---
 
 ```
-POST https://beta.hapuppy.com/v1/audio/speech
+POST https://api.hapuppy.com/v1/audio/speech
 ```
 
 Synthesizes natural-sounding speech from a text input. Useful for voice assistants, narration, accessibility features, and audio content generation. Returns raw audio bytes in the chosen format.
@@ -46,7 +46,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://beta.hapuppy.com/v1"
+    base_url="https://api.hapuppy.com/v1"
 )
 
 response = client.audio.speech.create(
@@ -64,7 +64,7 @@ import fs from "fs";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://beta.hapuppy.com/v1",
+  baseURL: "https://api.hapuppy.com/v1",
 });
 
 const response = await client.audio.speech.create({
@@ -78,7 +78,7 @@ fs.writeFileSync("welcome.mp3", buffer);
 ```
 
 ```bash cURL
-curl https://beta.hapuppy.com/v1/audio/speech \
+curl https://api.hapuppy.com/v1/audio/speech \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -H "Content-Type: application/json" \
   -d '{

@@ -5,14 +5,15 @@ description: "How credits, model multipliers, the vault, and rate limits work."
 
 Hapuppy uses a **credit-based** system. You buy credits once, they enter your **vault**, and they never expire. Every API call deducts credits based on the model and the work it did.
 
-## Plans
+## Credit Packs
 
-| Plan | Price | Credits | Models | Notes |
+There are no subscriptions, plans, or free credits. Buy any pack and your account can call every model.
+
+| Pack | Price | Credits | Models | Notes |
 |------|-------|---------|--------|-------|
-| Free | $0 | 200K on sign-up | Basic models | One-time grant; does **not** refill daily |
-| Lite | $9.99 one-time | 30M | All 100+ models | Vault credits never expire |
+| Lite | $9.99 one-time | 30M | All models | Vault credits never expire |
 | Standard | $19.99 one-time | 120M | All models | Most popular |
-| Pro | $36.99 one-time | 240M | All models + **priority routing** | Lowest-latency tier |
+| Pro | $36.99 one-time | 240M | All models + **priority routing** | Lowest latency |
 
 Purchase from the [Credits Packs](https://hapuppy.com/en/dashboard/billing) page. Payments are processed via Creem; refunds are available within 7 days if you have not consumed a significant portion of the pack.
 
@@ -56,16 +57,16 @@ Exact multipliers and fixed costs are maintained at the [Models](https://hapuppy
 
 ### Chat models
 
-| Model | Input multiplier | Output multiplier | Tier required |
-|---|---|---|---|
-| `claude-opus-4-5-20251101` | 1× | 5× | Free |
-| `claude-opus-4-6` | 1× | 5× | Free |
-| `claude-opus-4-7` | 1× | 5× | Free |
-| `claude-sonnet-4-6` | 0.6× | 3× | Free |
-| `hapuppy/claude-haiku-4-5-20251001` | 0.8× | 4× | Pro |
-| `hapuppy/claude-opus-4-6` | 2.4× | 12× | Pro |
-| `hapuppy/claude-opus-4-7` | 2.4× | 12× | Pro |
-| `hapuppy/claude-sonnet-4-6` | 1.6× | 8× | Pro |
+| Model | Input multiplier | Output multiplier |
+|---|---|---|
+| `claude-opus-4-5-20251101` | 1× | 5× |
+| `claude-opus-4-6` | 1× | 5× |
+| `claude-opus-4-7` | 1× | 5× |
+| `claude-sonnet-4-6` | 0.6× | 3× |
+| `hapuppy/claude-haiku-4-5-20251001` | 0.8× | 4× |
+| `hapuppy/claude-opus-4-6` | 2.4× | 12× |
+| `hapuppy/claude-opus-4-7` | 2.4× | 12× |
+| `hapuppy/claude-sonnet-4-6` | 1.6× | 8× |
 
 ### Fixed-cost endpoints
 
@@ -114,7 +115,7 @@ You'd get roughly **1,800 calls** from the same vault.
 
 ## Rate Limiting
 
-Rate limits depend on your plan: the **Free tier is 10 RPM**, while all **paid tiers get 100 RPM (requests per minute)**. Exceeding your limit returns a `429` error with:
+Every account gets **100 RPM (requests per minute)**. Exceeding your limit returns a `429` error with:
 
 ```json
 {
@@ -132,7 +133,7 @@ The right pattern is exponential backoff. The OpenAI SDK has retries built in (`
 import time
 from openai import OpenAI, RateLimitError, APIError
 
-client = OpenAI(api_key="sk-hapuppy-xxx", base_url="https://beta.hapuppy.com/v1")
+client = OpenAI(api_key="sk-hapuppy-xxx", base_url="https://api.hapuppy.com/v1")
 
 def chat_with_retry(messages, model="claude-sonnet-4-20250514", max_retries=5):
     for attempt in range(max_retries):
@@ -151,7 +152,7 @@ def chat_with_retry(messages, model="claude-sonnet-4-20250514", max_retries=5):
 
 ## Checking Your Balance
 
-Visit the [dashboard](https://hapuppy.com/en/dashboard) — your vault balance, free sign-up credits, and recent usage are all surfaced there. There is no public API for balance lookup yet; this is on the roadmap.
+Visit the [dashboard](https://hapuppy.com/en/dashboard) — your vault balance and recent usage are both surfaced there. There is no public API for balance lookup yet; this is on the roadmap.
 
 ## Cost-Optimization Tips
 

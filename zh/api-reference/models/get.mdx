@@ -4,7 +4,7 @@ description: "检索某个特定模型的详细信息。"
 ---
 
 ```
-GET https://beta.hapuppy.com/v1/models/{model_id}
+GET https://api.hapuppy.com/v1/models/{model_id}
 ```
 
 返回单个模型的元数据。在发送对话 / 嵌入 / 图像请求之前,可用它确认某个模型当前是否可用,或查看其背后的提供方。
@@ -42,7 +42,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://beta.hapuppy.com/v1"
+    base_url="https://api.hapuppy.com/v1"
 )
 
 model = client.models.retrieve("claude-sonnet-4-20250514")
@@ -54,7 +54,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://beta.hapuppy.com/v1",
+  baseURL: "https://api.hapuppy.com/v1",
 });
 
 const model = await client.models.retrieve("claude-sonnet-4-20250514");
@@ -62,7 +62,7 @@ console.log(model.id, model.owned_by);
 ```
 
 ```bash cURL
-curl https://beta.hapuppy.com/v1/models/claude-sonnet-4-20250514 \
+curl https://api.hapuppy.com/v1/models/claude-sonnet-4-20250514 \
   -H "Authorization: Bearer sk-hapuppy-xxx"
 ```
 
@@ -87,5 +87,5 @@ curl https://beta.hapuppy.com/v1/models/claude-sonnet-4-20250514 \
 | `401` | `invalid_api_key` | API 密钥缺失、格式错误或已被吊销。 |
 
 <Info>
-  本端点只是一次轻量的元数据查询 —— 它并不会校验你的计划是否被授予访问该模型的权限。部分 Claude/Opus 层级的模型还需要单独申请;参见 [Claude Apply](/zh/guides/claude-apply)。
+  本端点只是一次轻量的元数据查询。已购买积分的账户可调用它返回的全部模型,无需单独申请。
 </Info>

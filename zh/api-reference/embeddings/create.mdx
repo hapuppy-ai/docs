@@ -4,7 +4,7 @@ description: "从文本生成向量嵌入,用于语义搜索、聚类和检索�
 ---
 
 ```
-POST https://beta.hapuppy.com/v1/embeddings
+POST https://api.hapuppy.com/v1/embeddings
 ```
 
 将文本转换为定长向量,以捕捉其语义含义。嵌入可用于语义搜索、文档聚类、推荐系统、RAG 流程以及相似度比较。
@@ -67,7 +67,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://beta.hapuppy.com/v1"
+    base_url="https://api.hapuppy.com/v1"
 )
 
 resp = client.embeddings.create(
@@ -84,7 +84,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://beta.hapuppy.com/v1",
+  baseURL: "https://api.hapuppy.com/v1",
 });
 
 const resp = await client.embeddings.create({
@@ -96,7 +96,7 @@ console.log(`Dimensions: ${resp.data[0].embedding.length}`);
 ```
 
 ```bash cURL
-curl https://beta.hapuppy.com/v1/embeddings \
+curl https://api.hapuppy.com/v1/embeddings \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -H "Content-Type: application/json" \
   -d '{

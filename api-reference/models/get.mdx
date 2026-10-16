@@ -4,7 +4,7 @@ description: "Retrieve details about a specific model."
 ---
 
 ```
-GET https://beta.hapuppy.com/v1/models/{model_id}
+GET https://api.hapuppy.com/v1/models/{model_id}
 ```
 
 Returns metadata for a single model. Useful to confirm a model is currently available before sending a chat/embedding/image request, or to check the provider that backs it.
@@ -42,7 +42,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://beta.hapuppy.com/v1"
+    base_url="https://api.hapuppy.com/v1"
 )
 
 model = client.models.retrieve("claude-sonnet-4-20250514")
@@ -54,7 +54,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://beta.hapuppy.com/v1",
+  baseURL: "https://api.hapuppy.com/v1",
 });
 
 const model = await client.models.retrieve("claude-sonnet-4-20250514");
@@ -62,7 +62,7 @@ console.log(model.id, model.owned_by);
 ```
 
 ```bash cURL
-curl https://beta.hapuppy.com/v1/models/claude-sonnet-4-20250514 \
+curl https://api.hapuppy.com/v1/models/claude-sonnet-4-20250514 \
   -H "Authorization: Bearer sk-hapuppy-xxx"
 ```
 
@@ -87,5 +87,5 @@ curl https://beta.hapuppy.com/v1/models/claude-sonnet-4-20250514 \
 | `401` | `invalid_api_key` | API key is missing, malformed, or revoked. |
 
 <Info>
-  This endpoint is a thin metadata lookup — it does not validate that your plan grants access to the model. Some Claude/Opus tier models also require a separate application; see [Claude Apply](/guides/claude-apply).
+  This endpoint is a thin metadata lookup. Any account with purchased credits can call every model it returns; no separate application is required.
 </Info>

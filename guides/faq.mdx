@@ -6,7 +6,7 @@ description: "Frequently asked questions about Hapuppy."
 <AccordionGroup>
 
 <Accordion title="What is Hapuppy?">
-  Hapuppy is an AI API gateway that lets you access 100+ AI models (Claude, GPT, Gemini, DeepSeek, Llama, GLM, and more) through a single API key. It's fully compatible with the OpenAI API format, so it works as a drop-in replacement in any tool or SDK that supports OpenAI.
+  Hapuppy is an AI API gateway that lets you access every major AI model (Claude, GPT, Gemini, DeepSeek, Llama, GLM, and more) through a single API key. It's fully compatible with the OpenAI API format, so it works as a drop-in replacement in any tool or SDK that supports OpenAI.
 </Accordion>
 
 <Accordion title="How is Hapuppy different from using provider APIs directly?">
@@ -17,7 +17,7 @@ description: "Frequently asked questions about Hapuppy."
 </Accordion>
 
 <Accordion title="Which models are supported?">
-  Hapuppy supports 100+ models from providers including Anthropic (Claude), OpenAI (GPT), Google (Gemini), DeepSeek, Meta (Llama), and Zhipu (GLM). See the [Models](https://hapuppy.com/en/dashboard/models) page for the curated catalog with up-to-date credit multipliers, or call [List Models](/api-reference/models/list) programmatically.
+  Hapuppy supports models from providers including Anthropic (Claude), OpenAI (GPT), Google (Gemini), DeepSeek, Meta (Llama), and Zhipu (GLM). See the [Models](https://hapuppy.com/en/dashboard/models) page for the live catalog, current model count, and up-to-date credit multipliers, or call [List Models](/api-reference/models/list) programmatically.
 </Accordion>
 
 <Accordion title="Which API endpoints are supported?">
@@ -32,7 +32,7 @@ description: "Frequently asked questions about Hapuppy."
 </Accordion>
 
 <Accordion title="Is Hapuppy compatible with the OpenAI SDK?">
-  Yes. Hapuppy is a drop-in replacement for the OpenAI API. Simply set your base URL to `https://beta.hapuppy.com/v1` and use your Hapuppy API key. Both the Python and TypeScript OpenAI SDKs are fully supported.
+  Yes. Hapuppy is a drop-in replacement for the OpenAI API. Simply set your base URL to `https://api.hapuppy.com/v1` and use your Hapuppy API key. Both the Python and TypeScript OpenAI SDKs are fully supported.
 </Accordion>
 
 <Accordion title="What tools does Hapuppy work with?">
@@ -46,9 +46,8 @@ description: "Frequently asked questions about Hapuppy."
 </Accordion>
 
 <Accordion title="How does pricing work?">
-  Hapuppy offers a free tier plus three one-time credit packs:
-  - **Free** — 200K credits on sign-up (one-time), basic models
-  - **Lite** — $9.99 one-time, 30M credits, all 100+ models
+  Hapuppy sells three one-time credit packs. There is no free tier and no subscription, and any paid account can call every model:
+  - **Lite** — $9.99 one-time, 30M credits, all models
   - **Standard** — $19.99 one-time, 120M credits, all models (most popular)
   - **Pro** — $36.99 one-time, 240M credits, all models + priority routing
 
@@ -56,18 +55,17 @@ description: "Frequently asked questions about Hapuppy."
 </Accordion>
 
 <Accordion title="Do credits expire?">
-  Credits in your **vault** (purchased via a one-time pack) never expire — use them at your own pace. Free-tier credits are a one-time sign-up grant; once used up they do not refill.
+  Credits in your **vault** (purchased via a one-time pack) never expire — use them at your own pace.
 </Accordion>
 
 <Accordion title="What happens when I run out of credits?">
   API requests will return a `429` error.
 
-  - **Free tier**: your 200K sign-up credits are used up. Purchase any credit pack to top up your vault.
-  - **Paid users**: purchase another pack from the [Credits Packs](https://hapuppy.com/en/dashboard/billing) page — newly purchased credits stack into your vault.
+  Purchase another pack from the [Credits Packs](https://hapuppy.com/en/dashboard/billing) page — newly purchased credits stack into your vault.
 </Accordion>
 
 <Accordion title="What is the rate limit?">
-  The Free tier is limited to 10 requests per minute (RPM); all paid tiers get 100 RPM. If you exceed your limit, you'll receive a `429` error.
+  Every account is limited to 100 requests per minute (RPM). If you exceed your limit, you'll receive a `429` error.
 </Accordion>
 
 <Accordion title="Does Hapuppy support streaming?">
@@ -83,9 +81,9 @@ description: "Frequently asked questions about Hapuppy."
 </Accordion>
 
 <Accordion title="How do I get an API key?">
-  1. Sign up at [hapuppy.com/register](https://hapuppy.com/register) — you start on the free tier with 200K sign-up credits
+  1. Sign up at [hapuppy.com/register](https://hapuppy.com/register)
   2. Verify your account by binding it to a Discord account — see [Verify Account](/guides/verify-account)
-  3. (Optional) Purchase a one-time pack from the [Credits Packs](https://hapuppy.com/en/dashboard/billing) page to unlock all 100+ models
+  3. Purchase a one-time pack from the [Credits Packs](https://hapuppy.com/en/dashboard/billing) page. Once paid, every model is unlocked
   4. Generate an API key from the dashboard
 
   See the [Quickstart](/quickstart) guide for step-by-step instructions.
@@ -112,24 +110,18 @@ description: "Frequently asked questions about Hapuppy."
 </Accordion>
 
 <Accordion title="How do I verify my account?">
-  Hapuppy verification is done by binding your account to a Discord account in our official server. The full flow — including the dashboard banner, invite link, and 1:1 binding rule — is in [Verify Account](/guides/verify-account). Without this binding the API will reject your requests even on the free tier.
+  Hapuppy verification is done by binding your account to a Discord account in our official server. The full flow — including the dashboard banner, invite link, and 1:1 binding rule — is in [Verify Account](/guides/verify-account). Without this binding the API will reject your requests.
 </Accordion>
 
 <Accordion title="How do I get access to Claude models?">
-  It depends on which variant you want:
-
-  - **Unprefixed Claude** (e.g. `claude-opus-4-7`) — free after a manual application at **Dashboard → [Claude Apply](https://hapuppy.com/zh/dashboard/claude-apply)**. Does **not** support role-play (RP).
-  - **`hapuppy/`-prefixed Claude** (e.g. `hapuppy/claude-opus-4-7`) — **no application required**, paid pay-as-you-go, RP-enabled.
-
-  Reviews for the unprefixed variant are done by hand — there's no email notification, so check the application page in the dashboard for the status update. See [Claude Apply](/guides/claude-apply) for details.
+  No application is needed. Once you have purchased credits, every Claude model is available, the same as every other model. Credits are drawn at each model's multiplier; see the [Models](https://hapuppy.com/en/dashboard/models) page.
 </Accordion>
 
 <Accordion title="Why am I getting a 403 / model_access_denied error?">
   The model exists but your account isn't entitled to call it. Common reasons:
 
   - **Account not verified** — bind your Discord account first, see [Verify Account](/guides/verify-account)
-  - **No Claude Apply approval** — required only for **unprefixed** Claude models, see [Claude Apply](/guides/claude-apply)
-  - **Missing credits for paid variants** — `hapuppy/`-prefixed Claude models are paid; top up from the [Credits Packs](https://hapuppy.com/en/dashboard/billing) page if your vault is empty
+  - **No purchased credits** — model access requires a paid account; top up from the [Credits Packs](https://hapuppy.com/en/dashboard/billing) page
 
   Check the error message body for the exact reason.
 </Accordion>
@@ -137,8 +129,8 @@ description: "Frequently asked questions about Hapuppy."
 <Accordion title="Why am I getting 429 errors?">
   Two distinct causes — the error code tells you which:
 
-  - `rate_limit_exceeded` — you've exceeded your plan's per-minute request limit (10 RPM on Free, 100 RPM on paid tiers). Add exponential backoff to your retry logic.
-  - `insufficient_credits` — free-tier allowance is used up, or your vault is empty. Free users wait for the next day's reset, paid users purchase another credit pack.
+  - `rate_limit_exceeded` — you've exceeded the per-minute request limit (100 RPM). Add exponential backoff to your retry logic.
+  - `insufficient_credits` — your vault is empty. Purchase another credit pack.
 </Accordion>
 
 <Accordion title="Where do I report a bug or share feedback?">

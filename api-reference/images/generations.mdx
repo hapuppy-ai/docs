@@ -4,7 +4,7 @@ description: "Generate images from a text prompt."
 ---
 
 ```
-POST https://beta.hapuppy.com/v1/images/generations
+POST https://api.hapuppy.com/v1/images/generations
 ```
 
 Generates one or more images from a text prompt. Supports multiple image models including DALL-E 3, GPT-Image-1, Stable Diffusion variants, and Midjourney-compatible endpoints.
@@ -68,7 +68,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://beta.hapuppy.com/v1"
+    base_url="https://api.hapuppy.com/v1"
 )
 
 resp = client.images.generate(
@@ -87,7 +87,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://beta.hapuppy.com/v1",
+  baseURL: "https://api.hapuppy.com/v1",
 });
 
 const resp = await client.images.generate({
@@ -102,7 +102,7 @@ console.log(resp.data[0].url);
 ```
 
 ```bash cURL
-curl https://beta.hapuppy.com/v1/images/generations \
+curl https://api.hapuppy.com/v1/images/generations \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -H "Content-Type: application/json" \
   -d '{

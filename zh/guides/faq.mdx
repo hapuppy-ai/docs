@@ -6,7 +6,7 @@ description: "关于 Hapuppy 的常见问题。"
 <AccordionGroup>
 
 <Accordion title="什么是 Hapuppy?">
-  Hapuppy 是一个 AI API 网关,让你通过单个 API 密钥访问 100+ 个 AI 模型(Claude、GPT、Gemini、DeepSeek、Llama、GLM 等)。它与 OpenAI API 格式完全兼容,因此可作为直接替代品,用于任何支持 OpenAI 的工具或 SDK。
+  Hapuppy 是一个 AI API 网关,让你通过单个 API 密钥访问主流 AI 模型(Claude、GPT、Gemini、DeepSeek、Llama、GLM 等)。它与 OpenAI API 格式完全兼容,因此可作为直接替代品,用于任何支持 OpenAI 的工具或 SDK。
 </Accordion>
 
 <Accordion title="Hapuppy 与直接使用各家厂商的 API 有何不同?">
@@ -17,7 +17,7 @@ description: "关于 Hapuppy 的常见问题。"
 </Accordion>
 
 <Accordion title="支持哪些模型?">
-  Hapuppy 支持来自多家厂商的 100+ 个模型,包括 Anthropic(Claude)、OpenAI(GPT)、Google(Gemini)、DeepSeek、Meta(Llama)与智谱(GLM)。请查看 [Models](https://hapuppy.com/en/dashboard/models) 页面,获取附有最新积分倍率的精选目录,或以编程方式调用[列出模型](/zh/api-reference/models/list)。
+  Hapuppy 支持来自多家厂商的模型,包括 Anthropic(Claude)、OpenAI(GPT)、Google(Gemini)、DeepSeek、Meta(Llama)与智谱(GLM)。请查看 [Models](https://hapuppy.com/en/dashboard/models) 页面,获取实时模型目录、当前模型数量与最新积分倍率,或以编程方式调用[列出模型](/zh/api-reference/models/list)。
 </Accordion>
 
 <Accordion title="支持哪些 API 端点?">
@@ -32,7 +32,7 @@ description: "关于 Hapuppy 的常见问题。"
 </Accordion>
 
 <Accordion title="Hapuppy 兼容 OpenAI SDK 吗?">
-  兼容。Hapuppy 是 OpenAI API 的直接替代品。只需将你的 base URL 设为 `https://beta.hapuppy.com/v1`,并使用你的 Hapuppy API 密钥即可。Python 与 TypeScript 版的 OpenAI SDK 均完全支持。
+  兼容。Hapuppy 是 OpenAI API 的直接替代品。只需将你的 base URL 设为 `https://api.hapuppy.com/v1`,并使用你的 Hapuppy API 密钥即可。Python 与 TypeScript 版的 OpenAI SDK 均完全支持。
 </Accordion>
 
 <Accordion title="Hapuppy 能与哪些工具配合使用?">
@@ -46,9 +46,8 @@ description: "关于 Hapuppy 的常见问题。"
 </Accordion>
 
 <Accordion title="定价是如何运作的?">
-  Hapuppy 提供一个免费套餐,外加三个一次性积分包:
-  - **Free** —— 注册即送 200K 积分(一次性),可用基础模型
-  - **Lite** —— 一次性 $9.99,30M 积分,可用全部 100+ 个模型
+  Hapuppy 提供三个一次性积分包。不按月付费,也不赠送积分,付费账户可调用全部模型:
+  - **Lite** —— 一次性 $9.99,30M 积分,可用全部模型
   - **Standard** —— 一次性 $19.99,120M 积分,可用全部模型(最受欢迎)
   - **Pro** —— 一次性 $36.99,240M 积分,可用全部模型 + 优先路由
 
@@ -56,18 +55,17 @@ description: "关于 Hapuppy 的常见问题。"
 </Accordion>
 
 <Accordion title="积分会过期吗?">
-  你**金库**中的积分(通过一次性积分包购买)永不过期 —— 可按自己的节奏使用。免费套餐的积分是注册时的一次性赠送;一旦用完便不再补充。
+  你**金库**中的积分(通过一次性积分包购买)永不过期 —— 可按自己的节奏使用。
 </Accordion>
 
 <Accordion title="积分用完后会怎样?">
   API 请求会返回 `429` 错误。
 
-  - **免费套餐**:你注册赠送的 200K 积分已用完。购买任意积分包即可为金库充值。
-  - **付费用户**:从[积分包(Credits Packs)](https://hapuppy.com/en/dashboard/billing)页面再购买一个积分包 —— 新购买的积分会叠加进你的金库。
+  从[积分包(Credits Packs)](https://hapuppy.com/en/dashboard/billing)页面再购买一个积分包 —— 新购买的积分会叠加进你的金库。
 </Accordion>
 
 <Accordion title="速率限制是多少?">
-  免费套餐限制为每分钟 10 次请求(RPM);所有付费套餐为 100 RPM。如果超出限制,你会收到 `429` 错误。
+  所有账户均限制为每分钟 100 次请求(RPM)。如果超出限制,你会收到 `429` 错误。
 </Accordion>
 
 <Accordion title="Hapuppy 支持流式输出吗?">
@@ -83,9 +81,9 @@ description: "关于 Hapuppy 的常见问题。"
 </Accordion>
 
 <Accordion title="如何获取 API 密钥?">
-  1. 在 [hapuppy.com/register](https://hapuppy.com/register) 注册 —— 你将以免费套餐起步,并获得 200K 注册赠送积分
+  1. 在 [hapuppy.com/register](https://hapuppy.com/register) 注册
   2. 通过绑定 Discord 账户验证你的账户 —— 参见[验证账户](/zh/guides/verify-account)
-  3.(可选)从[积分包(Credits Packs)](https://hapuppy.com/en/dashboard/billing)页面购买一个一次性积分包,以解锁全部 100+ 个模型
+  3. 从[积分包(Credits Packs)](https://hapuppy.com/en/dashboard/billing)页面购买一个一次性积分包,付费后即解锁全部模型
   4. 在控制台中生成 API 密钥
 
   分步说明请参阅[快速开始](/zh/quickstart)指南。
@@ -95,8 +93,8 @@ description: "关于 Hapuppy 的常见问题。"
   支付通过 Creem 处理。支持信用卡 / 借记卡。
 </Accordion>
 
-<Accordion title="是否有订阅或周期性扣费?">
-  没有。Hapuppy 采用一次性积分包 —— 你只需付费一次,积分便会进入你的金库并永不过期。没有任何需要取消的订阅。
+<Accordion title="是否有按月或周期性扣费?">
+  没有。Hapuppy 采用一次性积分包 —— 你只需付费一次,积分便会进入你的金库并永不过期。没有任何需要取消的周期性扣费。
 </Accordion>
 
 <Accordion title="可以退款吗?">
@@ -112,24 +110,18 @@ description: "关于 Hapuppy 的常见问题。"
 </Accordion>
 
 <Accordion title="如何验证我的账户?">
-  Hapuppy 的验证方式是在我们的官方服务器中将你的账户与一个 Discord 账户绑定。完整流程 —— 包括控制台横幅、邀请链接以及 1:1 绑定规则 —— 都在[验证账户](/zh/guides/verify-account)中。没有完成该绑定,即使是免费套餐,API 也会拒绝你的请求。
+  Hapuppy 的验证方式是在我们的官方服务器中将你的账户与一个 Discord 账户绑定。完整流程 —— 包括控制台横幅、邀请链接以及 1:1 绑定规则 —— 都在[验证账户](/zh/guides/verify-account)中。没有完成该绑定,API 会拒绝你的请求。
 </Accordion>
 
 <Accordion title="如何获得 Claude 模型的访问权限?">
-  这取决于你想要哪种形态:
-
-  - **无前缀 Claude**(如 `claude-opus-4-7`)—— 在 **控制台 → [Claude 申请](https://hapuppy.com/zh/dashboard/claude-apply)** 完成人工申请后免费使用。**不支持**角色扮演(RP)。
-  - **`hapuppy/` 前缀的 Claude**(如 `hapuppy/claude-opus-4-7`)—— **无需申请**,按量付费,启用 RP。
-
-  无前缀形态的审核为人工进行 —— 没有邮件通知,因此请到控制台中的申请页面查看状态更新。详情请参阅 [Claude 申请](/zh/guides/claude-apply)。
+  无需申请。购买积分后,所有 Claude 模型与其他模型一样直接可用,按各模型倍率扣除积分,详见[模型(Models)](https://hapuppy.com/en/dashboard/models)页面。
 </Accordion>
 
 <Accordion title="为什么我会收到 403 / model_access_denied 错误?">
   该模型存在,但你的账户无权调用它。常见原因:
 
   - **账户未验证** —— 请先绑定你的 Discord 账户,参见[验证账户](/zh/guides/verify-account)
-  - **未通过 Claude 申请审核** —— 仅**无前缀**的 Claude 模型需要,参见 [Claude 申请](/zh/guides/claude-apply)
-  - **付费形态积分不足** —— `hapuppy/` 前缀的 Claude 模型为付费;如果你的金库已空,请从[积分包(Credits Packs)](https://hapuppy.com/en/dashboard/billing)页面充值
+  - **尚未购买积分** —— 模型访问需要付费账户;请从[积分包(Credits Packs)](https://hapuppy.com/en/dashboard/billing)页面充值
 
   请查看错误消息正文,了解确切原因。
 </Accordion>
@@ -137,8 +129,8 @@ description: "关于 Hapuppy 的常见问题。"
 <Accordion title="为什么我会收到 429 错误?">
   有两种不同的原因 —— 错误码会告诉你是哪一种:
 
-  - `rate_limit_exceeded` —— 你已超出套餐的每分钟请求限制(免费套餐 10 RPM,付费套餐 100 RPM)。请在重试逻辑中加入指数退避。
-  - `insufficient_credits` —— 免费套餐额度已用完,或你的金库已空。免费用户需等待次日重置,付费用户则需再购买一个积分包。
+  - `rate_limit_exceeded` —— 你已超出每分钟请求限制(100 RPM)。请在重试逻辑中加入指数退避。
+  - `insufficient_credits` —— 你的金库已空。请再购买一个积分包。
 </Accordion>
 
 <Accordion title="在哪里报告 Bug 或反馈意见?">

@@ -4,7 +4,7 @@ description: "针对各安全类别对文本进行潜在有害内容的分类。
 ---
 
 ```
-POST https://beta.hapuppy.com/v1/moderations
+POST https://api.hapuppy.com/v1/moderations
 ```
 
 检查文本是否包含潜在有害内容(仇恨、骚扰、自残、色情、暴力等)。在将用户生成的内容转发给对话模型、发布到信息流或存入公开场景之前,请先调用本接口。
@@ -44,7 +44,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://beta.hapuppy.com/v1"
+    base_url="https://api.hapuppy.com/v1"
 )
 
 resp = client.moderations.create(
@@ -64,7 +64,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://beta.hapuppy.com/v1",
+  baseURL: "https://api.hapuppy.com/v1",
 });
 
 const resp = await client.moderations.create({
@@ -76,7 +76,7 @@ console.log(resp.results[0].flagged ? "flagged" : "ok");
 ```
 
 ```bash cURL
-curl https://beta.hapuppy.com/v1/moderations \
+curl https://api.hapuppy.com/v1/moderations \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -153,5 +153,5 @@ if scores.violence > 0.3 or scores.harassment > 0.3:
 ```
 
 <Info>
-  在大多数计划中,审核是免费或近乎免费的(参见 [积分与定价](https://hapuppy.com/en/dashboard/models))。在将每一条用户提交的提示词转发给对话模型之前都先运行一次审核 —— 这是你能加上的成本最低的安全防线。
+  审核的成本为零或近乎为零(参见 [积分与定价](https://hapuppy.com/en/dashboard/models))。在将每一条用户提交的提示词转发给对话模型之前都先运行一次审核 —— 这是你能加上的成本最低的安全防线。
 </Info>

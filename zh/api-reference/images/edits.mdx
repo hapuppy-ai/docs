@@ -4,7 +4,7 @@ description: "使用文本提示词和可选的遮罩,编辑或扩展现有图�
 ---
 
 ```
-POST https://beta.hapuppy.com/v1/images/edits
+POST https://api.hapuppy.com/v1/images/edits
 ```
 
 根据文本提示词修改现有图像。使用透明**遮罩**(mask)来指定模型应重新生成哪些像素(局部重绘 / inpainting),或省略遮罩,让模型按指令编辑整张图像(指令式编辑)。
@@ -56,7 +56,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://beta.hapuppy.com/v1"
+    base_url="https://api.hapuppy.com/v1"
 )
 
 with open("portrait.png", "rb") as img, open("mask.png", "rb") as mask:
@@ -77,7 +77,7 @@ import fs from "fs";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://beta.hapuppy.com/v1",
+  baseURL: "https://api.hapuppy.com/v1",
 });
 
 const resp = await client.images.edit({
@@ -92,7 +92,7 @@ console.log(resp.data[0].url);
 ```
 
 ```bash cURL
-curl https://beta.hapuppy.com/v1/images/edits \
+curl https://api.hapuppy.com/v1/images/edits \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -F model="gpt-image-1" \
   -F image="@portrait.png" \

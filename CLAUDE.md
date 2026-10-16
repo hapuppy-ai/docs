@@ -35,12 +35,13 @@ Two groups of pages are intentionally not listed in `docs.json` but the source f
 
 - `api-reference/videos/*.mdx` — Video endpoints (Create / List / Get / Download / Delete). The product does not yet ship a video API.
 - `guides/errors.mdx` — the error-handling guide. References to it from other pages were also removed.
+- `guides/claude-apply.mdx` and `zh/guides/claude-apply.mdx` — the retired Claude application flow. Claude no longer needs an application and there is no role-play (RP) restriction; links to these pages were removed.
 
 If you re-enable these, also restore the navigation entries and the cross-page links that were stripped. Conversely, when shipping new product surface, follow the same pattern (write the `.mdx`, add to `docs.json`) — do not delete dropped pages outright.
 
-### API base URL: `https://beta.hapuppy.com/v1`
+### API base URL: `https://api.hapuppy.com/v1`
 
-All endpoint pages, code examples, and SDK snippets use `beta.hapuppy.com`. The earlier split where some pages used `api.hapuppy.com` has been resolved — do **not** reintroduce that hostname.
+All endpoint pages, code examples, and SDK snippets use `api.hapuppy.com`. `beta.hapuppy.com` is retired — do **not** reintroduce that hostname.
 
 ### Dashboard / billing / models links: three canonical URLs
 
@@ -54,16 +55,17 @@ The product website uses distinct paths for distinct intents. Match the intent t
 
 The phrase **"Credits Packs"** is the agreed-upon anchor text whenever the link is about purchasing — do not paraphrase to "Credits & Pricing", "Credit Pack", etc.
 
-### Pricing model: one-time credit packs, not subscriptions
+### Pricing model: one-time credit packs, no subscriptions, no free tier
 
 A prior commit (`5b80786 fix: 修正定价描述与官网一次性购买模式对齐`) specifically corrected pricing copy to match the website. Whenever you touch pricing language:
 
-- Plans are **one-time purchases**, not monthly subscriptions. Lite $9.99 / Standard $19.99 / Pro $36.99.
+- Credit packs are **one-time purchases**, not subscriptions. Lite $9.99 / Standard $19.99 / Pro $36.99.
 - Purchased credits live in the **vault** and **never expire**.
-- The Free tier (100K/day) **resets daily** and does **not** roll over.
-- Rate limit across all tiers: **100 RPM**.
-- Daily reset (free tier) is **midnight Beijing time (UTC 16:00)**.
+- There is **no free tier**, no sign-up credits, and no daily reset.
+- There are **no plan-based model permissions**: any paid account can call every model.
+- Rate limit for every account: **100 RPM**.
 - Payments are processed via **Creem**.
+- Do not hardcode a model count ("100+"); point to the live [Models](https://hapuppy.com/en/dashboard/models) page or the List Models endpoint.
 
 ### Chat models are billed by separate input/output multipliers
 
@@ -75,18 +77,13 @@ credits = prompt_tokens × input_multiplier + completion_tokens × output_multip
 
 Do not collapse this back into a single `total_tokens × multiplier` formula — it would conflict with the multipliers shown in the Chat models table.
 
-### Claude variants: unprefixed vs `hapuppy/`
+### Claude access: no application, no RP restriction
 
-Two flavours of Claude are offered through the same endpoint:
-
-- **Unprefixed** (`claude-opus-4-7`, `claude-sonnet-4-6`, ...) — free to use after the Claude Apply approval.
-- **`hapuppy/` prefix** (`hapuppy/claude-opus-4-7`, ...) — same models but configured to allow role-play (RP); **paid**, drawn from the vault at higher multipliers.
-
-A single Claude Apply approval unlocks both variants. Reviews are **manual, with no approval email** — applicants must check the application page to see status updates. Keep this consistent across `guides/claude-apply.mdx`, `guides/faq.mdx`, and any new copy.
+Claude models need no application and have no role-play (RP) restriction. Like every other model, they are available to any paid account and billed at their own multipliers (`hapuppy/`-prefixed IDs are just separate model IDs with their own multipliers). Do not reintroduce Claude Apply copy.
 
 ### Account verification = Discord binding
 
-Verification is **not** email/SMS/payment — it is binding the Hapuppy account to a Discord account in the official server, 1:1 and not reusable. Without binding, the API rejects requests even on the free tier. If you describe verification anywhere, match `guides/verify-account.mdx`.
+Verification is **not** email/SMS/payment — it is binding the Hapuppy account to a Discord account in the official server, 1:1 and not reusable. Without binding, the API rejects requests. If you describe verification anywhere, match `guides/verify-account.mdx`.
 
 ### Provider list — what we do NOT support
 

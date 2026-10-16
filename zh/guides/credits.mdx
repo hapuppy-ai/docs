@@ -5,14 +5,15 @@ description: "了解积分、模型系数、金库与速率限制的运作方式
 
 Hapuppy 采用**基于积分**的计费系统。你一次性购买积分,积分进入你的**金库**,且永不过期。每次 API 调用都会根据所用模型及其实际工作量扣除积分。
 
-## 套餐
+## 积分包
 
-| 套餐 | 价格 | 积分 | 模型 | 说明 |
+不按月付费,不分档位,也没有赠送积分。购买任意积分包后,你的账户即可调用全部模型。
+
+| 积分包 | 价格 | 积分 | 模型 | 说明 |
 |------|-------|---------|--------|-------|
-| Free | $0 | 注册赠送 200K | 基础模型 | 一次性赠送;**不会**每日补充 |
-| Lite | $9.99 一次性 | 30M | 全部 100+ 模型 | 金库积分永不过期 |
+| Lite | $9.99 一次性 | 30M | 全部模型 | 金库积分永不过期 |
 | Standard | $19.99 一次性 | 120M | 全部模型 | 最受欢迎 |
-| Pro | $36.99 一次性 | 240M | 全部模型 + **优先路由** | 最低延迟层级 |
+| Pro | $36.99 一次性 | 240M | 全部模型 + **优先路由** | 延迟最低 |
 
 请在[积分包(Credits Packs)](https://hapuppy.com/en/dashboard/billing)页面购买。支付经由 Creem 处理;如果你尚未消耗积分包的较大部分,可在 7 天内申请退款。
 
@@ -21,7 +22,7 @@ Hapuppy 采用**基于积分**的计费系统。你一次性购买积分,积分�
 你购买的积分会进入与账户绑定的个人**金库**。
 
 - **永不过期** —— 按自己的节奏使用
-- **可叠加累积** —— 在 Lite 套餐尚未用完时再购买 Standard 套餐,只会在你的剩余余额上再加 120M
+- **可叠加累积** —— 在 Lite 积分包尚未用完时再购买 Standard 积分包,只会在你的剩余余额上再加 120M
 - **大量使用后不可退款** —— 详见控制台上的退款政策
 
 ## 积分如何计算
@@ -56,16 +57,16 @@ credits_charged = fixed_base_cost
 
 ### 对话模型
 
-| 模型 | 输入系数 | 输出系数 | 所需层级 |
-|---|---|---|---|
-| `claude-opus-4-5-20251101` | 1× | 5× | Free |
-| `claude-opus-4-6` | 1× | 5× | Free |
-| `claude-opus-4-7` | 1× | 5× | Free |
-| `claude-sonnet-4-6` | 0.6× | 3× | Free |
-| `hapuppy/claude-haiku-4-5-20251001` | 0.8× | 4× | Pro |
-| `hapuppy/claude-opus-4-6` | 2.4× | 12× | Pro |
-| `hapuppy/claude-opus-4-7` | 2.4× | 12× | Pro |
-| `hapuppy/claude-sonnet-4-6` | 1.6× | 8× | Pro |
+| 模型 | 输入系数 | 输出系数 |
+|---|---|---|
+| `claude-opus-4-5-20251101` | 1× | 5× |
+| `claude-opus-4-6` | 1× | 5× |
+| `claude-opus-4-7` | 1× | 5× |
+| `claude-sonnet-4-6` | 0.6× | 3× |
+| `hapuppy/claude-haiku-4-5-20251001` | 0.8× | 4× |
+| `hapuppy/claude-opus-4-6` | 2.4× | 12× |
+| `hapuppy/claude-opus-4-7` | 2.4× | 12× |
+| `hapuppy/claude-sonnet-4-6` | 1.6× | 8× |
 
 ### 固定费用端点
 
@@ -86,7 +87,7 @@ credits_charged = fixed_base_cost
 | Transcription | `whisper-1` | 10 |
 | Embedding | `text-embedding-3-small` | 50 |
 | Embedding | `text-embedding-3-large` | 50 |
-| Moderation | `omni-moderation-latest` | 0(免费) |
+| Moderation | `omni-moderation-latest` | 0(不扣积分) |
 
 ## 计算示例
 
@@ -114,7 +115,7 @@ credits_charged = 800 × 2.4 + 1200 × 12 = 1920 + 14400 = 16,320 credits
 
 ## 速率限制
 
-速率限制取决于你的套餐:**免费层级为 10 RPM**,而所有**付费层级为 100 RPM(每分钟请求数)**。超出限制会返回 `429` 错误,内容如下:
+所有账户的速率限制均为 **100 RPM(每分钟请求数)**。超出限制会返回 `429` 错误,内容如下:
 
 ```json
 {
@@ -132,7 +133,7 @@ credits_charged = 800 × 2.4 + 1200 × 12 = 1920 + 14400 = 16,320 credits
 import time
 from openai import OpenAI, RateLimitError, APIError
 
-client = OpenAI(api_key="sk-hapuppy-xxx", base_url="https://beta.hapuppy.com/v1")
+client = OpenAI(api_key="sk-hapuppy-xxx", base_url="https://api.hapuppy.com/v1")
 
 def chat_with_retry(messages, model="claude-sonnet-4-20250514", max_retries=5):
     for attempt in range(max_retries):
@@ -151,7 +152,7 @@ def chat_with_retry(messages, model="claude-sonnet-4-20250514", max_retries=5):
 
 ## 查看余额
 
-请访问[控制台](https://hapuppy.com/en/dashboard) —— 你的金库余额、注册赠送积分以及近期用量都会在那里展示。目前还没有用于查询余额的公开 API;此功能已列入路线图。
+请访问[控制台](https://hapuppy.com/en/dashboard) —— 你的金库余额与近期用量都会在那里展示。目前还没有用于查询余额的公开 API;此功能已列入路线图。
 
 ## 成本优化技巧
 
@@ -172,7 +173,7 @@ def chat_with_retry(messages, model="claude-sonnet-4-20250514", max_retries=5):
     流式输出本身并不会更便宜,但它让你在用户已经得到所需内容时提前取消 —— 而这*确实*能节省积分。
   </Card>
   <Card title="低成本审核" icon="shield">
-    在将用户输入转发给高系数对话模型之前,先对其运行[内容审核](/zh/api-reference/moderations/create)。它几乎免费,能在不良提示产生费用之前将其拦截。
+    在将用户输入转发给高系数对话模型之前,先对其运行[内容审核](/zh/api-reference/moderations/create)。它几乎不消耗积分,能在不良提示产生费用之前将其拦截。
   </Card>
 </CardGroup>
 

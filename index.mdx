@@ -1,12 +1,12 @@
 ---
 title: "Hapuppy — AI API Gateway"
 sidebarTitle: "Introduction"
-description: "Access 100+ AI models through a single API key. OpenAI-compatible, flat-rate pricing."
+description: "Access every AI model on Hapuppy through a single API key. OpenAI-compatible, pay-as-you-go credits."
 ---
 
 ## Get Started
 
-Everything you need to start using 100+ AI models with a single API key.
+Everything you need to start using every AI model on Hapuppy with a single API key.
 
 <CardGroup cols={2}>
   <Card title="Quickstart" icon="bolt" href="/quickstart">
@@ -19,7 +19,7 @@ Everything you need to start using 100+ AI models with a single API key.
     Browse every endpoint — chat, embeddings, images, audio, moderation, models.
   </Card>
   <Card title="Browse Models" icon="layer-group" href="https://hapuppy.com/en/dashboard/models">
-    View all 100+ available AI models.
+    View every available AI model and its live pricing.
   </Card>
 </CardGroup>
 
@@ -29,7 +29,7 @@ Everything you need to start using 100+ AI models with a single API key.
   <Card title="OpenAI Compatible" icon="plug">
     Drop-in replacement for the OpenAI API. Works with any SDK or tool that supports the OpenAI format.
   </Card>
-  <Card title="100+ Models" icon="robot">
+  <Card title="Every Major Model" icon="robot">
     Access Claude, GPT, Gemini, DeepSeek, Llama, GLM, and more — all through one API key.
   </Card>
   <Card title="One-Time Pricing" icon="tag">
@@ -48,7 +48,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://beta.hapuppy.com/v1"
+    base_url="https://api.hapuppy.com/v1"
 )
 
 response = client.chat.completions.create(
@@ -66,7 +66,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://beta.hapuppy.com/v1",
+  baseURL: "https://api.hapuppy.com/v1",
 });
 
 const response = await client.chat.completions.create({
@@ -80,7 +80,7 @@ console.log(response.choices[0].message.content);
 ```
 
 ```bash cURL
-curl https://beta.hapuppy.com/v1/chat/completions \
+curl https://api.hapuppy.com/v1/chat/completions \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -H "Content-Type: application/json" \
   -d '{

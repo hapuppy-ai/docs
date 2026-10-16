@@ -6,20 +6,19 @@ description: "5 分钟内上手 Hapuppy。"
 <Steps>
 
 <Step title="创建账户">
-  前往 [hapuppy.com/register](https://hapuppy.com/register) 免费注册一个账户。
+  前往 [hapuppy.com/register](https://hapuppy.com/register) 注册一个账户。
 </Step>
 
-<Step title="选择套餐">
-  你可以免费开始,也可以购买一次性积分包。存入金库的积分永不过期。
+<Step title="购买积分包">
+  购买一次性积分包。存入金库的积分永不过期,付费账户可调用全部模型。
 
-  | 套餐 | 价格 | 积分 | 说明 |
+  | 积分包 | 价格 | 积分 | 说明 |
   |------|-------|---------|-------|
-  | Free | $0 | 注册即赠 200K | 基础模型,一次性赠送 |
-  | Lite | $9.99 一次性 | 30M | 全部 100+ 模型,永不过期 |
+  | Lite | $9.99 一次性 | 30M | 全部模型,永不过期 |
   | Standard | $19.99 一次性 | 120M | 全部模型,永不过期(热门) |
   | Pro | $36.99 一次性 | 240M | 全部模型 + 优先路由,永不过期 |
 
-  付费套餐共享 100 RPM 的速率限制;免费套餐为 10 RPM。请通过[积分包(Credits Packs)](https://hapuppy.com/en/dashboard/billing)页面购买;支付经由 Creem 处理。
+  所有账户的速率限制均为 100 RPM。请通过[积分包(Credits Packs)](https://hapuppy.com/en/dashboard/billing)页面购买;支付经由 Creem 处理。
 </Step>
 
 <Step title="生成 API 密钥">
@@ -44,7 +43,7 @@ description: "5 分钟内上手 Hapuppy。"
 
   client = OpenAI(
       api_key="sk-hapuppy-xxx",
-      base_url="https://beta.hapuppy.com/v1"
+      base_url="https://api.hapuppy.com/v1"
   )
 
   response = client.chat.completions.create(
@@ -62,7 +61,7 @@ description: "5 分钟内上手 Hapuppy。"
 
   const client = new OpenAI({
     apiKey: "sk-hapuppy-xxx",
-    baseURL: "https://beta.hapuppy.com/v1",
+    baseURL: "https://api.hapuppy.com/v1",
   });
 
   const response = await client.chat.completions.create({
@@ -76,7 +75,7 @@ description: "5 分钟内上手 Hapuppy。"
   ```
 
   ```bash cURL
-  curl https://beta.hapuppy.com/v1/chat/completions \
+  curl https://api.hapuppy.com/v1/chat/completions \
     -H "Authorization: Bearer sk-hapuppy-xxx" \
     -H "Content-Type: application/json" \
     -d '{
@@ -91,7 +90,7 @@ description: "5 分钟内上手 Hapuppy。"
 </Step>
 
 <Step title="尝试不同的模型">
-  替换 `model` 参数,即可试用我们支持的 100+ 模型中的任意一个:
+  替换 `model` 参数,即可试用任意支持的模型(实时列表见[模型(Models)](https://hapuppy.com/en/dashboard/models)页面):
 
   ```python Python
   # Try GPT-4o

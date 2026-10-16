@@ -4,7 +4,7 @@ description: "Start a video generation job from a text prompt."
 ---
 
 ```
-POST https://beta.hapuppy.com/v1/videos
+POST https://api.hapuppy.com/v1/videos
 ```
 
 Submits a video generation job. The endpoint returns immediately with a job ID — generation runs asynchronously and may take from tens of seconds to several minutes depending on the model, resolution, and duration. Poll [Get Video](/api-reference/videos/get) to track progress, then call [Download Video](/api-reference/videos/download) when the job completes.
@@ -52,7 +52,7 @@ Submits a video generation job. The endpoint returns immediately with a job ID �
 import requests
 
 resp = requests.post(
-    "https://beta.hapuppy.com/v1/videos",
+    "https://api.hapuppy.com/v1/videos",
     headers={"Authorization": "Bearer sk-hapuppy-xxx"},
     json={
         "model": "sora-2",
@@ -67,7 +67,7 @@ print(f"Job {job['id']}: {job['status']}")
 ```
 
 ```typescript TypeScript
-const resp = await fetch("https://beta.hapuppy.com/v1/videos", {
+const resp = await fetch("https://api.hapuppy.com/v1/videos", {
   method: "POST",
   headers: {
     "Authorization": "Bearer sk-hapuppy-xxx",
@@ -86,7 +86,7 @@ console.log(`Job ${job.id}: ${job.status}`);
 ```
 
 ```bash cURL
-curl https://beta.hapuppy.com/v1/videos \
+curl https://api.hapuppy.com/v1/videos \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -107,14 +107,14 @@ import time, requests
 HEADERS = {"Authorization": "Bearer sk-hapuppy-xxx"}
 
 job = requests.post(
-    "https://beta.hapuppy.com/v1/videos",
+    "https://api.hapuppy.com/v1/videos",
     headers=HEADERS,
     json={"model": "sora-2", "prompt": "Northern lights over a still lake", "seconds": 8}
 ).json()
 
 while True:
     status = requests.get(
-        f"https://beta.hapuppy.com/v1/videos/{job['id']}",
+        f"https://api.hapuppy.com/v1/videos/{job['id']}",
         headers=HEADERS
     ).json()
     print(f"{status['status']} — {status.get('progress', 0)}%")
@@ -124,7 +124,7 @@ while True:
 
 # Download the result
 video = requests.get(
-    f"https://beta.hapuppy.com/v1/videos/{job['id']}/content",
+    f"https://api.hapuppy.com/v1/videos/{job['id']}/content",
     headers=HEADERS
 ).content
 with open("output.mp4", "wb") as f:

@@ -1,12 +1,12 @@
 ---
 title: "Hapuppy — AI API 网关"
 sidebarTitle: "简介"
-description: "通过单个 API 密钥访问 100+ AI 模型。兼容 OpenAI,统一定价。"
+description: "通过单个 API 密钥访问 Hapuppy 上的全部 AI 模型。兼容 OpenAI,按量扣积分。"
 ---
 
 ## 开始使用
 
-用一个 API 密钥即可开始使用 100+ AI 模型,所需的一切都在这里。
+用一个 API 密钥即可开始使用 Hapuppy 上的全部 AI 模型,所需的一切都在这里。
 
 <CardGroup cols={2}>
   <Card title="快速开始" icon="bolt" href="/zh/quickstart">
@@ -19,7 +19,7 @@ description: "通过单个 API 密钥访问 100+ AI 模型。兼容 OpenAI,统�
     浏览全部端点 —— 对话、嵌入、图像、音频、审核、模型。
   </Card>
   <Card title="浏览模型" icon="layer-group" href="https://hapuppy.com/en/dashboard/models">
-    查看全部 100+ 个可用 AI 模型。
+    查看全部可用 AI 模型及实时价格。
   </Card>
 </CardGroup>
 
@@ -29,11 +29,11 @@ description: "通过单个 API 密钥访问 100+ AI 模型。兼容 OpenAI,统�
   <Card title="兼容 OpenAI" icon="plug">
     可直接替换 OpenAI API,适用于任何支持 OpenAI 格式的 SDK 或工具。
   </Card>
-  <Card title="100+ 模型" icon="robot">
+  <Card title="主流模型全覆盖" icon="robot">
     通过一个 API 密钥即可访问 Claude、GPT、Gemini、DeepSeek、Llama、GLM 等众多模型。
   </Card>
   <Card title="一次性付费" icon="tag">
-    一次性积分包,低至 $9.99。积分存入你的金库,永不过期 —— 没有订阅,也不会有 token 计费的意外。
+    一次性积分包,低至 $9.99。积分存入你的金库,永不过期 —— 无需按月付费,也不会有 token 计费的意外。
   </Card>
 </CardGroup>
 
@@ -48,7 +48,7 @@ from openai import OpenAI
 
 client = OpenAI(
     api_key="sk-hapuppy-xxx",
-    base_url="https://beta.hapuppy.com/v1"
+    base_url="https://api.hapuppy.com/v1"
 )
 
 response = client.chat.completions.create(
@@ -66,7 +66,7 @@ import OpenAI from "openai";
 
 const client = new OpenAI({
   apiKey: "sk-hapuppy-xxx",
-  baseURL: "https://beta.hapuppy.com/v1",
+  baseURL: "https://api.hapuppy.com/v1",
 });
 
 const response = await client.chat.completions.create({
@@ -80,7 +80,7 @@ console.log(response.choices[0].message.content);
 ```
 
 ```bash cURL
-curl https://beta.hapuppy.com/v1/chat/completions \
+curl https://api.hapuppy.com/v1/chat/completions \
   -H "Authorization: Bearer sk-hapuppy-xxx" \
   -H "Content-Type: application/json" \
   -d '{
@@ -114,7 +114,7 @@ Hapuppy 在所有主要模态上都兼容 OpenAI。
     Whisper 级别的转录,支持词级时间戳。
   </Card>
   <Card title="内容审核" icon="shield" href="/zh/api-reference/moderations/create">
-    在转发用户输入前进行免费 / 近乎免费的安全分类。
+    在转发用户输入前进行零成本 / 近乎零成本的安全分类。
   </Card>
 </CardGroup>
 

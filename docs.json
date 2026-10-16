@@ -39,8 +39,7 @@
               {
                 "group": "Account",
                 "pages": [
-                  "guides/verify-account",
-                  "guides/claude-apply"
+                  "guides/verify-account"
                 ]
               },
               {
@@ -122,8 +121,7 @@
               {
                 "group": "账户",
                 "pages": [
-                  "zh/guides/verify-account",
-                  "zh/guides/claude-apply"
+                  "zh/guides/verify-account"
                 ]
               },
               {
